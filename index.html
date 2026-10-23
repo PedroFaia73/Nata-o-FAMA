@@ -3,302 +3,476 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Natação FAMA · Planificação Geral</title>
-<meta name="description" content="Planificação geral da época e gestão das equipas de natação.">
+<title>GDNF · Planificação 2026/27</title>
+<meta name="description" content="Planificação geral da época 2026/27 do Grupo Desportivo de Natação de Famalicão: calendário, macrociclos, zonas de intensidade, horários e recordes.">
+<link rel="icon" href="img/logo-gdnf.png">
 <style>
   :root {
-    --bg: #f6f8fb;
+    --navy: #0d2340;
+    --bg: #f3f6fa;
     --surface: #ffffff;
-    --text: #14202e;
-    --muted: #5a6878;
-    --line: #dde4ec;
-    --accent: #0b6fb8;
-    --accent-soft: #e3f0fa;
-    --geral: #3b8fd4;
-    --especifica: #0d9488;
-    --competicao: #e0732c;
-    --transicao: #8b95a3;
-    --note-bg: #fff7e0;
-    --note-line: #e8c55a;
+    --text: #13223a;
+    --muted: #5d6b7d;
+    --line: #dbe3ec;
+    --accent: #1f6fb8;
+    --soft: #e6eff8;
+    --z-a1: #2f6fb5;
+    --z-a2: #157a68;
+    --z-a3: #f2b84b;
+    --z-a4: #ec8a3c;
+    --z-tl: #d43f33;
+    --z-pl: #a3245a;
+    --z-vel: #4a2779;
+    --m-carga: #8fb8e6;
+    --m-acum: #4f8ed6;
+    --m-espec: #1f5fbf;
+    --m-taper: #0d2340;
+    --warn-bg: #fff6dc;
+    --warn-line: #e3b93f;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #0e1620;
-      --surface: #16212e;
-      --text: #e6edf4;
-      --muted: #9aa8b8;
-      --line: #263445;
-      --accent: #5bb0f0;
-      --accent-soft: #17324a;
-      --geral: #4a9de0;
-      --especifica: #2bb3a5;
-      --competicao: #f08a46;
-      --transicao: #6f7a88;
-      --note-bg: #2d2714;
-      --note-line: #8a7330;
+      --bg: #0b1522;
+      --surface: #132133;
+      --text: #e5ecf4;
+      --muted: #9aa9bb;
+      --line: #23364d;
+      --accent: #6cb2f0;
+      --soft: #1a2f47;
+      --m-taper: #8aa4c4;
+      --warn-bg: #2e2712;
+      --warn-line: #8b7330;
     }
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  }
-  header.hero {
-    background: linear-gradient(135deg, #0b4f86, #0b6fb8 55%, #1aa0c8);
-    color: #fff;
-    padding: 48px 16px 40px;
-  }
-  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
-  header.hero .wrap { padding: 0; }
-  header.hero h1 { margin: 0 0 6px; font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.15; }
-  header.hero p { margin: 0; opacity: .9; font-size: 1.05rem; }
-  nav.menu {
-    position: sticky; top: 0; z-index: 10;
-    background: var(--surface);
-    border-bottom: 1px solid var(--line);
-  }
-  nav.menu .wrap { display: flex; gap: 4px; overflow-x: auto; padding: 0 16px; }
-  nav.menu a {
-    flex: none;
-    padding: 12px 12px;
-    color: var(--muted);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: .95rem;
-  }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+  header.hero { background: var(--navy); color: #fff; padding: 28px 0 26px; }
+  .hero .wrap { display: flex; gap: 18px; align-items: center; }
+  .hero img { width: 84px; height: auto; border-radius: 50%; background: #fff; padding: 3px; flex: none; }
+  .hero .over { font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; opacity: .75; }
+  .hero h1 { margin: 2px 0 0; font-size: clamp(1.6rem, 5vw, 2.4rem); line-height: 1.1; }
+  .hero p { margin: 4px 0 0; opacity: .85; }
+  .stripe { height: 5px; background: linear-gradient(90deg, var(--z-a1) 0 16.6%, var(--z-a2) 0 33.3%, var(--z-a3) 0 50%, var(--z-a4) 0 66.6%, var(--z-tl) 0 83.3%, var(--z-vel) 0); }
+
+  nav.menu { position: sticky; top: 0; z-index: 10; background: var(--surface); border-bottom: 1px solid var(--line); }
+  nav.menu .wrap { display: flex; overflow-x: auto; gap: 2px; }
+  nav.menu a { flex: none; padding: 12px 10px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: .92rem; }
   nav.menu a:hover { color: var(--accent); }
-  main section { padding: 40px 0 8px; scroll-margin-top: 48px; }
-  h2 { font-size: 1.5rem; margin: 0 0 16px; }
-  h3 { font-size: 1.1rem; margin: 0 0 8px; }
-  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 18px;
-  }
-  .card p, .card ul { margin: 0; }
-  .card ul { padding-left: 18px; }
-  .note {
-    background: var(--note-bg);
-    border-left: 4px solid var(--note-line);
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin: 0 0 20px;
-    font-size: .92rem;
-  }
-  .kicker { color: var(--accent); font-weight: 700; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
 
-  /* Linha temporal da época */
-  .timeline { overflow-x: auto; margin-bottom: 20px; }
-  .months, .phases, .macros { display: grid; grid-template-columns: repeat(11, minmax(56px, 1fr)); gap: 3px; min-width: 640px; }
-  .months div { text-align: center; font-size: .8rem; color: var(--muted); font-weight: 600; padding-bottom: 4px; }
-  .macros div, .phases div {
-    border-radius: 6px; padding: 8px 6px; font-size: .78rem; font-weight: 600; color: #fff; text-align: center;
-  }
-  .macros { margin-bottom: 3px; }
-  .macros div { background: var(--accent-soft); color: var(--text); }
-  .p-geral { background: var(--geral); }
-  .p-especifica { background: var(--especifica); }
-  .p-competicao { background: var(--competicao); }
-  .p-transicao { background: var(--transicao); }
-  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .88rem; color: var(--muted); margin-bottom: 20px; }
-  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+  main section { padding: 36px 0 4px; scroll-margin-top: 50px; }
+  h2 { font-size: 1.45rem; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; margin: 22px 0 10px; }
+  .lead { color: var(--muted); margin: 0 0 18px; }
+  .docs { font-size: .9rem; margin: 10px 0 0; }
+  .docs a { margin-right: 14px; white-space: nowrap; }
 
-  table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
-  .table-scroll { overflow-x: auto; margin-bottom: 20px; }
-  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: .92rem; vertical-align: top; }
-  th { background: var(--accent-soft); font-size: .85rem; }
-  tr:last-child td { border-bottom: 0; }
+  .stats { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-bottom: 18px; }
+  .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .stat b { display: block; font-size: 1.45rem; line-height: 1.1; }
+  .stat span { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
 
-  footer { color: var(--muted); font-size: .85rem; padding: 40px 0; text-align: center; }
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .card h3 { margin-top: 0; }
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: .88rem; text-align: left; vertical-align: top; }
+  th { background: var(--soft); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .sub { display: block; color: var(--muted); font-size: .8rem; }
+  .warn { background: var(--warn-bg); outline: 2px solid var(--warn-line); outline-offset: -2px; }
+
+  /* Macrociclo */
+  .meso { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .72rem; font-weight: 700; color: #fff; white-space: nowrap; }
+  .meso.carga { background: var(--m-carga); color: #0d2340; }
+  .meso.acum { background: var(--m-acum); }
+  .meso.espec { background: var(--m-espec); }
+  .meso.taper { background: var(--m-taper); }
+  @media (prefers-color-scheme: dark) { .meso.taper { color: #0d2340; } }
+  .bar { position: relative; height: 10px; min-width: 70px; background: var(--soft); border-radius: 5px; overflow: hidden; }
+  .bar i { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 5px; }
+  .mix { display: flex; height: 10px; min-width: 90px; border-radius: 5px; overflow: hidden; background: var(--soft); }
+  .mix i:nth-child(1) { background: var(--z-a1); }
+  .mix i:nth-child(2) { background: var(--z-a4); }
+  .mix i:nth-child(3) { background: var(--z-tl); }
+  .mix i:nth-child(4) { background: var(--z-vel); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .82rem; color: var(--muted); margin: 10px 0 0; }
+  .legend span::before { content: ""; display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+
+  /* Zonas */
+  .zones th.z { color: #fff; text-align: center; font-size: .95rem; text-transform: none; letter-spacing: 0; }
+  .zones th.z small { display: block; font-weight: 500; font-size: .72rem; opacity: .9; }
+  .zones td { text-align: center; white-space: nowrap; }
+  .zones td.big { font-size: 1.15rem; font-weight: 700; }
+  .zones th:first-child, .zones td:first-child { text-align: left; }
+
+  /* Horários */
+  .esc h3 { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .esc h3 small { color: var(--muted); font-weight: 500; font-size: .82rem; }
+  .esc ul { list-style: none; margin: 0; padding: 0; }
+  .esc li { display: grid; grid-template-columns: 44px 1fr; gap: 8px; padding: 7px 0; border-top: 1px solid var(--line); font-size: .9rem; }
+  .esc li:first-child { border-top: 0; }
+  .esc .d { font-weight: 700; color: var(--accent); }
+  .esc .t { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .esc .gym { color: var(--z-tl); font-weight: 700; font-size: .75rem; text-transform: uppercase; margin-right: 4px; }
+
+  /* Recordes */
+  .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+  .tabs button { font: inherit; font-weight: 700; padding: 7px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .rec td.prova { font-weight: 700; text-align: center; white-space: nowrap; background: var(--soft); }
+  .rec td.tempo { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .rec td.f, .rec th.f { text-align: right; }
+  .new { display: inline-block; background: var(--z-a2); color: #fff; font-size: .68rem; font-weight: 700; padding: 0 5px; border-radius: 4px; margin-left: 4px; vertical-align: 1px; }
+  .rec .yr { color: var(--muted); font-size: .78rem; display: block; }
+
+  .mapa img { width: 100%; height: auto; display: block; border-radius: 12px; border: 1px solid var(--line); background: #fff; }
+
+  footer { color: var(--muted); font-size: .82rem; padding: 36px 0; text-align: center; }
 </style>
 </head>
 <body>
 
 <header class="hero">
   <div class="wrap">
-    <h1>Natação FAMA</h1>
-    <p>Planificação geral da época 2026/2027 e gestão das equipas</p>
+    <img src="img/logo-gdnf.png" alt="Logótipo do GDNF">
+    <div>
+      <div class="over">Planeamento do treino · Época 2026/27</div>
+      <h1>GD Natação Famalicão</h1>
+      <p>Planificação geral e gestão das equipas</p>
+    </div>
   </div>
 </header>
+<div class="stripe"></div>
 
 <nav class="menu" aria-label="Secções">
   <div class="wrap">
     <a href="#epoca">Época</a>
-    <a href="#macrociclos">Macrociclos</a>
-    <a href="#treinos">Treinos</a>
-    <a href="#equipa">Gestão de equipa</a>
+    <a href="#calendario">Calendário</a>
+    <a href="#macrociclo">Macrociclo 1</a>
+    <a href="#zonas">Zonas</a>
+    <a href="#horarios">Horários</a>
+    <a href="#recordes">Recordes</a>
   </div>
 </nav>
 
 <main class="wrap">
 
-  <p class="note" style="margin-top:24px"><strong>Versão de exemplo.</strong> Os textos e datas abaixo são provisórios e vão ser substituídos pela planificação real.</p>
-
   <!-- ÉPOCA -->
   <section id="epoca">
     <h2>Época 2026/2027</h2>
-    <div class="grid">
-      <div class="card">
-        <div class="kicker">Objetivos</div>
-        <ul>
-          <li>Melhorar os recordes pessoais da maioria dos atletas</li>
-          <li>Qualificar nadadores para os Campeonatos Nacionais</li>
-          <li>Consolidar a técnica dos quatro estilos nos escalões de formação</li>
-        </ul>
-      </div>
-      <div class="card">
-        <div class="kicker">Calendário</div>
-        <p>Início: setembro 2026<br>Fim: julho 2027<br>Transição: agosto 2027</p>
-      </div>
-      <div class="card">
-        <div class="kicker">Competições principais</div>
-        <ul>
-          <li>Dezembro: Campeonato Regional de Inverno</li>
-          <li>Março: Campeonatos Nacionais de Inverno</li>
-          <li>Julho: Campeonatos Nacionais de Verão</li>
-        </ul>
-      </div>
+    <p class="lead">De setembro de 2026 a agosto de 2027, com o primeiro macrociclo a terminar no Campeonato Nacional de Clubes da 1.ª Divisão.</p>
+    <div class="stats">
+      <div class="stat"><b>500</b><span>atletas por semana</span></div>
+      <div class="stat"><b>7</b><span>grupos de treino</span></div>
+      <div class="stat"><b>13</b><span>provas FPN de natação pura</span></div>
+      <div class="stat"><b>576 km</b><span>volume do macrociclo 1</span></div>
     </div>
+    <h3>Mapa de provas 2026/27</h3>
+    <p class="lead">Provas por escalão, eventos do clube e calendário escolar. Carrega na imagem para a abrir em tamanho grande.</p>
+    <a class="mapa" href="docs/mapa-provas-2026-27.pdf"><img src="img/mapa-provas.png" alt="Mapa de provas 2026/27 do GD Natação Famalicão, de setembro a agosto, com provas por escalão e calendário escolar" loading="lazy"></a>
+    <p class="docs"><a href="docs/mapa-provas-2026-27.pdf">Mapa de provas (PDF)</a></p>
   </section>
 
-  <!-- MACROCICLOS -->
-  <section id="macrociclos">
-    <h2>Macrociclos e mesociclos</h2>
-    <p>A época divide-se em três macrociclos, cada um terminado numa competição principal.</p>
-
-    <div class="timeline" role="img" aria-label="Linha temporal da época de setembro a julho, com três macrociclos">
-      <div class="months">
-        <div>Set</div><div>Out</div><div>Nov</div><div>Dez</div><div>Jan</div><div>Fev</div><div>Mar</div><div>Abr</div><div>Mai</div><div>Jun</div><div>Jul</div>
-      </div>
-      <div class="macros">
-        <div style="grid-column: span 4">Macrociclo 1</div>
-        <div style="grid-column: span 3">Macrociclo 2</div>
-        <div style="grid-column: span 4">Macrociclo 3</div>
-      </div>
-      <div class="phases">
-        <div class="p-geral" style="grid-column: span 2">Geral</div>
-        <div class="p-especifica">Espec.</div>
-        <div class="p-competicao">Comp.</div>
-        <div class="p-geral">Geral</div>
-        <div class="p-especifica">Espec.</div>
-        <div class="p-competicao">Comp.</div>
-        <div class="p-geral">Geral</div>
-        <div class="p-especifica" style="grid-column: span 2">Específica</div>
-        <div class="p-competicao">Comp.</div>
-      </div>
+  <!-- CALENDÁRIO -->
+  <section id="calendario">
+    <h2>Quadro competitivo FPN</h2>
+    <p class="lead">Competições nacionais de natação pura, locais e datas limite de inscrição.</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Competição</th><th>Datas</th><th>Local</th><th>Inscrições até</th></tr></thead>
+        <tbody>
+          <tr><td>Fase de Qualificação · Campeonato de Clubes 3.ª Divisão</td><td>24 out. 2026</td><td>ANALEN · Sines</td><td>13 out. 2026<span class="sub">Pré-inscrição 7 out.</span></td></tr>
+          <tr><td>Torneios Regionais de Fundo Juvenis · Torneio Nadador Completo de Infantis</td><td>Até 22 nov.</td><td>A definir por AT</td><td>A definir por AT</td></tr>
+          <tr><td>Campeonato Nacional de Clubes 3.ª Divisão</td><td>27 nov. 2026</td><td>ANCNP · Mealhada</td><td>17 nov. 2026<span class="sub">Pré-inscrição 7 out.</span></td></tr>
+          <tr><td>Campeonato Nacional de Clubes 2.ª Divisão</td><td>28–29 nov. 2026</td><td>ANCNP · Mealhada</td><td>17 nov. 2026<span class="sub">Pré-inscrição 7 out.</span></td></tr>
+          <tr><td>Torneios Zonais de Juvenis</td><td>4–6 dez. 2026</td><td>Norte: ARNN · Bragança<span class="sub">Sul: ANDL · Leiria</span></td><td>A definir por Zona</td></tr>
+          <tr><td>Campeonatos Nacionais Juniores e Seniores PC</td><td>10–13 dez. 2026</td><td>ANDS · Tomar</td><td>1 dez. 2026</td></tr>
+          <tr><td>Campeonato Nacional de Clubes 1.ª Divisão</td><td>19–20 dez. 2026</td><td>ANALGARVE · Albufeira</td><td>8 dez. 2026<span class="sub">Pré-inscrição 7 out.</span></td></tr>
+          <tr><td>Torneios Zonais de Infantis</td><td>26–28 fev. 2027</td><td>Norte: ANC · Cantanhede<span class="sub">Sul: ANALEN · Sines</span></td><td>A definir por Zona</td></tr>
+          <tr><td>Campeonatos Nacionais Juvenis</td><td>2–4 abr. 2027</td><td>ANL · Oeiras (Jamor)</td><td>23 mar. 2027</td></tr>
+          <tr><td>Campeonatos Nacionais Juniores, Sub21 e Absolutos · Open Portugal / Astralpool</td><td>8–11 abr. 2027</td><td>ANC · Coimbra</td><td>30 mar. 2027</td></tr>
+          <tr><td>Torneios Regionais de Fundo Infantis · Torneio Nadador Completo de Juvenis</td><td>Até 16 mai.</td><td>A definir por AT</td><td>A definir por AT</td></tr>
+          <tr><td>Campeonatos Nacionais de Infantis</td><td>23–25 jul. 2027</td><td>ANALEN · Reguengos</td><td>13 jul. 2027</td></tr>
+          <tr><td>Campeonatos Nacionais de Juvenis, Juniores e Seniores</td><td>29 jul.–1 ago. 2027</td><td>ANC · Coimbra</td><td>20 jul. 2027</td></tr>
+        </tbody>
+      </table>
     </div>
 
+    <div class="grid" style="margin-top:14px">
+      <div class="card">
+        <h3>Natação Master</h3>
+        <table>
+          <tbody>
+            <tr><td>CN de Inverno</td><td class="num">22–24 jan. 2027</td></tr>
+            <tr><td>CN de Fundo</td><td class="num">20–21 fev. 2027</td></tr>
+            <tr><td>CN Águas Abertas 1,5 km e 3 km</td><td class="num">22–23 mai. 2027</td></tr>
+            <tr><td>CN Águas Abertas 5 km</td><td class="num">26 jun. 2027</td></tr>
+            <tr><td>CN de Verão</td><td class="num">8–11 jul. 2027</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Águas abertas</h3>
+        <table>
+          <tbody>
+            <tr><td>CN de Longa Distância</td><td class="num">20 fev. 2027</td></tr>
+            <tr><td>CN Primavera 10 km, 7,5 km, 5 km</td><td class="num">22–23 mai. 2027</td></tr>
+            <tr><td>CN Verão 5 km e 4×1500 m</td><td class="num">26–27 jun. 2027</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="docs"><a href="docs/calendario-fpn-2026-27.pdf">Calendário FPN completo (PDF)</a></p>
+  </section>
+
+  <!-- MACROCICLO 1 -->
+  <section id="macrociclo">
+    <h2>Macrociclo 1</h2>
+    <p class="lead">3 de setembro a 20 de dezembro de 2026 · 16 semanas · Absolutos</p>
+    <div class="stats">
+      <div class="stat"><b>576,1 km</b><span>volume total</span></div>
+      <div class="stat"><b>111</b><span>unidades de treino</span></div>
+      <div class="stat"><b>36,0 km</b><span>média semanal</span></div>
+      <div class="stat"><b>7 UT</b><span>média semanal</span></div>
+      <div class="stat"><b>65,0 km</b><span>pico · semana 9</span></div>
+      <div class="stat"><b>9</b><span>provas e eventos</span></div>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Sem.</th><th>Datas</th><th>Mesociclo</th><th>Prova / evento</th><th class="num">UT</th><th class="num">Volume</th><th>Carga</th><th>Distribuição</th></tr>
+        </thead>
+        <tbody id="macro-rows"></tbody>
+        <tfoot>
+          <tr><th colspan="4">Total · 9 provas e 3 outros eventos</th><th class="num">111</th><th class="num">576 100 m</th><th></th><th></th></tr>
+        </tfoot>
+      </table>
+    </div>
     <div class="legend">
-      <span style="--c: var(--geral)">Preparação geral</span>
-      <span style="--c: var(--especifica)">Preparação específica</span>
-      <span style="--c: var(--competicao)">Competição</span>
-      <span style="--c: var(--transicao)">Transição (agosto)</span>
+      <span style="--c: var(--z-a1)">Aeróbio e técnica (76,4%)</span>
+      <span style="--c: var(--z-a4)">Aeróbio intenso (13,2%)</span>
+      <span style="--c: var(--z-tl)">Láctico (2,4%)</span>
+      <span style="--c: var(--z-vel)">Velocidade (2,2%)</span>
+      <span style="--c: var(--warn-line)">Valor a verificar na folha original</span>
     </div>
 
-    <div class="grid">
-      <div class="card">
-        <h3>Preparação geral</h3>
-        <p>Volume elevado, base aeróbia, técnica e trabalho em seco. Intensidade baixa a moderada.</p>
-      </div>
-      <div class="card">
-        <h3>Preparação específica</h3>
-        <p>Menos volume e mais intensidade. Ritmos de prova, limiar anaeróbio e trabalho de velocidade.</p>
-      </div>
-      <div class="card">
-        <h3>Competição</h3>
-        <p>Afinação (taper) de 1 a 3 semanas, foco na qualidade, partidas e viragens.</p>
-      </div>
-      <div class="card">
-        <h3>Transição</h3>
-        <p>Descanso ativo e outras atividades físicas para recuperar antes da nova época.</p>
-      </div>
+    <div class="grid" style="margin-top:18px">
+      <div class="card"><h3><span class="meso carga">Carga</span> semanas 1–3</h3><p>Entrada progressiva no volume, de 14 para 49,5 km. Material: pára-quedas e copos.</p></div>
+      <div class="card"><h3><span class="meso acum">Acumulação</span> semanas 4–8</h3><p>Volume alto, entre 55 e 60 km, com estágio FPN em Rio Maior. Material: t-shirt e elásticos.</p></div>
+      <div class="card"><h3><span class="meso espec">Específico</span> semanas 9–12</h3><p>Pico de 65 km no estágio de VRSA e mais trabalho aeróbio intenso. Material: pára-quedas e copos.</p></div>
+      <div class="card"><h3><span class="meso taper">Taper</span> semanas 13–16</h3><p>Redução para 13–14 km por semana para os Zonais, CN Jun/Sen e CN Clubes 1.ª Divisão. Fato de competição.</p></div>
     </div>
+    <p class="docs"><a href="docs/macrociclo-1-2026-27.pdf">Macrociclo 1 detalhado (PDF)</a></p>
   </section>
 
-  <!-- TREINOS -->
-  <section id="treinos">
-    <h2>Treinos</h2>
-
-    <h3>Estrutura semanal tipo</h3>
-    <div class="table-scroll">
+  <!-- ZONAS -->
+  <section id="zonas">
+    <h2>Zonas de intensidade</h2>
+    <p class="lead">GPS FAMA · referência comum para todos os treinos da época.</p>
+    <div class="table-scroll zones">
       <table>
-        <thead><tr><th>Dia</th><th>Água</th><th>Seco</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Zona</th>
+            <th class="z" style="background:var(--z-a1)">A1<small>CAer</small></th>
+            <th class="z" style="background:var(--z-a2)">A2<small>LAer</small></th>
+            <th class="z" style="background:var(--z-a3);color:#13223a">A3<small>CAna</small></th>
+            <th class="z" style="background:var(--z-a4)">A4<small>VO2 Máx</small></th>
+            <th class="z" style="background:var(--z-tl)">TL<small>Tolerância</small></th>
+            <th class="z" style="background:var(--z-pl)">PL<small>Potência</small></th>
+            <th class="z" style="background:var(--z-vel)">Vel<small>Velocidade</small></th>
+          </tr>
+        </thead>
         <tbody>
-          <tr><td>Segunda</td><td>Aeróbio (A1/A2) + técnica</td><td>Força geral</td></tr>
-          <tr><td>Terça</td><td>Limiar (A3)</td><td>—</td></tr>
-          <tr><td>Quarta</td><td>Técnica + velocidade</td><td>Mobilidade e core</td></tr>
-          <tr><td>Quinta</td><td>Aeróbio (A2) + pernas</td><td>—</td></tr>
-          <tr><td>Sexta</td><td>Ritmo de prova</td><td>Força geral</td></tr>
-          <tr><td>Sábado</td><td>Sessão longa ou controlo</td><td>—</td></tr>
-          <tr><td>Domingo</td><td>Descanso</td><td>—</td></tr>
+          <tr><th>% MT</th><td>65–70%</td><td>75%</td><td>80–85%</td><td>90–95%</td><td>105%</td><td>máx</td><td>máx</td></tr>
+          <tr><th>Pulso</th><td class="big">21–23</td><td class="big">24–25</td><td class="big">26–28</td><td class="big">&gt;29</td><td class="big">máx</td><td class="big">máx</td><td class="big">máx</td></tr>
+          <tr><th>Lactato</th><td>1,5–2,0</td><td>2,0–3,0</td><td>3,5–4,5</td><td>5,0–10</td><td>&gt;5,0</td><td>&gt;5,0</td><td>—</td></tr>
+          <tr><th>T50</th><td class="big">12"</td><td class="big">9"</td><td class="big">6"</td><td class="big">4"</td><td class="big">2"</td><td class="big">máx</td><td>—</td></tr>
+          <tr><th>T100</th><td class="big">20"</td><td class="big">15"</td><td class="big">10"</td><td class="big">7"</td><td class="big">4"</td><td class="big">máx</td><td>T(100−5")/4</td></tr>
+          <tr><th>Variação</th><td>1,0"–2,0"</td><td>1,0"–2,0"</td><td>1,0"–1,5"</td><td>0,5"–1,0"</td><td>0,2"–0,8"</td><td>0,0"</td><td>0,0"</td></tr>
         </tbody>
       </table>
     </div>
-
-    <h3>Zonas de intensidade</h3>
-    <div class="table-scroll">
-      <table>
-        <thead><tr><th>Zona</th><th>Objetivo</th><th>Esforço</th></tr></thead>
-        <tbody>
-          <tr><td><strong>A1</strong></td><td>Aeróbio ligeiro, recuperação</td><td>Fácil, conversa possível</td></tr>
-          <tr><td><strong>A2</strong></td><td>Aeróbio médio, base</td><td>Moderado e contínuo</td></tr>
-          <tr><td><strong>A3</strong></td><td>Limiar anaeróbio</td><td>Forte mas sustentável</td></tr>
-          <tr><td><strong>TL</strong></td><td>Tolerância láctica</td><td>Muito forte, séries curtas</td></tr>
-          <tr><td><strong>VEL</strong></td><td>Velocidade máxima</td><td>Máximo, distâncias curtas com muita pausa</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <p class="docs"><a href="docs/zonas-intensidade-2026-27.pdf">Zonas de intensidade (PDF)</a></p>
   </section>
 
-  <!-- GESTÃO DE EQUIPA -->
-  <section id="equipa">
-    <h2>Gestão de equipa</h2>
-    <div class="table-scroll">
+  <!-- HORÁRIOS -->
+  <section id="horarios">
+    <h2>Horários e treinadores</h2>
+    <p class="lead">Distribuição de treinadores 2026/27 · cerca de 500 atletas por semana.</p>
+    <div class="grid" id="horarios-grid"></div>
+  </section>
+
+  <!-- RECORDES -->
+  <section id="recordes">
+    <h2>Recordes do clube · Absolutos</h2>
+    <p class="lead" id="rec-info"></p>
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-pool="p25">Piscina 25 m</button>
+      <button role="tab" aria-selected="false" data-pool="p50">Piscina 50 m</button>
+    </div>
+    <div class="table-scroll rec">
       <table>
-        <thead><tr><th>Escalão</th><th>Treinos por semana</th><th>Treinador</th></tr></thead>
-        <tbody>
-          <tr><td>Cadetes</td><td>3</td><td>A definir</td></tr>
-          <tr><td>Infantis</td><td>4 a 5</td><td>A definir</td></tr>
-          <tr><td>Juvenis</td><td>6 a 7</td><td>A definir</td></tr>
-          <tr><td>Juniores e Seniores</td><td>8 a 9</td><td>A definir</td></tr>
-          <tr><td>Masters</td><td>3 a 4</td><td>A definir</td></tr>
-        </tbody>
+        <thead><tr><th>Masculino</th><th>Tempo</th><th style="text-align:center">Prova</th><th>Tempo</th><th class="f">Feminino</th></tr></thead>
+        <tbody id="rec-rows"></tbody>
       </table>
     </div>
-    <div class="grid">
-      <div class="card">
-        <h3>Regras</h3>
-        <ul>
-          <li>Chegar 10 minutos antes do treino</li>
-          <li>Avisar faltas ao treinador com antecedência</li>
-          <li>Trazer sempre o material completo</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Comunicação</h3>
-        <ul>
-          <li>Convocatórias publicadas na semana anterior à prova</li>
-          <li>Reunião com pais no início de cada macrociclo</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Avaliação</h3>
-        <ul>
-          <li>Testes de controlo no fim de cada mesociclo</li>
-          <li>Registo de tempos e evolução de cada atleta</li>
-        </ul>
-      </div>
-    </div>
+    <div class="legend"><span style="--c: var(--z-a2)">Recorde batido na época 2025/26</span></div>
+    <p class="docs"><a href="docs/recordes-p25.pdf">Recordes P25 (PDF)</a><a href="docs/recordes-p50.pdf">Recordes P50 (PDF)</a></p>
   </section>
 
 </main>
 
-<footer>Natação FAMA · Planificação Geral 2026/2027</footer>
+<footer>GDNF · Grupo Desportivo de Natação de Famalicão · Coordenação técnica: Pedro Faia · 2026/27</footer>
 
+<script>
+// Macrociclo 1: [sem, datas, mesociclo, prova, local, UT, volume, carga%, aeróbio%, intenso%, láctico%, velocidade%, aVerificar]
+const macro = [
+  [1, "07–13 set.", "carga", "Mercado Vai à Vila", "", 4, 14000, 22, 98.6, 0, 0, 1.4],
+  [2, "14–20 set.", "carga", "", "", 6, 30000, 46, 84.7, 13.3, 1.0, 1.0],
+  [3, "21–27 set.", "carga", "", "", 9, 49500, 76, 84.4, 13.9, 0.8, 0.8],
+  [4, "28 set.–04 out.", "acum", "", "", 9, 55800, 86, 83.9, 13.4, 1.6, 1.1],
+  [5, "05–11 out.", "acum", "Gala GDNF New Season", "Estágio FPN Rio Maior", 9, 58500, 90, 82.1, 13.8, 3.4, 2.1],
+  [6, "12–18 out.", "acum", "Prep. Juv/Jun/Sen", "Penafiel · APTN · Tomar", 10, 60000, 92, 81.0, 15.0, 2.0, 2.0],
+  [7, "19–25 out.", "acum", "", "", 5, 26500, 41, 84.9, 10.2, 3.4, 1.5],
+  [8, "26 out.–01 nov.", "acum", "", "", 5, 22500, 35, 82.2, 12.0, 2.7, 3.1],
+  [9, "02–08 nov.", "espec", "Estágio VRSA", "VRSA · Gala Desporto CMF", 10, 65000, 100, 79.4, 14.6, 3.1, 2.9],
+  [10, "09–15 nov.", "espec", "CT Jun/Sen", "Felgueiras", 5, 22500, 35, 83.1, 12.0, 2.7, 2.2],
+  [11, "16–22 nov.", "espec", "", "", 9, 46800, 72, 77.1, 16.7, 3.4, 2.8],
+  [12, "23–29 nov.", "espec", "CN Clubes 2.ª Divisão", "Mealhada", 9, 46800, 72, null, 16.7, 3.4, 2.8, true],
+  [13, "30 nov.–06 dez.", "taper", "Zonal Juvenis", "Bragança", 9, 37800, 58, 87.6, 7.9, 1.9, 2.6],
+  [14, "07–13 dez.", "taper", "CN Jun/Sen", "Tomar", 4, 14000, 22, 70.7, 18.6, 4.3, 6.4],
+  [15, "14–20 dez.", "taper", "CN Clubes 1.ª Divisão", "Albufeira", 4, 13200, 20, 78.0, 12.1, 3.0, 6.8],
+  [16, "21–27 dez.", "taper", "", "", 4, 13200, 20, null, null, null, null, true]
+];
+const mesoName = { carga: "Carga", acum: "Acumulação", espec: "Específico", taper: "Taper" };
+const fmt = n => n.toLocaleString("pt-PT").replace(/\./g, " ");
+document.getElementById("macro-rows").innerHTML = macro.map(([s, d, m, p, l, ut, v, c, a, i, t, ve, w]) => {
+  const mix = a == null
+    ? `<span class="sub">a verificar</span>`
+    : `<div class="mix" title="Aeróbio ${a}% · Intenso ${i}% · Láctico ${t}% · Velocidade ${ve}%"><i style="width:${a}%"></i><i style="width:${i}%"></i><i style="width:${t}%"></i><i style="width:${ve}%"></i></div>`;
+  return `<tr${w ? ' class="warn"' : ""}>
+    <td class="num"><b>${s}</b></td><td style="white-space:nowrap">${d}</td>
+    <td><span class="meso ${m}">${mesoName[m]}</span></td>
+    <td>${p ? `<b>${p}</b>` : ""}${l ? `<span class="sub">${l}</span>` : ""}</td>
+    <td class="num">${ut}</td><td class="num">${fmt(v)}</td>
+    <td><div class="bar" title="${c}%"><i style="width:${c}%"></i></div></td>
+    <td>${mix}</td></tr>`;
+}).join("");
+
+// Horários: [dia, hora, local, pistas, treinadores, nota]
+const horarios = [
+  { nome: "Pré-competição", total: "2 treinos", sessoes: [
+    ["2.ª", "18h10–18h50", "Piscina Grande", "2 pistas", "Susana, Olga"],
+    ["5.ª", "18h10–18h50", "Piscina Grande", "2 pistas", "Susana, Olga"] ] },
+  { nome: "Cadetes C", total: "3 treinos", sessoes: [
+    ["2.ª", "18h50–19h25", "Famalicão", "2 pistas", "Andreia, Carla"],
+    ["5.ª", "18h50–19h25", "Famalicão", "2 pistas", "Andreia, Carla"],
+    ["Sáb", "09h30–10h15", "Famalicão", "2 pistas", "Andreia, Carla"] ] },
+  { nome: "Cadetes D", total: "3 treinos", sessoes: [
+    ["2.ª", "19h25–20h00", "Famalicão", "2 pistas", "Andreia, Carla"],
+    ["4.ª", "18h10–18h45", "Famalicão", "2 pistas", "Andreia, Carla"],
+    ["Sáb", "10h15–11h00", "Famalicão", "2 pistas", "Andreia, Carla"] ] },
+  { nome: "Cadetes A/B", total: "4 dias", sessoes: [
+    ["3.ª", "18h50–19h45", "Famalicão", "2 pistas", "Sílvio, Cátia"],
+    ["4.ª", "18h10–19h05", "Famalicão", "3 pistas", "Sílvio, Cátia"],
+    ["6.ª", "19h00–20h30", "Oliveira", "2 pistas", "Sílvio, Cátia"],
+    ["Sáb", "09h00–10h20 e 14h15–15h30", "Famalicão", "2 pistas", "Sílvio, Cátia"] ] },
+  { nome: "Infantis", total: "6 treinos", sessoes: [
+    ["2.ª", "19h00–20h30", "Joane", "2 pistas", "Jorge"],
+    ["3.ª", "19h45–20h50", "Famalicão", "2 pistas", "Jorge, Andreia"],
+    ["4.ª", "18h50–20h50", "Famalicão", "2 pistas", "Jorge, Andreia"],
+    ["5.ª", "19h00–20h30", "Joane", "2 pistas", "Jorge, Andreia"],
+    ["6.ª", "18h50–20h30", "Famalicão", "2 pistas", "Jorge, Andreia"],
+    ["Sáb", "07h15–09h00", "Famalicão", "2 pistas", "Jorge, Andreia"] ] },
+  { nome: "Absolutos", total: "9 na água + 5 ginásio", sessoes: [
+    ["2.ª", "18h00–18h40", "Ginásio", "", "Melo, Valdemar", "gym"],
+    ["2.ª", "18h50–20h50", "Famalicão", "3 → 5 pistas (20h00)", "Faia, Valdemar, Melo"],
+    ["3.ª", "06h30–07h55", "Famalicão", "5 pistas", "Melo"],
+    ["3.ª", "18h00–18h40", "Ginásio", "", "Melo", "gym"],
+    ["3.ª", "18h50–20h50", "Famalicão", "3 pistas", "Faia, Valdemar, Melo"],
+    ["4.ª", "06h30–07h55", "Famalicão", "5 pistas", "Faia"],
+    ["4.ª", "18h00–18h50", "Ginásio", "", "Melo, Valdemar", "gym"],
+    ["4.ª", "19h05–20h50", "Famalicão", "3 → 5 pistas (20h20)", "Faia (Póvoa), Valdemar, Melo"],
+    ["5.ª", "18h00–18h40", "Ginásio", "", "Melo, Valdemar", "gym"],
+    ["5.ª", "18h50–20h50", "Famalicão", "3 → 5 pistas (19h30)", "Faia, Valdemar, Melo"],
+    ["6.ª", "06h30–07h55", "Famalicão", "5 pistas", "Melo"],
+    ["6.ª", "18h00–18h40", "Ginásio", "", "Melo, Valdemar", "gym"],
+    ["6.ª", "18h50–20h50", "Famalicão", "3 → 5 pistas (20h20)", "Faia (Póvoa), Valdemar, Melo"],
+    ["Sáb", "07h30–09h30", "Famalicão", "3 pistas", "Faia (Póvoa), Melo"] ] },
+  { nome: "Masters / Triatlo", total: "3 treinos", sessoes: [
+    ["2.ª", "21h20–22h00", "Ribeirão", "2 pistas", "Ricardo"],
+    ["4.ª", "21h00–22h00", "Ribeirão", "2 pistas", "Ricardo"],
+    ["6.ª", "21h30–22h00", "Ribeirão", "2 pistas", "Ricardo"] ] }
+];
+document.getElementById("horarios-grid").innerHTML = horarios.map(g => `
+  <div class="card esc">
+    <h3>${g.nome} <small>${g.total}</small></h3>
+    <ul>${g.sessoes.map(([d, h, l, p, t, k]) => `
+      <li><span class="d">${d}</span><span>${k === "gym" ? '<span class="gym">Ginásio</span>' : ""}<span class="t">${h}</span> · ${k === "gym" ? "" : l}${p ? (k === "gym" ? "" : " · ") + p : ""}<span class="sub">${t}</span></span></li>`).join("")}
+    </ul>
+  </div>`).join("");
+
+// Recordes: [prova, m_atleta, m_ano, m_tempo, m_data, m_novo, f_tempo, f_atleta, f_ano, f_data, f_novo]
+const recordes = {
+  p25: { info: "Piscina de 25 m · atualização 24/07/2026", rows: [
+    ["50 Livres", "PEREIRA Rodrigo Ferreira", "06", "22.48", "12/04/26", 1, "27.14", "ALVES Leonor Cunha", "12", "11/04/26", 1],
+    ["100 Livres", "VAZ Luís Emanuel", "91", "48.80", "20/12/13", 0, "57.15", "FERREIRA Ana Ribeiro", "92", "20/12/09", 0],
+    ["200 Livres", "VAZ Luís Emanuel", "91", "1:45.25", "21/12/13", 0, "2:03.08", "FERREIRA Ana Ribeiro", "92", "06/12/09", 0],
+    ["400 Livres", "VAZ Luís Emanuel", "91", "3:48.14", "22/12/13", 0, "4:21.04", "FERREIRA Ana Ribeiro", "92", "11/12/10", 0],
+    ["800 Livres", "VAZ Luís Emanuel", "91", "8:08.62", "30/11/13", 0, "8:54.50", "LOPES Daniela Magalhães", "05", "28/11/21", 0],
+    ["1500 Livres", "VAZ Luís Emanuel", "91", "15:33.15", "18/12/11", 0, "17:14.77", "MESQUITA Mafalda Martins", "07", "13/12/24", 0],
+    ["50 Costas", "SILVA Francisco Araújo", "06", "24.56", "12/04/26", 1, "30.13", "MESQUITA Mafalda Martins", "07", "13/12/24", 0],
+    ["100 Costas", "SILVA Francisco Araújo", "06", "52.79", "11/04/26", 1, "1:04.37", "MESQUITA Mafalda Martins", "07", "23/04/23", 0],
+    ["200 Costas", "SILVA Francisco Araújo", "06", "1:57.10", "12/04/26", 1, "2:17.73", "MESQUITA Mafalda Martins", "07", "13/04/24", 0],
+    ["50 Bruços", "FERREIRA João Miguel", "89", "29.11", "19/12/09", 0, "34.44", "MARTINS Ana Beatriz", "99", "13/12/15", 0],
+    ["100 Bruços", "FERREIRA João Miguel", "89", "1:03.45", "19/12/09", 0, "1:13.94", "ALMEIDA Mariana Dias", "93", "20/12/09", 0],
+    ["200 Bruços", "FERNANDES Leonardo Freitas", "06", "2:18.44", "22/12/23", 0, "2:38.30", "LOPES Daniela Magalhães", "05", "13/04/24", 0],
+    ["50 Mariposa", "PEREIRA Rodrigo Ferreira", "06", "23.87", "11/04/26", 1, "28.49", "MARTINS Ana Beatriz", "99", "21/12/18", 0],
+    ["100 Mariposa", "PEREIRA Rodrigo Ferreira", "06", "52.20", "12/04/26", 1, "1:03.83", "MARTINS Ana Beatriz", "99", "22/12/18", 0],
+    ["200 Mariposa", "ARAÚJO João Pedro", "85", "1:57.73", "10/12/05", 0, "2:16.48", "MARTINS Ana Beatriz", "99", "08/12/18", 0],
+    ["100 Estilos", "NIZ Adriano Miguel", "86", "57.48", "12/12/10", 0, "1:05.66", "MARTINS Ana Beatriz", "99", "13/12/15", 0],
+    ["200 Estilos", "ARAÚJO Paulo Ricardo", "89", "2:02.24", "07/12/08", 0, "2:20.59", "MARTINS Ana Beatriz", "99", "11/06/16", 0],
+    ["400 Estilos", "NIZ Adriano Miguel", "86", "4:17.92", "02/11/11", 0, "4:52.86", "MARTINS Ana Beatriz", "99", "13/01/18", 0] ] },
+  p50: { info: "Piscina de 50 m · atualização 14/07/2026", rows: [
+    ["50 Livres", "VAZ Luís Emanuel", "91", "23.44", "29/03/13", 0, "27.96", "MARTINS Ana Beatriz", "99", "02/06/18", 0],
+    ["100 Livres", "VAZ Luís Emanuel", "91", "50.84", "21/07/13", 0, "58.44", "FERREIRA Ana Ribeiro", "92", "20/06/09", 0],
+    ["200 Livres", "VAZ Luís Emanuel", "91", "1:48.98", "25/07/14", 0, "2:04.66", "FERREIRA Ana Ribeiro", "92", "30/05/09", 0],
+    ["400 Livres", "MAIA Jorge Manuel", "89", "3:52.29", "05/04/09", 0, "4:23.61", "FERREIRA Ana Ribeiro", "92", "31/07/10", 0],
+    ["800 Livres", "MAIA Jorge Manuel", "89", "8:17.33", "11/04/10", 0, "9:09.73", "LOPES Daniela Magalhães", "05", "01/08/21", 0],
+    ["1500 Livres", "MAIA Jorge Manuel", "89", "15:51.42", "30/05/09", 0, "17:42.93", "LOPES Daniela Magalhães", "05", "28/07/23", 0],
+    ["50 Costas", "SILVA Francisco Araújo", "06", "25.82", "29/03/26", 1, "31.07", "MESQUITA Mafalda Martins", "07", "15/03/25", 0],
+    ["100 Costas", "SILVA Francisco Araújo", "06", "55.47", "28/03/26", 1, "1:06.55", "MESQUITA Mafalda Martins", "07", "04/04/24", 0],
+    ["200 Costas", "SILVA Francisco Araújo", "06", "2:02.11", "23/05/26", 1, "2:22.98", "MESQUITA Mafalda Martins", "07", "10/06/23", 0],
+    ["50 Bruços", "FERNANDES Leonardo Freitas", "06", "29.97", "08/06/25", 0, "34.84", "ALMEIDA Mariana Dias", "93", "11/04/10", 0],
+    ["100 Bruços", "OLIVEIRA João Campelo", "04", "1:05.87", "27/07/22", 0, "1:15.45", "MARTINS Ana Beatriz", "99", "23/07/15", 0],
+    ["200 Bruços", "OLIVEIRA João Campelo", "04", "2:23.21", "29/07/22", 0, "2:43.46", "MARTINS Ana Beatriz", "99", "03/04/15", 0],
+    ["50 Mariposa", "PEREIRA Rodrigo Ferreira", "06", "24.86", "30/03/26", 1, "29.56", "MARTINS Ana Beatriz", "99", "26/07/18", 0],
+    ["100 Mariposa", "PEREIRA Rodrigo Ferreira", "06", "55.16", "09/06/24", 0, "1:04.22", "MARTINS Ana Beatriz", "99", "22/07/17", 0],
+    ["200 Mariposa", "ARAÚJO João Pedro", "85", "2:00.17", "26/07/05", 0, "2:19.72", "MARTINS Ana Beatriz", "99", "11/03/16", 0],
+    ["200 Estilos", "ARAÚJO Paulo Ricardo", "89", "2:06.16", "19/07/07", 0, "2:23.88", "MARTINS Ana Beatriz", "99", "17/12/16", 0],
+    ["400 Estilos", "ARAÚJO Paulo Ricardo", "89", "4:31.48", "22/07/?? (a verificar)", 0, "4:58.76", "MARTINS Ana Beatriz", "99", "02/06/18", 0] ] }
+};
+const badge = '<span class="new">25/26</span>';
+function showPool(pool) {
+  const r = recordes[pool];
+  document.getElementById("rec-info").textContent = r.info;
+  document.getElementById("rec-rows").innerHTML = r.rows.map(([p, ma, my, mt, md, mn, ft, fa, fy, fd, fn]) => `
+    <tr><td>${ma}${mn ? badge : ""}<span class="yr">${my} · ${md}</span></td><td class="tempo">${mt}</td>
+    <td class="prova">${p}</td>
+    <td class="tempo">${ft}</td><td class="f">${fn ? badge : ""}${fa}<span class="yr">${fy} · ${fd}</span></td></tr>`).join("");
+  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.pool === pool));
+}
+document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => showPool(b.dataset.pool)));
+showPool("p25");
+</script>
 </body>
 </html>
