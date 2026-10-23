@@ -134,6 +134,12 @@
 
   .mapa img { width: 100%; height: auto; display: block; border-radius: 12px; border: 1px solid var(--line); background: #fff; }
 
+  .esc-tag { display: inline-block; margin-top: 3px; padding: 0 6px; border-radius: 4px; font-size: .7rem; font-weight: 700; background: var(--soft); color: var(--accent); }
+  .esc-tag.check { outline: 2px solid var(--warn-line); }
+  .morning { background: color-mix(in srgb, var(--z-a4) 22%, transparent); border-radius: 4px; padding: 0 4px; font-weight: 700; }
+  .tbd { color: var(--muted); font-style: italic; }
+  .note-line { font-size: .9rem; margin: 12px 0 0; padding: 10px 14px; border-left: 4px solid var(--accent); background: var(--surface); border-radius: 8px; }
+
   footer { color: var(--muted); font-size: .82rem; padding: 36px 0; text-align: center; }
 </style>
 </head>
@@ -158,6 +164,7 @@
     <a href="#macrociclo">Macrociclo 1</a>
     <a href="#zonas">Zonas</a>
     <a href="#horarios">Horários</a>
+    <a href="#deslocacoes">Deslocações</a>
     <a href="#recordes">Recordes</a>
   </div>
 </nav>
@@ -308,7 +315,29 @@
   <section id="horarios">
     <h2>Horários e treinadores</h2>
     <p class="lead">Distribuição de treinadores 2026/27 · cerca de 500 atletas por semana.</p>
-    <div class="grid" id="horarios-grid"></div>
+    <div class="grid" id="horarios-grid" style="align-items:start"></div>
+  </section>
+
+  <!-- DESLOCAÇÕES -->
+  <section id="deslocacoes">
+    <h2>Deslocações e hotéis</h2>
+    <p class="lead">Logística das provas fora de Famalicão · pré-reservas 2026/27.</p>
+    <div class="stats">
+      <div class="stat"><b>9</b><span>deslocações</span></div>
+      <div class="stat"><b>28</b><span>noites de hotel</span></div>
+      <div class="stat"><b>150</b><span>pessoas no total</span></div>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Data</th><th>Prova · escalão</th><th>Local</th><th>Hotel</th><th>Restaurante</th><th>Estadia</th><th>Partida de Famalicão</th><th class="num">Comitiva</th></tr></thead>
+        <tbody id="desl-rows"></tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <span style="--c: var(--z-a4)">Partida de manhã</span>
+      <span style="--c: var(--warn-line)">A confirmar</span>
+    </div>
+    <p class="note-line"><strong>Em todas as reservas:</strong> pedir saída do hotel às 14h30 no último dia.</p>
   </section>
 
   <!-- RECORDES -->
@@ -417,9 +446,30 @@ document.getElementById("horarios-grid").innerHTML = horarios.map(g => `
   <div class="card esc">
     <h3>${g.nome} <small>${g.total}</small></h3>
     <ul>${g.sessoes.map(([d, h, l, p, t, k]) => `
-      <li><span class="d">${d}</span><span>${k === "gym" ? '<span class="gym">Ginásio</span>' : ""}<span class="t">${h}</span> · ${k === "gym" ? "" : l}${p ? (k === "gym" ? "" : " · ") + p : ""}<span class="sub">${t}</span></span></li>`).join("")}
+      <li><span class="d">${d}</span><span>${k === "gym" ? '<span class="gym">Ginásio</span>' : ""}<span class="t">${h}</span>${k === "gym" ? "" : ` · ${l}${p ? " · " + p : ""}`}<span class="sub">${t}</span></span></li>`).join("")}
     </ul>
   </div>`).join("");
+
+// Deslocações: [data, prova, escalão, escalão a confirmar, local, hotel, restaurante, entrada, saída, noites, partida, partida de manhã, fem, masc, trein, total]
+const desl = [
+  ["28–29 nov. 2026", "Camp. Nacional de Clubes 2.ª Divisão", "Absolutos", 0, "Mealhada", "", "D. Bacalhau · O Beto (01/12)", "27 nov · 17h00", "29 nov · 14h30", 2, "27 nov · 14h30", 0, 12, 0, 2, 14],
+  ["04–06 dez. 2026", "Camp. Zonal Juvenis", "Juvenis", 0, "Bragança", "", "", "03 dez · 14h30", "06 dez · 14h30", 3, "03 dez · 14h30", 0, 6, 6, 1, 13],
+  ["10–13 dez. 2026", "Camp. Nacional Jun. e Abs.", "Jun/Abs", 0, "Tomar", "Hotel Sinagoga / Bonjardim", "D. Bacalhau · O Beto (29/11)", "09 dez · 17h00", "13 dez · 14h30", 4, "09 dez · 14h30", 0, 6, 8, 2, 16],
+  ["19–20 dez. 2026", "Camp. Nacional de Clubes 1.ª Divisão", "Absolutos", 0, "Albufeira", "INATEL", "INATEL", "18 dez · 17h00", "20 dez · 14h30", 2, "18 dez · 08h00", 1, 0, 12, 3, 15],
+  ["26–28 fev. 2027", "Camp. Zonal Infantis", "Infantis", 0, "Cantanhede", "", "", "25 fev · 14h30", "28 fev · 14h30", 3, "25 fev · 14h30", 0, 8, 8, 2, 18],
+  ["02–04 abr. 2027", "Camp. Nacional Juvenis", "Juvenis", 0, "Jamor", "Hotel Holiday Inn", "Pizza na Brasa", "01 abr · 17h00", "04 abr · 14h30", 3, "01 abr · 14h30", 0, 6, 6, 2, 14],
+  ["08–11 abr. 2027", "Camp. Nacional Juv/Jun/Sen", "Jun/Sen", 0, "Coimbra", "Hotel D. Dinis", "Hotel D. Dinis", "07 abr · 17h00", "11 abr · 14h30", 4, "07 abr · 14h30", 0, 6, 10, 3, 19],
+  ["23–25 jul. 2027", "Camp. Nacional Infantis", "Infantis", 0, "Reguengos de Monsaraz", "", "", "22 jul · 14h00", "25 jul · 14h30", 3, "22 jul · 07h30", 1, 10, 8, 2, 20],
+  ["29 jul.–01 ago. 2027", "Camp. Nacional Juv/Jun/Sen", "Absolutos", 0, "Coimbra", "Hotel D. Dinis", "Hotel D. Dinis", "28 jul · 17h00", "01 ago · 14h30", 4, "28 jul · 13h30", 0, 6, 12, 3, 21]
+];
+const tbd = v => v || '<span class="tbd">a definir</span>';
+document.getElementById("desl-rows").innerHTML = desl.map(([d, p, e, ec, l, h, r, en, sa, n, pa, pm, f, m, t, tot]) => `
+  <tr><td style="white-space:nowrap"><b>${d}</b></td>
+  <td>${p}<br><span class="esc-tag${ec ? " check" : ""}">${e}${ec ? " · a confirmar" : ""}</span></td>
+  <td>${l}</td><td>${tbd(h)}</td><td>${tbd(r)}</td>
+  <td style="white-space:nowrap">${en}<span class="sub">${n} noites · saída ${sa}</span></td>
+  <td style="white-space:nowrap">${pm ? `<span class="morning">${pa}</span>` : pa}</td>
+  <td class="num"><b>${tot}</b><span class="sub">${f || "–"} F · ${m || "–"} M · ${t} trein.</span></td></tr>`).join("");
 
 // Recordes: [prova, m_atleta, m_ano, m_tempo, m_data, m_novo, f_tempo, f_atleta, f_ano, f_data, f_novo]
 const recordes = {
