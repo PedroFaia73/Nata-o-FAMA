@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Natação FAMA · Planificação Geral</title>
+<meta name="description" content="Planificação geral da época e gestão das equipas de natação.">
+<style>
+  :root {
+    --bg: #f6f8fb;
+    --surface: #ffffff;
+    --text: #14202e;
+    --muted: #5a6878;
+    --line: #dde4ec;
+    --accent: #0b6fb8;
+    --accent-soft: #e3f0fa;
+    --geral: #3b8fd4;
+    --especifica: #0d9488;
+    --competicao: #e0732c;
+    --transicao: #8b95a3;
+    --note-bg: #fff7e0;
+    --note-line: #e8c55a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1620;
+      --surface: #16212e;
+      --text: #e6edf4;
+      --muted: #9aa8b8;
+      --line: #263445;
+      --accent: #5bb0f0;
+      --accent-soft: #17324a;
+      --geral: #4a9de0;
+      --especifica: #2bb3a5;
+      --competicao: #f08a46;
+      --transicao: #6f7a88;
+      --note-bg: #2d2714;
+      --note-line: #8a7330;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  header.hero {
+    background: linear-gradient(135deg, #0b4f86, #0b6fb8 55%, #1aa0c8);
+    color: #fff;
+    padding: 48px 16px 40px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+  header.hero .wrap { padding: 0; }
+  header.hero h1 { margin: 0 0 6px; font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.15; }
+  header.hero p { margin: 0; opacity: .9; font-size: 1.05rem; }
+  nav.menu {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+  nav.menu .wrap { display: flex; gap: 4px; overflow-x: auto; padding: 0 16px; }
+  nav.menu a {
+    flex: none;
+    padding: 12px 12px;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: .95rem;
+  }
+  nav.menu a:hover { color: var(--accent); }
+  main section { padding: 40px 0 8px; scroll-margin-top: 48px; }
+  h2 { font-size: 1.5rem; margin: 0 0 16px; }
+  h3 { font-size: 1.1rem; margin: 0 0 8px; }
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .card p, .card ul { margin: 0; }
+  .card ul { padding-left: 18px; }
+  .note {
+    background: var(--note-bg);
+    border-left: 4px solid var(--note-line);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 0 0 20px;
+    font-size: .92rem;
+  }
+  .kicker { color: var(--accent); font-weight: 700; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* Linha temporal da época */
+  .timeline { overflow-x: auto; margin-bottom: 20px; }
+  .months, .phases, .macros { display: grid; grid-template-columns: repeat(11, minmax(56px, 1fr)); gap: 3px; min-width: 640px; }
+  .months div { text-align: center; font-size: .8rem; color: var(--muted); font-weight: 600; padding-bottom: 4px; }
+  .macros div, .phases div {
+    border-radius: 6px; padding: 8px 6px; font-size: .78rem; font-weight: 600; color: #fff; text-align: center;
+  }
+  .macros { margin-bottom: 3px; }
+  .macros div { background: var(--accent-soft); color: var(--text); }
+  .p-geral { background: var(--geral); }
+  .p-especifica { background: var(--especifica); }
+  .p-competicao { background: var(--competicao); }
+  .p-transicao { background: var(--transicao); }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .88rem; color: var(--muted); margin-bottom: 20px; }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+  .table-scroll { overflow-x: auto; margin-bottom: 20px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: .92rem; vertical-align: top; }
+  th { background: var(--accent-soft); font-size: .85rem; }
+  tr:last-child td { border-bottom: 0; }
+
+  footer { color: var(--muted); font-size: .85rem; padding: 40px 0; text-align: center; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Natação FAMA</h1>
+    <p>Planificação geral da época 2026/2027 e gestão das equipas</p>
+  </div>
+</header>
+
+<nav class="menu" aria-label="Secções">
+  <div class="wrap">
+    <a href="#epoca">Época</a>
+    <a href="#macrociclos">Macrociclos</a>
+    <a href="#treinos">Treinos</a>
+    <a href="#equipa">Gestão de equipa</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <p class="note" style="margin-top:24px"><strong>Versão de exemplo.</strong> Os textos e datas abaixo são provisórios e vão ser substituídos pela planificação real.</p>
+
+  <!-- ÉPOCA -->
+  <section id="epoca">
+    <h2>Época 2026/2027</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="kicker">Objetivos</div>
+        <ul>
+          <li>Melhorar os recordes pessoais da maioria dos atletas</li>
+          <li>Qualificar nadadores para os Campeonatos Nacionais</li>
+          <li>Consolidar a técnica dos quatro estilos nos escalões de formação</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="kicker">Calendário</div>
+        <p>Início: setembro 2026<br>Fim: julho 2027<br>Transição: agosto 2027</p>
+      </div>
+      <div class="card">
+        <div class="kicker">Competições principais</div>
+        <ul>
+          <li>Dezembro: Campeonato Regional de Inverno</li>
+          <li>Março: Campeonatos Nacionais de Inverno</li>
+          <li>Julho: Campeonatos Nacionais de Verão</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- MACROCICLOS -->
+  <section id="macrociclos">
+    <h2>Macrociclos e mesociclos</h2>
+    <p>A época divide-se em três macrociclos, cada um terminado numa competição principal.</p>
+
+    <div class="timeline" role="img" aria-label="Linha temporal da época de setembro a julho, com três macrociclos">
+      <div class="months">
+        <div>Set</div><div>Out</div><div>Nov</div><div>Dez</div><div>Jan</div><div>Fev</div><div>Mar</div><div>Abr</div><div>Mai</div><div>Jun</div><div>Jul</div>
+      </div>
+      <div class="macros">
+        <div style="grid-column: span 4">Macrociclo 1</div>
+        <div style="grid-column: span 3">Macrociclo 2</div>
+        <div style="grid-column: span 4">Macrociclo 3</div>
+      </div>
+      <div class="phases">
+        <div class="p-geral" style="grid-column: span 2">Geral</div>
+        <div class="p-especifica">Espec.</div>
+        <div class="p-competicao">Comp.</div>
+        <div class="p-geral">Geral</div>
+        <div class="p-especifica">Espec.</div>
+        <div class="p-competicao">Comp.</div>
+        <div class="p-geral">Geral</div>
+        <div class="p-especifica" style="grid-column: span 2">Específica</div>
+        <div class="p-competicao">Comp.</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span style="--c: var(--geral)">Preparação geral</span>
+      <span style="--c: var(--especifica)">Preparação específica</span>
+      <span style="--c: var(--competicao)">Competição</span>
+      <span style="--c: var(--transicao)">Transição (agosto)</span>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Preparação geral</h3>
+        <p>Volume elevado, base aeróbia, técnica e trabalho em seco. Intensidade baixa a moderada.</p>
+      </div>
+      <div class="card">
+        <h3>Preparação específica</h3>
+        <p>Menos volume e mais intensidade. Ritmos de prova, limiar anaeróbio e trabalho de velocidade.</p>
+      </div>
+      <div class="card">
+        <h3>Competição</h3>
+        <p>Afinação (taper) de 1 a 3 semanas, foco na qualidade, partidas e viragens.</p>
+      </div>
+      <div class="card">
+        <h3>Transição</h3>
+        <p>Descanso ativo e outras atividades físicas para recuperar antes da nova época.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TREINOS -->
+  <section id="treinos">
+    <h2>Treinos</h2>
+
+    <h3>Estrutura semanal tipo</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Dia</th><th>Água</th><th>Seco</th></tr></thead>
+        <tbody>
+          <tr><td>Segunda</td><td>Aeróbio (A1/A2) + técnica</td><td>Força geral</td></tr>
+          <tr><td>Terça</td><td>Limiar (A3)</td><td>—</td></tr>
+          <tr><td>Quarta</td><td>Técnica + velocidade</td><td>Mobilidade e core</td></tr>
+          <tr><td>Quinta</td><td>Aeróbio (A2) + pernas</td><td>—</td></tr>
+          <tr><td>Sexta</td><td>Ritmo de prova</td><td>Força geral</td></tr>
+          <tr><td>Sábado</td><td>Sessão longa ou controlo</td><td>—</td></tr>
+          <tr><td>Domingo</td><td>Descanso</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Zonas de intensidade</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Zona</th><th>Objetivo</th><th>Esforço</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A1</strong></td><td>Aeróbio ligeiro, recuperação</td><td>Fácil, conversa possível</td></tr>
+          <tr><td><strong>A2</strong></td><td>Aeróbio médio, base</td><td>Moderado e contínuo</td></tr>
+          <tr><td><strong>A3</strong></td><td>Limiar anaeróbio</td><td>Forte mas sustentável</td></tr>
+          <tr><td><strong>TL</strong></td><td>Tolerância láctica</td><td>Muito forte, séries curtas</td></tr>
+          <tr><td><strong>VEL</strong></td><td>Velocidade máxima</td><td>Máximo, distâncias curtas com muita pausa</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- GESTÃO DE EQUIPA -->
+  <section id="equipa">
+    <h2>Gestão de equipa</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Escalão</th><th>Treinos por semana</th><th>Treinador</th></tr></thead>
+        <tbody>
+          <tr><td>Cadetes</td><td>3</td><td>A definir</td></tr>
+          <tr><td>Infantis</td><td>4 a 5</td><td>A definir</td></tr>
+          <tr><td>Juvenis</td><td>6 a 7</td><td>A definir</td></tr>
+          <tr><td>Juniores e Seniores</td><td>8 a 9</td><td>A definir</td></tr>
+          <tr><td>Masters</td><td>3 a 4</td><td>A definir</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h3>Regras</h3>
+        <ul>
+          <li>Chegar 10 minutos antes do treino</li>
+          <li>Avisar faltas ao treinador com antecedência</li>
+          <li>Trazer sempre o material completo</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Comunicação</h3>
+        <ul>
+          <li>Convocatórias publicadas na semana anterior à prova</li>
+          <li>Reunião com pais no início de cada macrociclo</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Avaliação</h3>
+        <ul>
+          <li>Testes de controlo no fim de cada mesociclo</li>
+          <li>Registo de tempos e evolução de cada atleta</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>Natação FAMA · Planificação Geral 2026/2027</footer>
+
+</body>
+</html>
