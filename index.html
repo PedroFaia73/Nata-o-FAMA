@@ -214,6 +214,7 @@
     <a href="#macrociclo">Macrociclo 1</a>
     <a href="#zonas">Zonas</a>
     <a href="#horarios">Horários</a>
+    <a href="#atletas">Atletas</a>
     <a href="#deslocacoes">Deslocações</a>
     <a href="#fama-a-nadar">FAMA a Nadar</a>
     <a href="#plano">Plano diário</a>
@@ -445,6 +446,23 @@
     <div class="grid" id="horarios-grid" style="align-items:start"></div>
   </section>
 
+  <!-- ATLETAS -->
+  <section id="atletas">
+    <h2>Atletas 2026/27</h2>
+    <p class="lead">Atletas inscritos na época, por escalão de filiação. Escolhe o escalão na lista.</p>
+    <div class="pickers">
+      <label>Escalão
+        <select id="atl-esc"></select>
+      </label>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Nome</th><th class="num">Ano</th><th>Escalão</th></tr></thead>
+        <tbody id="atl-rows"></tbody>
+      </table>
+    </div>
+  </section>
+
   <!-- DESLOCAÇÕES -->
   <section id="deslocacoes">
     <h2>Deslocações e hotéis</h2>
@@ -596,6 +614,111 @@
 <footer>GDNF · Grupo Desportivo de Natação de Famalicão · Coordenação técnica: Pedro Faia · 2026/27</footer>
 
 <script>
+const atletas = [
+  ["Beatriz Oliveira Faria", 2018, "Cadete D"],
+  ["Benedita Correia e Santos", 2018, "Cadete D"],
+  ["Daniela Rodrigues Tavares", 2018, "Cadete D"],
+  ["Duarte Carvalho Costa", 2018, "Cadete D"],
+  ["Estrela Peixoto e Silva", 2018, "Cadete D"],
+  ["Francisco Cariano Barbosa", 2018, "Cadete D"],
+  ["Leonor Sofia Silva", 2017, "Cadete D"],
+  ["Lourenço Braga Oliveira", 2018, "Cadete D"],
+  ["Maria Francisca Vieira", 2018, "Cadete D"],
+  ["Nicollas Lage Carolino", 2018, "Cadete D"],
+  ["Sofia Carneiro Silva", 2018, "Cadete D"],
+  ["Sofia Dias Mendes", 2018, "Cadete D"],
+  ["Beatriz de Sá Rodrigues", 2018, "Cadete C"],
+  ["Diana Marques Braga", 2017, "Cadete C"],
+  ["Mafalda Marques Teixeira", 2017, "Cadete C"],
+  ["Mariana Flor Ferreira", 2017, "Cadete C"],
+  ["Santiago Cardoso Garcia", 2017, "Cadete C"],
+  ["Vitória de Oliveira Carvalho", 2017, "Cadete C"],
+  ["Enzo Vasconcelos Oliveira", 2016, "Cadete B"],
+  ["Gustavo Garcia Carvalho", 2016, "Cadete B"],
+  ["Luísa Machado Sousa", 2016, "Cadete B"],
+  ["Maria Clara Cardoso Leal", 2016, "Cadete B"],
+  ["Maria Miguel Cunha", 2016, "Cadete B"],
+  ["Marina Abreu", 2016, "Cadete B"],
+  ["Martim Rodrigues Miranda", 2016, "Cadete B"],
+  ["Miriam Oliveira Peixoto", 2016, "Cadete B"],
+  ["Rita Costa Bezerra", 2016, "Cadete B"],
+  ["Clara Araújo Silva", 2015, "Cadete A"],
+  ["Dinis Silva Azevedo", 2015, "Cadete A"],
+  ["Duarte Moreira Ribeiro", 2015, "Cadete A"],
+  ["João Lucas Veloso", 2015, "Cadete A"],
+  ["Leonardo Ferreira Monteiro", 2015, "Cadete A"],
+  ["Matilde Reis Campelos", 2015, "Cadete A"],
+  ["Matilde Sousa de Barros", 2016, "Cadete A"],
+  ["Sofia Magalhães Lopes", 2015, "Cadete A"],
+  ["Ana Teresa Martins Almeida", 2014, "Infantil B"],
+  ["Anastacia Mandziak", 2014, "Infantil B"],
+  ["Dora Cunha Paiva", 2014, "Infantil B"],
+  ["Eduardo Guimarães Rodrigues", 2014, "Infantil B"],
+  ["Francisco Lemos Barbosa", 2014, "Infantil B"],
+  ["Gonçalo Lopes Pereira", 2014, "Infantil B"],
+  ["Inês Silva Oliveira", 2014, "Infantil B"],
+  ["Isabella Schaab Torres", 2014, "Infantil B"],
+  ["Joana Veloso Machado", 2014, "Infantil B"],
+  ["José Martins Oliveira", 2013, "Infantil B"],
+  ["Lucas Maia", 2014, "Infantil B"],
+  ["Margarida Silva Gomes", 2014, "Infantil B"],
+  ["Maria Francisca Machado", 2014, "Infantil B"],
+  ["Sara Marques Braga", 2014, "Infantil B"],
+  ["Francisco Pinto Costa", 2013, "Infantil A"],
+  ["Gabriel Manuel da Silva Costa", 2013, "Infantil A"],
+  ["Gabriela Sofia Silva", 2013, "Infantil A"],
+  ["Inês Barbosa Amorim", 2013, "Infantil A"],
+  ["Margarida Peixoto Bragança", 2013, "Infantil A"],
+  ["Maria Alves Martins", 2013, "Infantil A"],
+  ["Maria Ribeiro de Oliveira", 2013, "Infantil A"],
+  ["Matilde Neves Sa", 2013, "Infantil A"],
+  ["Rita Oliveira Araújo", 2013, "Infantil A"],
+  ["Salomé Ferreira Pereira", 2013, "Infantil A"],
+  ["Salvador Oliveira Sousa", 2013, "Infantil A"],
+  ["Vasco Ferreira Sá", 2013, "Infantil A"],
+  ["Victória Filipe Grilo", 2013, "Infantil A"],
+  ["Vitória Sofia Ferreira", 2013, "Infantil A"],
+  ["Carolina Miguel Fernandes", 2012, "Juvenil B"],
+  ["Iana Cheltigmacheva", 2012, "Juvenil B"],
+  ["Inês Gomes Ribeiro", 2012, "Juvenil B"],
+  ["Leonor Cunha Alves", 2012, "Juvenil B"],
+  ["Lucas Rafael Sá", 2012, "Juvenil B"],
+  ["Catarina Miguel Encarnação", 2011, "Juvenil A"],
+  ["Dinis Araújo Silva", 2011, "Juvenil A"],
+  ["Leonardo da Silva Antunes", 2011, "Juvenil A"],
+  ["Afonso Carvalho Monteiro", 2010, "Júnior B"],
+  ["Afonso Oliveira Ribeiro", 2010, "Júnior B"],
+  ["Matheus Tramonti Messuca", 2010, "Júnior B"],
+  ["Rodrigo Saldanha Ferreira", 2010, "Júnior B"],
+  ["Ana Miguel Felgueiras Moreira Antunes", 2009, "Júnior A"],
+  ["Mafalda Brandão Reis", 2009, "Júnior A"],
+  ["Miguel Araújo Carriço", 2009, "Júnior A"],
+  ["Rafael Rui Sampaio", 2009, "Júnior A"],
+  ["Ana Carolina Cruz", 2008, "Sub 21"],
+  ["Beatriz da Silva Coentrão", 2008, "Sub 21"],
+  ["Mafalda Martins Mesquita", 2007, "Sub 21"],
+  ["Rodrigo Ferreira Pereira", 2006, "Sub 21"],
+  ["Santiago Carvalho Pereira", 2008, "Sub 21"],
+  ["Tomás Ferreira e Sá", 2008, "Sub 21"],
+  ["Afonso Eiró Carvalho da Silva", 2005, "Sénior"],
+  ["Francisco Araújo da Silva", 2006, "Sénior"],
+  ["Gabriel Moreira dos Santos", 2004, "Sénior"],
+  ["João António Melo", 2003, "Sénior"],
+  ["João Miguel Encarnação", 2008, "Sénior"],
+  ["Ruben Fortunas Couto", 2006, "Sénior"]
+];
+const escaloes = ["Cadete D", "Cadete C", "Cadete B", "Cadete A", "Infantil B", "Infantil A", "Juvenil B", "Juvenil A", "Júnior B", "Júnior A", "Sub 21", "Sénior"];
+const selEsc = document.getElementById("atl-esc");
+selEsc.innerHTML = `<option value="">Todos os escalões (${atletas.length})</option>` +
+  escaloes.map(e => `<option value="${e}">${e} (${atletas.filter(a => a[2] === e).length})</option>`).join("");
+function showAtl() {
+  const e = selEsc.value;
+  document.getElementById("atl-rows").innerHTML = atletas.filter(a => !e || a[2] === e)
+    .map(([n, a, es]) => `<tr><td>${n}</td><td class="num">${a}</td><td>${es}</td></tr>`).join("");
+}
+selEsc.addEventListener("change", showAtl);
+showAtl();
+
 // Macrociclo 1: [sem, datas, mesociclo, prova, local, UT, volume, carga%, aeróbio%, intenso%, láctico%, velocidade%, aVerificar]
 const macro = [
   [1, "07–13 set.", "carga", "Mercado Vai à Vila", "", 4, 14000, 22, 98.6, 0, 0, 1.4],
