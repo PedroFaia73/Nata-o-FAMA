@@ -152,6 +152,42 @@
   .int-info h3 { margin: 0 0 4px; }
   .int-info .sel { display: inline-block; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); margin-bottom: 8px; }
 
+  .plan-head { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  .plan-card label, .plan-notes { display: flex; flex-direction: column; gap: 4px; font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); min-width: 0; }
+  .plan-head .wide { grid-column: 1 / -1; }
+  .plan-card input, .plan-card select, .plan-card textarea { width: 100%; min-width: 0; font: inherit; font-size: .95rem; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+  .plan-mat { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 4px; }
+  .chip { font: inherit; font-size: .82rem; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .parte { margin-top: 18px; }
+  .parte h4 { margin: 0 0 8px; font-size: .95rem; display: flex; justify-content: space-between; align-items: baseline; }
+  .parte h4 small { color: var(--muted); font-weight: 600; }
+  .serie { display: grid; grid-template-columns: 56px 76px 1fr 96px 28px; grid-template-areas: "rep dist desc zona del"; gap: 6px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
+  .serie [data-f=rep] { grid-area: rep; } .serie [data-f=dist] { grid-area: dist; } .serie .x { grid-area: desc; } .serie .z { grid-area: zona; } .serie .del { grid-area: del; }
+  .serie input, .serie select { padding: 7px 6px !important; font-size: .9rem !important; }
+  .serie .del { font: inherit; border: 0; background: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; padding: 4px 0; }
+  .addrow { font: inherit; font-size: .85rem; font-weight: 600; margin-top: 6px; background: none; border: 1px dashed var(--line); color: var(--accent); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+  .plan-tot { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 14px; border-top: 2px solid var(--line); }
+  .plan-tot b { display: block; font-size: 1.5rem; line-height: 1.1; }
+  .plan-tot span { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .plan-zbar { flex: 1; display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--soft); }
+  .plan-zlist { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .82rem; color: var(--muted); margin: 8px 0 14px; }
+  .plan-zlist span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; background: var(--c); }
+  .plan-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .plan-actions button, #pl-list button { font: inherit; font-weight: 600; font-size: .9rem; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; }
+  .plan-actions .primary { background: var(--navy); color: #fff; border-color: var(--navy); }
+  #pl-list button { padding: 4px 10px; font-size: .8rem; margin-left: 4px; }
+  .plan-msg { min-height: 1.2em; font-size: .88rem; color: var(--z-a2); margin: 8px 0 0; }
+  .link { font: inherit; background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; cursor: pointer; margin-right: 14px; display: inline; text-transform: none; letter-spacing: 0; font-size: .9rem; font-weight: 400; }
+  @media (max-width: 520px) { .serie { grid-template-columns: 56px 76px 1fr 28px; grid-template-areas: "rep dist zona del" "desc desc desc desc"; } }
+  @media print {
+    body * { visibility: hidden; }
+    #plan-sheet, #plan-sheet * { visibility: visible; }
+    #plan-sheet { position: absolute; inset: 0 auto auto 0; width: 100%; border: 0; background: #fff; color: #000; }
+    #plan-sheet .del, #plan-sheet .addrow, #plan-sheet .chip[aria-pressed="false"] { display: none; }
+    #plan-sheet input, #plan-sheet select, #plan-sheet textarea { border: 0; background: none; padding: 2px 0 !important; color: #000; appearance: none; }
+  }
+
   footer { color: var(--muted); font-size: .82rem; padding: 36px 0; text-align: center; }
 </style>
 </head>
@@ -179,6 +215,7 @@
     <a href="#zonas">Zonas</a>
     <a href="#horarios">Horários</a>
     <a href="#deslocacoes">Deslocações</a>
+    <a href="#plano">Plano diário</a>
     <a href="#recordes">Recordes</a>
   </div>
 </nav>
@@ -429,6 +466,56 @@
     <p class="note-line"><strong>Em todas as reservas:</strong> pedir saída do hotel às 14h30 no último dia.</p>
   </section>
 
+  <!-- PLANO DIÁRIO -->
+  <section id="plano">
+    <h2>Plano de treino diário</h2>
+    <p class="lead">Preenche o treino, o volume calcula-se sozinho. Os planos ficam guardados neste aparelho; usa Imprimir/PDF ou Partilhar para os enviar.</p>
+
+    <div class="card plan-card" id="plan-sheet">
+      <div class="plan-head">
+        <label>Data<input type="date" id="pl-data"></label>
+        <label>Grupo
+          <select id="pl-grupo">
+            <option>Absolutos</option><option>Infantis</option><option>Cadetes A/B</option><option>Cadetes C</option><option>Cadetes D</option><option>Pré-competição</option><option>Masters / Triatlo</option>
+          </select>
+        </label>
+        <label>Sessão<select id="pl-sessao"><option>Manhã</option><option>Tarde</option></select></label>
+        <label>Treinador<input type="text" id="pl-trein" placeholder="Nome"></label>
+        <label class="wide">Objetivo<input type="text" id="pl-obj" placeholder="Ex.: High aerobic, Race pace"></label>
+      </div>
+      <div class="plan-mat" id="pl-mat"></div>
+
+      <div id="pl-partes"></div>
+
+      <div class="plan-tot">
+        <div><b id="pl-total">0 m</b><span>volume total</span></div>
+        <div class="plan-zbar" id="pl-zbar"></div>
+      </div>
+      <div class="plan-zlist" id="pl-zlist"></div>
+      <label class="wide plan-notes">Observações<textarea id="pl-obs" rows="2" placeholder="Notas para o grupo"></textarea></label>
+    </div>
+
+    <div class="plan-actions">
+      <button type="button" id="pl-save" class="primary">Guardar</button>
+      <button type="button" id="pl-new">Novo plano</button>
+      <button type="button" id="pl-print">Imprimir / PDF</button>
+      <button type="button" id="pl-share">Partilhar</button>
+    </div>
+    <p class="plan-msg" id="pl-msg" role="status"></p>
+
+    <h3>Planos guardados</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Data</th><th>Grupo</th><th class="num">Volume</th><th></th></tr></thead>
+        <tbody id="pl-list"></tbody>
+      </table>
+    </div>
+    <p class="docs">
+      <button type="button" class="link" id="pl-export">Exportar cópia de segurança</button>
+      <label class="link">Importar cópia<input type="file" id="pl-import" accept="application/json" hidden></label>
+    </p>
+  </section>
+
   <!-- RECORDES -->
   <section id="recordes">
     <h2>Recordes do clube · Absolutos</h2>
@@ -653,6 +740,127 @@ selComp.addEventListener("change", fillCats);
 selCat.addEventListener("change", showInt);
 selGen.addEventListener("change", showInt);
 fillCats();
+
+// Plano diário: guardado no localStorage deste aparelho
+const ZONAS = [["A1", "--z-a1"], ["A2", "--z-a2"], ["A3", "--z-a3"], ["A4", "--z-a4"], ["TL", "--z-tl"], ["PL", "--z-pl"], ["VEL", "--z-vel"], ["RP", "--accent"], ["Técnica", "--m-carga"], ["Pernas", "--m-acum"], ["Braços", "--m-espec"]];
+const MATERIAL = ["Copos", "Pára-quedas", "Elásticos", "Snorkel", "T-shirt", "Palas", "Barbatanas", "Pullbuoy", "Fato de competição"];
+const PARTES = ["Aquecimento", "Parte principal", "Volta à calma"];
+const KEY = "gdnf-planos";
+const $ = id => document.getElementById(id);
+const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } };
+const store = list => { try { localStorage.setItem(KEY, JSON.stringify(list)); return true; } catch (e) { return false; } };
+let atual = null;
+const hoje = () => new Date().toISOString().slice(0, 10);
+const vazio = () => ({ id: Date.now().toString(36), data: hoje(), grupo: "Absolutos", sessao: new Date().getHours() < 12 ? "Manhã" : "Tarde", trein: "", obj: "", mat: [], obs: "",
+  partes: PARTES.map((n, i) => ({ nome: n, series: [{ rep: i === 1 ? 4 : 1, dist: i === 1 ? 100 : 400, desc: "", zona: i === 1 ? "A2" : "A1", int: "" }] })) });
+$("pl-mat").innerHTML = MATERIAL.map(m => `<button type="button" class="chip" aria-pressed="false" data-m="${m}">${m}</button>`).join("");
+$("pl-mat").addEventListener("click", e => { const b = e.target.closest(".chip"); if (!b) return; b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true"); });
+const vol = s => (+s.rep || 0) * (+s.dist || 0);
+function render() {
+  const p = atual;
+  $("pl-data").value = p.data; $("pl-grupo").value = p.grupo; $("pl-sessao").value = p.sessao;
+  $("pl-trein").value = p.trein; $("pl-obj").value = p.obj; $("pl-obs").value = p.obs;
+  document.querySelectorAll("#pl-mat .chip").forEach(b => b.setAttribute("aria-pressed", p.mat.includes(b.dataset.m)));
+  $("pl-partes").innerHTML = p.partes.map((pt, pi) => `
+    <div class="parte" data-p="${pi}">
+      <h4>${pt.nome} <small data-sub="${pi}"></small></h4>
+      ${pt.series.map((s, si) => `
+        <div class="serie" data-s="${si}">
+          <input type="number" inputmode="numeric" min="1" value="${s.rep}" data-f="rep" aria-label="Repetições">
+          <input type="number" inputmode="numeric" min="0" step="25" value="${s.dist}" data-f="dist" aria-label="Distância (m)">
+          <input type="text" class="x" value="${(s.desc || "").replace(/"/g, "&quot;")}" data-f="desc" placeholder="Estilo, técnica, partida…" aria-label="Descrição">
+          <select class="z" data-f="zona" aria-label="Zona">${ZONAS.map(([z]) => `<option${z === s.zona ? " selected" : ""}>${z}</option>`).join("")}</select>
+          <button type="button" class="del" data-del="${si}" aria-label="Apagar série">×</button>
+        </div>`).join("")}
+      <button type="button" class="addrow" data-add="${pi}">+ série</button>
+    </div>`).join("");
+  totais();
+}
+function ler() {
+  const p = atual;
+  p.data = $("pl-data").value; p.grupo = $("pl-grupo").value; p.sessao = $("pl-sessao").value;
+  p.trein = $("pl-trein").value; p.obj = $("pl-obj").value; p.obs = $("pl-obs").value;
+  p.mat = [...document.querySelectorAll("#pl-mat .chip[aria-pressed=true]")].map(b => b.dataset.m);
+  document.querySelectorAll("#pl-partes .serie").forEach(row => {
+    const s = p.partes[+row.closest(".parte").dataset.p].series[+row.dataset.s];
+    row.querySelectorAll("[data-f]").forEach(el => { s[el.dataset.f] = el.type === "number" ? +el.value : el.value; });
+  });
+}
+function totais() {
+  ler();
+  const porZona = {}; let total = 0;
+  atual.partes.forEach((pt, pi) => {
+    const v = pt.series.reduce((a, s) => a + vol(s), 0); total += v;
+    document.querySelector(`[data-sub="${pi}"]`).textContent = fmt(v) + " m";
+    pt.series.forEach(s => porZona[s.zona] = (porZona[s.zona] || 0) + vol(s));
+  });
+  $("pl-total").textContent = fmt(total) + " m";
+  const zs = ZONAS.filter(([z]) => porZona[z]);
+  $("pl-zbar").innerHTML = zs.map(([z, c]) => `<i style="width:${porZona[z] / total * 100}%;background:var(${c})" title="${z}"></i>`).join("");
+  $("pl-zlist").innerHTML = zs.map(([z, c]) => `<span style="--c:var(${c})">${z} ${fmt(porZona[z])} m (${Math.round(porZona[z] / total * 100)}%)</span>`).join("");
+  return total;
+}
+$("plan-sheet").addEventListener("input", totais);
+$("plan-sheet").addEventListener("click", e => {
+  const add = e.target.closest("[data-add]"), del = e.target.closest("[data-del]");
+  if (!add && !del) return;
+  ler();
+  if (add) atual.partes[+add.dataset.add].series.push({ rep: 1, dist: 100, desc: "", zona: "A1", int: "" });
+  if (del) atual.partes[+del.closest(".parte").dataset.p].series.splice(+del.dataset.del, 1);
+  render();
+});
+const msg = t => { $("pl-msg").textContent = t; setTimeout(() => { if ($("pl-msg").textContent === t) $("pl-msg").textContent = ""; }, 4000); };
+function lista() {
+  const l = load().sort((a, b) => (b.data + b.sessao).localeCompare(a.data + a.sessao));
+  $("pl-list").innerHTML = l.length ? l.map(p => `<tr><td style="white-space:nowrap">${p.data.split("-").reverse().join("/")} <span class="sub">${p.sessao}</span></td><td>${p.grupo}${p.obj ? `<span class="sub">${p.obj}</span>` : ""}</td><td class="num">${fmt(p.partes.reduce((a, pt) => a + pt.series.reduce((b, s) => b + vol(s), 0), 0))} m</td>
+    <td class="num" style="white-space:nowrap"><button type="button" data-open="${p.id}">Abrir</button><button type="button" data-dup="${p.id}">Duplicar</button><button type="button" data-rm="${p.id}" aria-label="Apagar">×</button></td></tr>`).join("")
+    : '<tr><td colspan="4" class="sub">Ainda não há planos guardados neste aparelho.</td></tr>';
+}
+$("pl-list").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const l = load();
+  if (b.dataset.open) { atual = structuredClone(l.find(p => p.id === b.dataset.open)); render(); $("plan-sheet").scrollIntoView({ behavior: "smooth" }); }
+  if (b.dataset.dup) { atual = structuredClone(l.find(p => p.id === b.dataset.dup)); atual.id = Date.now().toString(36); atual.data = hoje(); render(); msg("Cópia criada. Ajusta e carrega em Guardar."); $("plan-sheet").scrollIntoView({ behavior: "smooth" }); }
+  if (b.dataset.rm) { store(l.filter(p => p.id !== b.dataset.rm)); lista(); msg("Plano apagado."); }
+});
+$("pl-save").addEventListener("click", () => {
+  totais();
+  const l = load().filter(p => p.id !== atual.id); l.push(structuredClone(atual));
+  msg(store(l) ? "Plano guardado neste aparelho." : "Não foi possível guardar neste navegador.");
+  lista();
+});
+$("pl-new").addEventListener("click", () => { atual = vazio(); render(); });
+$("pl-print").addEventListener("click", () => { totais(); window.print(); });
+function texto() {
+  const p = atual, t = totais();
+  const linhas = [`GDNF · ${p.grupo} · ${p.data.split("-").reverse().join("/")} (${p.sessao})`];
+  if (p.obj) linhas.push(`Objetivo: ${p.obj}`);
+  if (p.mat.length) linhas.push(`Material: ${p.mat.join(", ")}`);
+  p.partes.forEach(pt => { if (!pt.series.length) return; linhas.push("", pt.nome.toUpperCase()); pt.series.forEach(s => linhas.push(`${s.rep > 1 ? s.rep + "×" : ""}${s.dist} ${s.desc} [${s.zona}]`.replace(/\s+/g, " "))); });
+  linhas.push("", `Total: ${fmt(t)} m`);
+  if (p.obs) linhas.push(`Obs.: ${p.obs}`);
+  return linhas.join("\n");
+}
+$("pl-share").addEventListener("click", async () => {
+  const t = texto();
+  if (navigator.share) { try { await navigator.share({ title: "Plano de treino", text: t }); return; } catch (e) { if (e.name === "AbortError") return; } }
+  window.open("https://wa.me/?text=" + encodeURIComponent(t), "_blank");
+});
+$("pl-export").addEventListener("click", () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(load(), null, 1)], { type: "application/json" }));
+  a.download = `planos-gdnf-${hoje()}.json`; a.click();
+});
+$("pl-import").addEventListener("change", async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    const novos = JSON.parse(await f.text()); if (!Array.isArray(novos)) throw 0;
+    const l = load().filter(p => !novos.some(n => n.id === p.id)).concat(novos);
+    store(l); lista(); msg(`${novos.length} planos importados.`);
+  } catch (err) { msg("Ficheiro inválido."); }
+  e.target.value = "";
+});
+atual = vazio(); render(); lista();
 
 // Recordes: [prova, m_atleta, m_ano, m_tempo, m_data, m_novo, f_tempo, f_atleta, f_ano, f_data, f_novo]
 const recordes = {
