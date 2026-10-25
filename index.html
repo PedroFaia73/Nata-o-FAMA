@@ -451,7 +451,7 @@
     </div>
 
     <h3 id="ritmo-100">Progressão de ritmo · 100 (adaptação da série Popovici)</h3>
-    <p class="lead">A mesma lógica aplicada ao 100: a série do 200 vai construindo um 4x50 a ritmo de prova (4x50 = 200), aqui constrói-se um 4x25 a ritmo de 100 (4x25 = 100). O número de rondas desce de 6 para 1 e cada ronda fica mais longa. As saídas foram reduzidas para manter a mesma relação entre nado e descanso.</p>
+    <p class="lead">A mesma lógica aplicada ao 100, com objetivo de <b>52,00</b>. Começa com 25 a ritmo de prova e vai juntando 50: primeiro 50 + 25, depois o 100 fracionado em 50 + 2x25 e, nas últimas 2 semanas, em 50 + 50. O número de rondas desce de 6 para 1.</p>
     <div class="grid pp-grid">
       <article class="card st">
         <header><span class="st-n">6 semanas antes</span><span class="tipo t-ritmo">6 rondas</span><b class="st-m">300 m</b></header>
@@ -465,56 +465,58 @@
       </article>
       <article class="card st">
         <header><span class="st-n">5 semanas antes</span><span class="tipo t-ritmo">4 rondas</span><b class="st-m">300 m</b></header>
-        <p class="st-set">3x25 por ronda</p>
+        <p class="st-set">50 + 25 por ronda</p>
         <ul class="pp-list">
-          <li>1x25 com partida do bloco</li>
-          <li>2x25 com impulso na parede</li>
-          <li>Saída: 1'00" (partida) / 30" (impulso)</li>
+          <li>1x50 com partida do bloco</li>
+          <li>1x25 com impulso na parede</li>
+          <li>Saída: 1'15" (partida) / 30" (impulso)</li>
           <li>Recuperação ativa entre rondas (100 solto)</li>
         </ul>
       </article>
       <article class="card st">
         <header><span class="st-n">4–3 semanas antes</span><span class="tipo t-ritmo">3 rondas</span><b class="st-m">300 m</b></header>
-        <p class="st-set">4x25 por ronda</p>
+        <p class="st-set">50 + 2x25 (100 fracionado) por ronda</p>
         <ul class="pp-list">
-          <li>1x25 com partida do bloco</li>
-          <li>3x25 com impulso na parede</li>
-          <li>Saída: 1'00" (partida) / 30" (impulso)</li>
+          <li>1x50 com partida do bloco</li>
+          <li>2x25 com impulso na parede</li>
+          <li>Saída: 1'15" (partida) / 30" (impulso)</li>
           <li>Recuperação ativa entre rondas (100 solto)</li>
         </ul>
       </article>
       <article class="card st">
         <header><span class="st-n">2 semanas antes</span><span class="tipo t-ritmo">2 rondas</span><b class="st-m">200 m</b></header>
-        <p class="st-set">4x25 por ronda</p>
+        <p class="st-set">50 + 50 (100 fracionado) por ronda</p>
         <ul class="pp-list">
-          <li>1x25 com partida do bloco</li>
-          <li>3x25 com impulso na parede</li>
-          <li>Saída: 30" (todos)</li>
+          <li>1x50 com partida do bloco</li>
+          <li>1x50 com impulso na parede</li>
+          <li>Saída: 1'15" (partida) / 1'00" (impulso)</li>
           <li>Recuperação ativa entre rondas (100 solto)</li>
         </ul>
       </article>
       <article class="card st">
         <header><span class="st-n">1 semana antes</span><span class="tipo t-ritmo">1 ronda</span><b class="st-m">100 m</b></header>
-        <p class="st-set">4x25</p>
+        <p class="st-set">50 + 50 (100 fracionado)</p>
         <ul class="pp-list">
-          <li>1x25 com partida do bloco</li>
-          <li>3x25 com impulso na parede</li>
-          <li>Saída: 30" (todos)</li>
+          <li>1x50 com partida do bloco</li>
+          <li>1x50 com impulso na parede</li>
+          <li>Saída: 1'15" (partida) / 1'00" (impulso)</li>
         </ul>
       </article>
       <article class="card st pp-alvo">
         <header><span class="st-n">Tempos-alvo</span></header>
-        <label class="pp-calc">Tempo objetivo no 100 <input id="r100-in" inputmode="decimal" placeholder="ex.: 1:02.50" value="1:00.00"></label>
+        <label class="pp-calc">Tempo objetivo no 100 <input id="r100-in" inputmode="decimal" placeholder="ex.: 52.00" value="52.00"></label>
         <div class="pp-tempos">
-          <div><span>1.º 25 (partida do bloco)</span><b id="r100-d">–</b></div>
-          <div><span>25 seguintes (impulso)</span><b id="r100-p">–</b></div>
+          <div><span>50 com partida</span><b id="r100-d50">–</b></div>
+          <div><span>50 com impulso</span><b id="r100-p50">–</b></div>
+          <div><span>25 com partida</span><b id="r100-d">–</b></div>
+          <div><span>25 com impulso</span><b id="r100-p">–</b></div>
         </div>
-        <p class="st-ind">1.º 25 ≈ tempo/4 − 1,2" · 25 com impulso ≈ tempo/4 + 0,4", para os 4x25 somarem o tempo objetivo. É a mesma lógica dos tempos do Popovici (24,0 + 3 × 25,8 ≈ 1:41).</p>
+        <p class="st-ind">50: tempo/2 − 0,8" com partida e tempo/2 + 0,5" com impulso · 25: tempo/4 − 1,2" com partida e tempo/4 + 0,4" com impulso. Para 52,00 dá 25,2 + 26,5 no 50 + 50.</p>
       </article>
     </div>
 
     <h3 id="ritmo-400">Progressão de ritmo · 400 (adaptação da série Popovici)</h3>
-    <p class="lead">Para o 400, o objetivo é um 4x100 a ritmo de prova (4x100 = 400), com a mesma descida de 6 para 1 ronda. As saídas indicadas são para nadadores à volta de 4:20–4:40 no 400. Ajusta-as para manter cerca de 25–35" de descanso nos 100 com impulso.</p>
+    <p class="lead">Para o 400, o objetivo é um 4x100 a ritmo de prova (4x100 = 400), com a mesma descida de 6 para 1 ronda. Objetivo de <b>3:59,00</b> (cerca de 59,8 por 100). As saídas estão pensadas para esse ritmo, com cerca de 30" de descanso nos 100 com impulso. Ajusta-as se o nadador for mais lento.</p>
     <div class="grid pp-grid">
       <article class="card st">
         <header><span class="st-n">6 semanas antes</span><span class="tipo t-ritmo">6 rondas</span><b class="st-m">1 200 m</b></header>
@@ -522,7 +524,7 @@
         <ul class="pp-list">
           <li>1x100 com partida do bloco</li>
           <li>1x100 com impulso na parede</li>
-          <li>Saída: 2'30" (partida) / 1'40" (impulso)</li>
+          <li>Saída: 2'15" (partida) / 1'30" (impulso)</li>
           <li>Recuperação ativa entre rondas (200 solto)</li>
         </ul>
       </article>
@@ -532,7 +534,7 @@
         <ul class="pp-list">
           <li>1x100 com partida do bloco</li>
           <li>2x100 com impulso na parede</li>
-          <li>Saída: 2'30" (partida) / 1'40" (impulso)</li>
+          <li>Saída: 2'15" (partida) / 1'30" (impulso)</li>
           <li>Recuperação ativa entre rondas (200 solto)</li>
         </ul>
       </article>
@@ -542,7 +544,7 @@
         <ul class="pp-list">
           <li>1x100 com partida do bloco</li>
           <li>3x100 com impulso na parede</li>
-          <li>Saída: 2'30" (partida) / 1'40" (impulso)</li>
+          <li>Saída: 2'15" (partida) / 1'30" (impulso)</li>
           <li>Recuperação ativa entre rondas (200 solto)</li>
         </ul>
       </article>
@@ -552,7 +554,7 @@
         <ul class="pp-list">
           <li>1x100 com partida do bloco</li>
           <li>3x100 com impulso na parede</li>
-          <li>Saída: 1'40" (todos)</li>
+          <li>Saída: 1'30" (todos)</li>
           <li>Recuperação ativa entre rondas (200 solto)</li>
         </ul>
       </article>
@@ -562,12 +564,12 @@
         <ul class="pp-list">
           <li>1x100 com partida do bloco</li>
           <li>3x100 com impulso na parede</li>
-          <li>Saída: 1'40" (todos)</li>
+          <li>Saída: 1'30" (todos)</li>
         </ul>
       </article>
       <article class="card st pp-alvo">
         <header><span class="st-n">Tempos-alvo</span></header>
-        <label class="pp-calc">Tempo objetivo no 400 <input id="r400-in" inputmode="decimal" placeholder="ex.: 4:30.00" value="4:30.00"></label>
+        <label class="pp-calc">Tempo objetivo no 400 <input id="r400-in" inputmode="decimal" placeholder="ex.: 3:59.00" value="3:59.00"></label>
         <div class="pp-tempos">
           <div><span>1.º 100 (partida do bloco)</span><b id="r400-d">–</b></div>
           <div><span>100 seguintes (impulso)</span><b id="r400-p">–</b></div>
@@ -1495,20 +1497,23 @@ function showTreinadores() {
 }
 showTreinadores();
 
-function ritmoAlvo(id, dive, push) {
+function ritmoAlvo(id, dive, push, dist = "", div = 4) {
   const inp = document.getElementById(id + "-in");
   const f = x => { const m = Math.floor(x / 60), r = (x - m * 60).toFixed(1); return m ? `${m}:${r.padStart(4, "0")}`.replace(".", ",") : r.replace(".", ","); };
   const calc = () => {
-    const m = inp.value.trim().replace(",", ".").match(/^(?:(\d+):)?(\d+(?:\.\d+)?)$/);
+    let v = inp.value.trim().replace(",", ".");
+    if ((v.match(/:/g) || []).length === 2) v = v.replace(/:(\d+)$/, ".$1");
+    const m = v.match(/^(?:(\d+):)?(\d+(?:\.\d+)?)$/);
     const t = m ? (+(m[1] || 0)) * 60 + +m[2] : NaN;
     const ok = t >= 20 && t <= 900;
-    document.getElementById(id + "-d").textContent = ok ? f(t / 4 + dive) : "–";
-    document.getElementById(id + "-p").textContent = ok ? f(t / 4 + push) : "–";
+    document.getElementById(id + "-d" + dist).textContent = ok ? f(t / div + dive) : "–";
+    document.getElementById(id + "-p" + dist).textContent = ok ? f(t / div + push) : "–";
   };
   inp.addEventListener("input", calc);
   calc();
 }
 ritmoAlvo("r100", -1.2, 0.4);
+ritmoAlvo("r100", -0.8, 0.5, "50", 2);
 ritmoAlvo("r400", -1.5, 0.5);
 
 </script>
