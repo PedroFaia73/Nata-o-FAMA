@@ -205,6 +205,10 @@
   .st-leg dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 12px 0 0; font-size: .9rem; }
   .st-leg dt { font-weight: 700; } .st-leg dd { margin: 0; color: var(--muted); }
   @media (max-width: 520px) { .st-leg dl { grid-template-columns: 1fr; } .st-leg dd { margin-bottom: 6px; } }
+  .trein h3 { margin: 6px 0 0; } .trein p { margin: 8px 0 0; } .trein p.sub { margin-top: 2px; }
+  .grau { display: inline-block; background: var(--navy); color: #fff; font-size: .72rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; letter-spacing: .03em; }
+  .ced { font-size: .72rem; font-weight: 700; padding: 1px 7px; border-radius: 999px; margin-left: 4px; }
+  .ced.warn { background: var(--warn-line); color: #0d2340; } .ced.exp { background: var(--z-tl); color: #fff; }
 </style>
 </head>
 <body>
@@ -230,6 +234,7 @@
     <a href="#macrociclo">Macrociclo 1</a>
     <a href="#zonas">Zonas</a>
     <a href="#horarios">Horários</a>
+    <a href="#treinadores">Treinadores</a>
     <a href="#atletas">Atletas</a>
     <a href="#deslocacoes">Deslocações</a>
     <a href="#fama-a-nadar">FAMA a Nadar</a>
@@ -461,6 +466,13 @@
     <h2>Horários e treinadores</h2>
     <p class="lead">Distribuição de treinadores 2026/27 · cerca de 500 atletas por semana.</p>
     <div class="grid" id="horarios-grid" style="align-items:start"></div>
+  </section>
+
+  <!-- TREINADORES -->
+  <section id="treinadores">
+    <h2>Treinadores</h2>
+    <p class="lead">Equipa técnica com cédula de Treinador de Desporto (IPDJ). Os grupos vêm dos horários 2026/27.</p>
+    <div class="grid" id="trein-grid"></div>
   </section>
 
   <!-- ATLETAS -->
@@ -1263,6 +1275,28 @@ function showSeries() {
 stTipo.addEventListener("change", showSeries);
 stComp.addEventListener("change", showSeries);
 showSeries();
+
+const treinadores = [
+  ["Pedro Filipe Faia", "Coordenador técnico", 4, "2026-11-01", "Faia"],
+  ["João António Melo", "Treinador", 2, "2029-09-25", "Melo"],
+  ["Cátia Oliveira Campos", "Treinador", 1, "2028-05-09", "Cátia"]
+];
+function showTreinadores() {
+  const hoje = new Date();
+  document.getElementById("trein-grid").innerHTML = treinadores.map(([n, f, g, val, k]) => {
+    const grupos = horarios.filter(h => h.sessoes.some(s => s[4].split(/,\s*/).some(t => t.startsWith(k)))).map(h => h.nome);
+    const dias = (new Date(val) - hoje) / 864e5;
+    const estado = dias < 0 ? '<span class="ced exp">Caducada</span>' : dias < 60 ? '<span class="ced warn">Renovar</span>' : "";
+    return `<div class="card trein">
+    <span class="grau">Grau ${["", "I", "II", "III", "IV"][g]}</span>
+    <h3>${n}</h3>
+    <p class="sub">${f}</p>
+    <p><b>Cédula IPDJ</b> válida até ${val.split("-").reverse().join("/")} ${estado}</p>
+    ${grupos.length ? `<p><b>Grupos</b> ${grupos.join(" · ")}</p>` : ""}
+  </div>`;
+  }).join("");
+}
+showTreinadores();
 
 </script>
 </body>
