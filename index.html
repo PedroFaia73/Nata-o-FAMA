@@ -189,6 +189,22 @@
   }
 
   footer { color: var(--muted); font-size: .82rem; padding: 36px 0; text-align: center; }
+  .tipo { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .7rem; font-weight: 700; letter-spacing: .03em; color: #fff; white-space: nowrap; }
+  .t-ritmo { background: var(--z-a4); color: #0d2340; } .t-vel { background: var(--z-vel); } .t-paraq { background: var(--z-tl); }
+  .t-ensaio { background: var(--z-pl); } .t-teste { background: var(--z-a1); } .t-tecnica { background: var(--z-a2); }
+  .st-count { font-size: .85rem; color: var(--muted); margin: 12px 0 8px; }
+  .st-list { display: grid; gap: 10px; }
+  .st header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .st-n { font-weight: 700; } .st-m { margin-left: auto; font-variant-numeric: tabular-nums; }
+  .st-set { font-weight: 600; margin: 0 0 6px; }
+  .st-ind { color: var(--muted); font-size: .9rem; margin: 0 0 8px; }
+  .st-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .82rem; color: var(--muted); margin: 0; }
+  .st-tags { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0 0; }
+  .st-tags span { font-size: .72rem; padding: 1px 7px; border: 1px solid var(--line); border-radius: 999px; }
+  .st-leg { margin-top: 18px; } .st-leg summary { font-weight: 700; cursor: pointer; }
+  .st-leg dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 12px 0 0; font-size: .9rem; }
+  .st-leg dt { font-weight: 700; } .st-leg dd { margin: 0; color: var(--muted); }
+  @media (max-width: 520px) { .st-leg dl { grid-template-columns: 1fr; } .st-leg dd { margin-bottom: 6px; } }
 </style>
 </head>
 <body>
@@ -218,6 +234,7 @@
     <a href="#deslocacoes">Deslocações</a>
     <a href="#fama-a-nadar">FAMA a Nadar</a>
     <a href="#plano">Plano diário</a>
+    <a href="#series">Séries-tipo</a>
     <a href="#recordes">Recordes</a>
   </div>
 </nav>
@@ -589,6 +606,90 @@
       <button type="button" class="link" id="pl-export">Exportar cópia de segurança</button>
       <label class="link">Importar cópia<input type="file" id="pl-import" accept="application/json" hidden></label>
     </p>
+  </section>
+
+  <!-- SÉRIES-TIPO -->
+  <section id="series">
+    <h2>Séries-tipo · SprintSalo</h2>
+    <p class="lead">As 48 séries principais (main sets) do programa SprintSalo de David C. Salo, em português. Escolhe o tipo de série e a componente nas listas.</p>
+    <div class="stats">
+      <div class="stat"><b>48</b><span>treinos</span></div>
+      <div class="stat"><b>989 m</b><span>main set médio</span></div>
+      <div class="stat"><b>200–2100</b><span>metros por main set</span></div>
+      <div class="stat"><b>54%</b><span>com recuperação por FC</span></div>
+    </div>
+    <p class="note-line"><strong>Todos os treinos:</strong> aquecimento fixo 400 + 4x100 + 4x50 (1200 m) → PreSet → Main Set → recuperação 200–400 m. O autor aponta para 3000–3500 m por sessão.</p>
+    <div class="pickers" style="margin-top:16px">
+      <label>Tipo de série
+        <select id="st-tipo"><option value="">Todos os tipos (48)</option><option value="RITMO">RITMO (22)</option><option value="VEL">VEL (3)</option><option value="PARAQ">PARAQ (5)</option><option value="ENSAIO">ENSAIO (13)</option><option value="TESTE">TESTE (3)</option><option value="TÉCNICA">TÉCNICA (2)</option></select>
+      </label>
+      <label>Componente
+        <select id="st-comp"><option value="">Todas</option><option>Paraq.</option><option>Ensaio</option><option>Rec. FC</option><option>P200</option><option>P100</option><option>VEL</option></select>
+      </label>
+    </div>
+    <p class="st-count" id="st-count"></p>
+    <div class="st-list" id="st-list"></div>
+
+    <h3>Tipos de série</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Tipo</th><th class="num">Treinos</th><th class="num">m médio</th><th class="num">m máx.</th><th>O que treina</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tipo t-ritmo">RITMO</span></td><td class="num">22</td><td class="num">1 035 m</td><td class="num">2 100 m</td><td style="min-width:220px">Ritmo de prova fracionado (P200 / P100) com repetições curtas</td></tr>
+          <tr><td><span class="tipo t-vel">VEL</span></td><td class="num">3</td><td class="num">650 m</td><td class="num">800 m</td><td style="min-width:220px">Velocidade máxima (25-50) com recuperação completa</td></tr>
+          <tr><td><span class="tipo t-paraq">PARAQ</span></td><td class="num">5</td><td class="num">925 m</td><td class="num">1 550 m</td><td style="min-width:220px">Velocidade resistida com paraquedas + contraste sem paraquedas</td></tr>
+          <tr><td><span class="tipo t-ensaio">ENSAIO</span></td><td class="num">13</td><td class="num">1 071 m</td><td class="num">1 700 m</td><td style="min-width:220px">Nado de ensaio: simulação da prova em esforço máximo</td></tr>
+          <tr><td><span class="tipo t-teste">TESTE</span></td><td class="num">3</td><td class="num">800 m</td><td class="num">800 m</td><td style="min-width:220px">Teste Pulse Plot (8x100 com FC) para controlar a adaptação</td></tr>
+          <tr><td><span class="tipo t-tecnica">TÉCNICA</span></td><td class="num">2</td><td class="num">900 m</td><td class="num">1 300 m</td><td style="min-width:220px">Série técnica por estilo terminada em velocidade</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Evolução ao longo do programa</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Bloco</th><th>Treinos</th><th class="num">m médio</th><th class="num">Ensaios</th><th class="num">Paraq.</th><th>Comentário</th></tr></thead>
+        <tbody>
+          <tr><td>Bloco 1</td><td style="white-space:nowrap">1–8</td><td class="num">1 103 m</td><td class="num">1</td><td class="num">0</td><td style="min-width:220px">Teste inicial, ritmo P200/P100, técnica e a série mais longa do livro (treino 8).</td></tr>
+          <tr><td>Bloco 2</td><td style="white-space:nowrap">9–16</td><td class="num">772 m</td><td class="num">1</td><td class="num">1</td><td style="min-width:220px">Volume mais baixo: ensaio 6x100 com FC (9), 1.ª série com paraquedas (10), fracionados de 200.</td></tr>
+          <tr><td>Bloco 3</td><td style="white-space:nowrap">17–24</td><td class="num">1 291 m</td><td class="num">4</td><td class="num">2</td><td style="min-width:220px">Bloco mais exigente: maior volume médio, 4 ensaios e 2 séries com paraquedas.</td></tr>
+          <tr><td>Bloco 4</td><td style="white-space:nowrap">25–32</td><td class="num">1 103 m</td><td class="num">3</td><td class="num">1</td><td style="min-width:220px">Teste Pulse Plot (25) e ritmo de prova com fracionados de 200 e 400.</td></tr>
+          <tr><td>Bloco 5</td><td style="white-space:nowrap">33–40</td><td class="num">916 m</td><td class="num">3</td><td class="num">2</td><td style="min-width:220px">Ensaio 6x100 com FC (36) e velocidade pura (37, 38).</td></tr>
+          <tr><td>Bloco 6</td><td style="white-space:nowrap">41–48</td><td class="num">750 m</td><td class="num">1</td><td class="num">2</td><td style="min-width:220px">Teste final (44) e o volume médio mais baixo: séries curtas e específicas, tipo afinação.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Conclusões</h3>
+    <div class="grid">
+      <div class="card"><h3>Estrutura fixa</h3><p>Todos os treinos seguem a mesma sequência: aquecimento igual (400 + 4x100 + 4x50 = 1200 m), PreSet de pernas/braços/educativos que já sobe para intensidade máxima, Main Set específico e recuperação de 200-400 m. O autor aponta para 3000-3500 m por sessão, uma sessão por dia.</p></div>
+      <div class="card"><h3>Pouco volume, muita qualidade</h3><p>O Main Set tem em média ~1000 m (200 a 2100 m). Não há trabalho aeróbio extensivo; a base aeróbia vem da repetição diária de esforços curtos e intensos.</p></div>
+      <div class="card"><h3>Ritmo de prova acima de tudo</h3><p>Metade dos Main Sets trabalha a P200 e metade inclui velocidade máxima. As repetições raramente passam dos 75 m e o 200 é treinado fracionado (3x50+50, 150+50, 75+125…).</p></div>
+      <div class="card"><h3>Recuperação individual</h3><p>Mais de metade das séries usa a FC para controlar a recuperação (FC23 ≈ 138 bpm; FC25 e FC27 encurtam o descanso). Cada nadador descansa o que precisa para manter o ritmo.</p></div>
+      <div class="card"><h3>Lógica das 3 rondas</h3><p>Muitas séries são em 3 (ou 4) rondas com descanso que diminui ou intervalo que encurta: o nadador ensaia «a última ronda é a que conta», como o 3.º/4.º 50 de um 200.</p></div>
+      <div class="card"><h3>Controlo</h3><p>Pulse Plot nos treinos 1, 25 e 44 (cada 3-4 semanas) e ensaios 6x100 com FC nos treinos 9 e 36, sempre com o mesmo aquecimento para poderem ser comparados.</p></div>
+      <div class="card"><h3>Adaptar ao teu grupo</h3><p>Os intervalos foram pensados para nadadores universitários em jardas: em P25 metros acrescenta ~10% às saídas. Para nadadores mais novos, a referência FC23 pode subir para FC24-25. Define os tempos objetivo (P100/P200) de cada nadador antes de começar.</p></div>
+    </div>
+
+    <details class="card st-leg">
+      <summary>Legenda da notação</summary>
+      <dl>
+        <dt>c/45&quot;</dt><dd>Saída a cada 45 segundos (intervalo de partida, inclui nado + descanso). No livro: «@ :45».</dd>
+        <dt>[desc. 15&quot;]</dt><dd>Descanso alternativo: nadar e descansar 15&quot; (útil quando os nadadores têm velocidades diferentes).</dd>
+        <dt>desc. 10&quot; (fracionado)</dt><dd>Pausa dentro da repetição. Ex.: 75+25 desc. 10&quot; = nadar 75, parar 10&quot;, nadar 25.</dd>
+        <dt>FC23 / FC25 / FC27</dt><dd>Descansar até a FC baixar para 23 (25, 27) batimentos em 10&quot; (≈138 / 150 / 162 bpm).</dd>
+        <dt>P200 / P100 / P400 / P500</dt><dd>Ritmo do tempo objetivo da prova. Ex.: 50 a P200 = tempo objetivo do 200 ÷ 4.</dd>
+        <dt>VEL / máx.</dt><dd>Velocidade máxima.</dd>
+        <dt>Nado alongado</dt><dd>Braçada longa, lenta e fácil (no livro: «nadar estirándose»).</dd>
+        <dt>Nado de Ensaio</dt><dd>Simulação da prova em esforço máximo (no livro: «Nado de Ensayo»).</dd>
+        <dt>Pulse Plot</dt><dd>Teste 8x100 c/4&#x27;30&quot; a 70-80-90-100-100-90-80-70 %, com FC aos 0-10&quot;, 30-40&quot; e 60-70&quot; após cada 100.</dd>
+        <dt>E1 / Est / L</dt><dd>Estilo principal / estilo que não é livre / livre.</dd>
+        <dt>Brçs · Palas · Bb</dt><dd>Braços (pull) · palas (palas soltas = sem elásticos) · barbatanas.</dd>
+        <dt>3:3 / 3:3:3</dt><dd>3 braçadas braço direito, 3 braço esquerdo (e 3 com os dois).</dd>
+        <dt>à voz</dt><dd>Saída dada pelo treinador (no livro: «Orden de Coach»).</dd>
+      </dl>
+    </details>
+    <p class="note-line">Fonte: David C. Salo, <em>SprintSalo</em> (trad. esp.), «Entrenamientos». Os metros contam só o main set. Os intervalos foram pensados para jardas: em piscina de 25 m acrescenta cerca de 10% às saídas.</p>
   </section>
 
   <!-- RECORDES -->
@@ -1094,6 +1195,75 @@ function showPool(pool) {
 }
 document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => showPool(b.dataset.pool)));
 showPool("p25");
+const seriesTipo = [
+  [1, "TESTE", "Pulse Plot: 8x100 E1 c/4'30\" [desc. 3'00\"]", "Esforço 70-80-90-100-100-90-80-70 %. FC 10\" aos 0\", 30\" e 60\" após cada 100", 800, "Intervalo fixo", "", ["Rec. FC"], ""],
+  [2, "RITMO", "Velocistas: 3x(3x25 desc. 5\" + 50) desc. 2'00\" · Outros: 3x(3x25 desc. 5\" + 75) desc. 2'00\" · Todos: 200 Nado alongado + 3x(3x50) FC23", "25 = VEL · 50 = ritmo P100 · 75 = ritmo P200 · 3x50 = ritmo P200", 1025, "Desc. curto + FC23", "", ["Rec. FC", "P200", "P100", "VEL"], "Grupo de referência: velocistas (outros = 1100 m)"],
+  [3, "TÉCNICA", "3x225 E1 à voz [desc. 30\"] · Velocistas: 4x8m + 150 + 4x15m + 150 + 4x20m + 150 · Estilos: 10x20m c/1'00\" [desc. 30\"]", "225 = educativos por estilo (Pernas/Brçs, 1 braço, catch-up) com 25 progressivo · sprints antes/depois da viragem, 150 alongado R3-5-7", 1300, "Desc. 30\" / FC30", "", ["Rec. FC", "VEL"], "Velocistas ≈ 1300 m (Estilos: 875 m)"],
+  [4, "RITMO", "3x50 + 50 desc. 10\" (+30\" antes do último 50)", "200 fracionado a ritmo P200", 200, "Desc. curto", "", ["P200"], ""],
+  [5, "RITMO", "Brçs: 1x(50+100+50) + 2x(50+50+50) + 1x(50+100+50) com saída a encurtar · 5x(2x25+50) desc. 10\" à voz [desc. 30\"-1'00\"] · 7x75 [desc. 30\"-45\"]", "Brçs: 50 ao ritmo / 100 e 50 do meio rápidos · 2x25+50 = ritmo P100 · 75 = ritmo P200 (ímpares L c/1'30\", pares E1 c/1'45\")", 1725, "Intervalo + desc.", "Pull buoy", ["P200", "P100"], ""],
+  [6, "TÉCNICA", "3x100 L (75 catch-up + 25 VEL) · 2x75 Cd (25 1 braço / 25 3:3 / 25 2 braços VEL) · 1x50 M (Remada 12,5 + Pernas 12,5 + 25 VEL)", "Série técnica por estilo, terminando sempre em velocidade", 500, "À voz", "", ["VEL"], ""],
+  [7, "ENSAIO", "3x(3x25+50) c/40\"/1'00\" [desc. 20\"/40\"] + 200 solto + Nado de Ensaio 3x200 c/4'00\" [desc. 3'00\"]", "Ritmo P100 nos 25/50 · 200 em esforço de prova", 1175, "Desc. longo", "", ["Ensaio", "P100"], ""],
+  [8, "RITMO", "4x[(75+25 desc. 10\") + 50 L] c/1'30\"/1'00\" · 4x(3x50 Est + 75 L) FC23 · 4x(3x25 + 75) desc. 35\"", "75+25 um estilo por ronda a ritmo 400 Estilos · 50 Est = P100+5\" · 75 L = P200 · 25 = educativos (punhos fechados, rotação rápida, VEL)", 2100, "FC23 + 1'00\" entre rondas", "", ["Rec. FC", "P200", "P100"], ""],
+  [9, "ENSAIO", "Nado de Ensaio 6x100 c/8'00\" [desc. 7'00\"]", "Esforço máximo · FC 10\" aos 0\", 30\" e 60\"", 600, "Desc. 7'00\"", "", ["Ensaio"], ""],
+  [10, "PARAQ", "Paraquedas 4x(3x25 + 50) c/45\"/1'30\" [desc. 15\"/1'00\"]", "25 com paraquedas · 50 sem paraquedas", 500, "Intervalo + desc.", "Paraquedas", ["Paraq.", "VEL"], ""],
+  [11, "RITMO", "4x(50 + 2x25 + 50) saída 40\" → 45\" → 50\" → 55\" por ronda", "1.º 50 = P200 · 25 = VEL · último 50 = P100+2\"", 600, "Desc. crescente + 1'00\" entre rondas", "", ["P200", "P100", "VEL"], ""],
+  [12, "RITMO", "4x(3x25 + 50) desc. 5\"/10\"/15\"/20\" por ronda + 1x(50+75+50) c/1'00\"", "25 = VEL · 50 = P200 · 50+75+50 = P200", 675, "Desc. crescente + 30\"", "", ["P200", "VEL"], ""],
+  [13, "RITMO", "4 rondas: 3x50 + (100 + 25/50/75/100 desc. 5\") + 100 Nado alongado · saída dos 50 a 45\"/50\"/55\"/60\"", "50 = P200 · 100 = P200 + 1,5\" · a parte final cresce de 25 a 100", 1550, "Desc. crescente", "", ["P200"], ""],
+  [14, "RITMO", "3x(4x25 + 75) · 25 #1-3 desc. 5\", #4 desc. 15\"", "25 #1-3 = VEL · #4 = Nado alongado · 75 = P200 · +1'00\" entre rondas", 525, "Desc. curto + 1'00\"", "", ["P200", "VEL"], ""],
+  [15, "RITMO", "5x(50 + 25 desc. 10\") c/1'15\" [desc. 10\"/45\"]", "50 progressivo até P200 · 25 = VEL", 375, "Intervalo fixo", "", ["P200", "VEL"], ""],
+  [16, "RITMO", "3x50 FC23 + 100 solto + 4x75 c/1'00\" + 100 solto + 3x50 FC23 + 100 solto + 4x75 c/1'00\" + 3x50 FC23", "Tudo a ritmo P200", 1350, "FC23 / desc. 20\"", "", ["Rec. FC", "P200"], ""],
+  [17, "ENSAIO", "16x50 c/1'00\" [desc. 15\"] + 8x50 FC23 + 200 solto + Nado de Ensaio 200", "16x50 = 25 VEL + 25 alongado (#4,8,12,16 VEL total) · 8x50 esforço máximo", 1600, "FC23", "", ["Ensaio", "Rec. FC", "VEL"], ""],
+  [18, "RITMO", "3x25 desc. 5\" + (50+75) FC23 · 3x25 desc. 10\" + (50+50) FC23 · 3x25 desc. 15\" + (25+75+25) FC23", "Tudo a esforço máximo · nados entre parênteses mais rápidos que P200", 575, "FC23", "", ["Rec. FC", "P200", "VEL"], ""],
+  [19, "PARAQ", "Paraquedas 3x(4x25) c/1'00\" [desc. 40\"] + 200 solto + 4x(3x25 desc. 5\" + 25 desc. 15\" + 50 FC23)", "25 VEL com paraquedas · 50 em esforço de prova", 1100, "Desc. + FC23", "Paraquedas", ["Paraq.", "Rec. FC", "VEL"], ""],
+  [20, "RITMO", "3x(3x50 + 200) 50 c/40\", 200 c/4'00\" [desc. 10\"/2'00\"]", "50 = P200+5\" → +2\" → P200 por ronda · 200 = Nado alongado com VEL 5m antes/depois da viragem", 1050, "Desc. curto", "", ["P200"], ""],
+  [21, "ENSAIO", "12x50 c/1'00\" [desc. 15\"] + 100 solto + 3x50 FC23 + 100 solto + Nado de Ensaio 200", "50 = 25 VEL + 25 alongado · 3x50 = ritmo P100", 1150, "FC23", "", ["Ensaio", "Rec. FC", "P100", "VEL"], ""],
+  [22, "ENSAIO", "Nado de Ensaio 200 + 200 solto + Nado de Ensaio 200 + 200 solto + 3x200 Palas soltas desc. 30\" + Nado de Ensaio 200", "3 ensaios de 200 em esforço de prova", 1600, "Solto entre ensaios", "Palas soltas", ["Ensaio"], ""],
+  [23, "ENSAIO", "Fundistas: 10x(75+25 desc. 5\") c/1'15\" ritmo P500 · Velocistas: 3x(3x25 + 75 + 25) desc. 5\" · Todos: Est 4x(3x50) FC23 + solto até FC17 + Nado de Ensaio 100 Est", "Grupo de velocidade: 25 VEL · Estilos a ritmo de prova", 1700, "FC23 / FC17", "", ["Ensaio", "Rec. FC", "VEL"], "Grupo de fundo (velocistas ≈ 1225 m)"],
+  [24, "PARAQ", "Paraquedas 4x(100 + 3x25) + 100 solto + 75+25 / 75+50 / 75+75 / 75+100 / 75+125 (desc. 10\", 1'00\" entre)", "100 alongado regular, 25 esforço máximo · 75 = ritmo do 1.º 100 do 200 objetivo · restante = ritmo do 2.º 100", 1550, "Desc. 1'00\"", "Paraquedas", ["Paraq.", "P200", "VEL"], ""],
+  [25, "TESTE", "Pulse Plot: 8x100 E1 c/4'30\" [desc. 3'00\"]", "Repetição do teste do treino 1", 800, "Intervalo fixo", "", ["Rec. FC"], ""],
+  [26, "RITMO", "Livres: 4x(4x100) FC23 ritmo P400 (25+75 / 50+50 / 75+25 / 100, desc. 10\") · Estilos: 3x(3x100) Estilos c/1'20\" [desc. 15\"]", "Estilos: ronda 1 = 75+25 a P400 · ronda 2 = 50+50 a P200 · ronda 3 = 25 Est + 75 L", 1600, "FC23 / desc. 15\"", "", ["Rec. FC", "P200"], "Livres (Estilos = 900 m)"],
+  [27, "ENSAIO", "3x50 FC23 + 100 + 3x50 desc. 5\" + 100 + (3x50+75) FC23 + 100 + (3x50+75) desc. 5\" + 100 + Ensaio 150+50 desc. 30\"", "Tudo a ritmo P200 · ensaio ao tempo objetivo ou mais rápido", 1350, "FC23 / desc. 5\"", "", ["Ensaio", "Rec. FC", "P200"], ""],
+  [28, "RITMO", "3x(4x25 c/30\" + 3x100) · 100 c/1'40\" → 1'30\" → 1'20\" por ronda", "25 = VEL · 100 = ritmo rápido constante", 1200, "Intervalo a encurtar", "", ["VEL"], ""],
+  [29, "ENSAIO", "3x(150 + 50 desc. 10\") · 3'00\" entre rondas", "200 fracionado: bater o tempo objetivo", 600, "Desc. 3'00\"", "", ["Ensaio", "P200"], ""],
+  [30, "RITMO", "3x(3x25 + 75) desc. 5\" + 100 solto + 3x(3x50 + 75) FC23", "25 = VEL · 75 = P200 · 50 e 75 da 2.ª parte = P100", 1225, "Desc. 5\" / FC23 + 1'00\"", "", ["Rec. FC", "P200", "P100", "VEL"], ""],
+  [31, "RITMO", "4x100 fracionado c/3'00\" [desc. 2'00\"] (75+25 / 50+50 / 25+75 / 100) + 200 solto + 3x200 (200 / 4x50 desc. 10\" / 75+75+50 FC23)", "Velocidade de prova nos fracionados", 1200, "Desc. 2'00\" / 1'00\"", "", ["Rec. FC", "VEL"], ""],
+  [32, "ENSAIO", "Paraquedas 12x25 FC23 + 200 solto + 3x50 desc. 15\" + 200 solto + Nado de Ensaio (distância da prova)", "50 ao ritmo indicado pelo treinador · ensaio para o tempo objetivo", 850, "FC23", "Paraquedas", ["Paraq.", "Ensaio", "Rec. FC", "VEL"], "+ distância da prova"],
+  [33, "ENSAIO", "3x100 c/1'15\" + (2x25+75+2x25) + 3x75 c/1'00\" + (2x25+75+2x25) + 3x50 c/45\" + (2x25+75+2x25) + 200 solto + Nado de Ensaio 100", "Tudo a ritmo P200 · desc. crescente nos blocos 2x25+75+2x25", 1500, "Desc. 15\"-45\"", "", ["Ensaio", "P200"], ""],
+  [34, "RITMO", "3x(3x50 FC23 + 200 + 100 solto)", "50 = P100 · 200 a descer tempo", 1350, "FC23", "", ["Rec. FC", "P100"], ""],
+  [35, "PARAQ", "Paraquedas 16x25 c/1'15\" [desc. 45\"] + n x (3x75) FC23 (1'00\" entre rondas)", "25: 2 progressivos + 2 VEL · 75 = P200 · rondas até conseguir P200 nos 3", 625, "FC23", "Paraquedas", ["Paraq.", "Rec. FC", "P200", "VEL"], "Com 1 ronda de 3x75 (mínimo)"],
+  [36, "ENSAIO", "Nado de Ensaio 6x100 c/8'00\" [desc. 7'00\"]", "Esforço máximo · FC 10\" aos 0\", 30\" e 60\" (repete treino 9)", 600, "Desc. 7'00\"", "", ["Ensaio"], ""],
+  [37, "VEL", "8x25 c/1'00\" [desc. 45\"] + 4x25 Paraquedas FC23 + 8x25 + 4x25 Paraquedas FC23 + 8x25", "Velocidade e esforço máximo", 800, "Desc. 45\" / FC23", "Paraquedas", ["Paraq.", "Rec. FC", "VEL"], ""],
+  [38, "VEL", "4x(50 + 2x25 + 50) saída 40\" → 45\" → 50\" → FC23", "Tudo a esforço máximo · 1'00\" entre rondas", 600, "Desc. crescente / FC23", "", ["Rec. FC", "VEL"], ""],
+  [39, "ENSAIO", "Nado de Ensaio: 6x100 desc. 3'00\" OU 4x200 desc. 5'00\" OU 2x500 desc. 7'00\" OU 1x1000/1500", "Escolher a distância da prova principal", 600, "Desc. longo", "", ["Ensaio"], "Opção 6x100"],
+  [40, "RITMO", "3x50 + 125 / 3x50 + 150 / 3x50 + 175 / 3x50 + 200 · 50 FC23 · nado longo fracionado aos 100 (desc. 5\")", "Ritmo do tempo objetivo · 1'00\" entre rondas", 1250, "FC23 + 1'00\"", "", ["Rec. FC", "P200"], ""],
+  [41, "RITMO", "3x(3x25 VEL + 25 alongado + 75) c/20\"/45\"/1'30\" [desc. 5\"/15\"/45\"]", "75 = P200", 525, "Intervalo + desc.", "", ["P200", "VEL"], ""],
+  [42, "RITMO", "4x(3x25) desc. 15\" + 200 solto + Estilos: 6x75 c/1'30\" + 3x75 c/1'00\" · Livres: 3x(3x25 Paraquedas + 75) desc. 10\" + 3x75 c/1'15\"", "Estilos: pares E1 a P200 · Livres: 25 máx. com paraquedas, 75 = P100 · 3x75 = 25 L + 25 Est + 25 L a P200", 1175, "Desc. 10\"-40\"", "Paraquedas (Livres)", ["Paraq.", "P200", "P100", "VEL"], "Grupo de Estilos (Livres ≈ 1175 m)"],
+  [43, "PARAQ", "Paraquedas 3x(3x50) c/40\" [desc. 5\"-10\"] + 2x(3x50 + 50) FC27 (+15\" antes do último 50)", "1'00\" entre rondas", 850, "FC27 + 1'00\"", "Paraquedas", ["Paraq.", "Rec. FC", "VEL"], ""],
+  [44, "TESTE", "Pulse Plot: 8x100 E1 c/4'30\" [desc. 3'00\"]", "Repetição do teste dos treinos 1 e 25", 800, "Intervalo fixo", "", ["Rec. FC"], ""],
+  [45, "RITMO", "3x(3x50) E1 · ronda 1 FC23, ronda 2 FC25, ronda 3 FC27 + 200 solto + 6x25 nado semi-cego com partida à voz", "Ronda 1: 1.º 50 a P200 · ronda 2: 2.º 50 · ronda 3: 3.º 50 (P200 do E1)", 800, "FC23 → FC25 → FC27", "", ["Rec. FC", "P200"], ""],
+  [46, "ENSAIO", "3x200 c/5'00\" [desc. 3'00\"]", "Esforço de prova", 600, "Desc. 3'00\"", "", ["Ensaio"], ""],
+  [47, "RITMO", "2x(75 + 2x50 + 75) FC27 + 2x(50 + 2x25) FC23 · 2'00\" entre rondas", "Fracionados de 300 e 100 a ritmo de prova", 700, "FC27 / FC23", "", ["Rec. FC", "P200"], ""],
+  [48, "VEL", "12x25 c/1'00\" [desc. 45\"] + 100 solto + 3x50 FC23", "25 = esforço máximo · 50 = ritmo da prova", 550, "Desc. 45\" / FC23", "", ["Rec. FC", "VEL"], ""]
+];
+const stTipo = document.getElementById("st-tipo"), stComp = document.getElementById("st-comp");
+const escH = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+function showSeries() {
+  const t = stTipo.value, c = stComp.value;
+  const l = seriesTipo.filter(s => (!t || s[1] === t) && (!c || s[7].includes(c)));
+  document.getElementById("st-count").textContent = `${l.length} ${l.length === 1 ? "série" : "séries"}`;
+  document.getElementById("st-list").innerHTML = l.map(([n, tp, ms, ind, m, rec, mat, cs, nota]) => `
+  <article class="card st">
+    <header><span class="st-n">Treino ${n}</span><span class="tipo t-${tp.toLowerCase().replace("é", "e")}">${tp}</span><b class="st-m">${fmt(m)} m</b></header>
+    <p class="st-set">${escH(ms)}</p>
+    <p class="st-ind">${escH(ind)}</p>
+    <p class="st-meta"><span>Recuperação: ${escH(rec)}</span>${mat ? `<span>Material: ${escH(mat)}</span>` : ""}${nota ? `<span>${escH(nota)}</span>` : ""}</p>
+    ${cs.length ? `<p class="st-tags">${cs.map(x => `<span>${x}</span>`).join("")}</p>` : ""}
+  </article>`).join("") || '<p class="sub">Nenhuma série com esta combinação.</p>';
+}
+stTipo.addEventListener("change", showSeries);
+stComp.addEventListener("change", showSeries);
+showSeries();
+
 </script>
 </body>
 </html>
