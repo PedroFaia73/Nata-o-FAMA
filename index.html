@@ -1277,13 +1277,13 @@ stComp.addEventListener("change", showSeries);
 showSeries();
 
 const treinadores = [
-  ["Pedro Filipe Faia", "Coordenador técnico", 4, "2026-11-01", "102321", "Faia"],
-  ["João António Melo", "Treinador", 2, "2029-09-25", "118226", "Melo"],
-  ["Cátia Oliveira Campos", "Treinador", 1, "2028-05-09", "118206", "Cátia"]
+  ["Pedro Filipe Faia", "Coordenador técnico", 4, "2026-11-01", "102321", "962973228", "Faia"],
+  ["João António Melo", "Treinador", 2, "2029-09-25", "118226", "967269409", "Melo"],
+  ["Cátia Oliveira Campos", "Treinador", 1, "2028-05-09", "118206", "926085488", "Cátia"]
 ];
 function showTreinadores() {
   const hoje = new Date();
-  document.getElementById("trein-grid").innerHTML = treinadores.map(([n, f, g, val, fpn, k]) => {
+  document.getElementById("trein-grid").innerHTML = treinadores.map(([n, f, g, val, fpn, tel, k]) => {
     const grupos = horarios.filter(h => h.sessoes.some(s => s[4].split(/,\s*/).some(t => t.startsWith(k)))).map(h => h.nome);
     const dias = (new Date(val) - hoje) / 864e5;
     const estado = dias < 0 ? '<span class="ced exp">Caducada</span>' : dias < 60 ? '<span class="ced warn">Renovar</span>' : "";
@@ -1291,6 +1291,7 @@ function showTreinadores() {
     <span class="grau">Grau ${["", "I", "II", "III", "IV"][g]}</span>
     <h3>${n}</h3>
     <p class="sub">${f}</p>
+    <p><b>Telemóvel</b> <a href="tel:+351${tel}">${tel.replace(/(\d{3})(?=\d)/g, "$1 ")}</a></p>
     <p><b>Cartão FPN</b> ${fpn}</p>
     <p><b>Cédula IPDJ</b> válida até ${val.split("-").reverse().join("/")} ${estado}</p>
     ${grupos.length ? `<p><b>Grupos</b> ${grupos.join(" · ")}</p>` : ""}
