@@ -209,6 +209,11 @@
   .grau { display: inline-block; background: var(--navy); color: #fff; font-size: .72rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; letter-spacing: .03em; }
   .ced { font-size: .72rem; font-weight: 700; padding: 1px 7px; border-radius: 999px; margin-left: 4px; }
   .ced.warn { background: var(--warn-line); color: #0d2340; } .ced.exp { background: var(--z-tl); color: #fff; }
+  .pp-grid { margin-bottom: 8px; }
+  .pp-list { margin: 0; padding-left: 18px; font-size: .9rem; color: var(--muted); }
+  .pp-tempos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pp-tempos span { display: block; font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .pp-tempos b { font-size: 1.35rem; line-height: 1.2; }
 </style>
 </head>
 <body>
@@ -362,7 +367,7 @@
   <!-- SÉRIES-TIPO -->
   <section id="series">
     <h2>Séries-tipo · SprintSalo</h2>
-    <p class="lead">As 48 séries principais (main sets) do programa SprintSalo de David C. Salo, em português. Escolhe o tipo de série e a componente nas listas.</p>
+    <p class="lead">As 48 séries principais (main sets) do programa SprintSalo de David C. Salo, em português. Escolhe o tipo de série e a componente nas listas. Mais abaixo está a <a href="#popovici">progressão de ritmo do 200 livres (Popovici)</a>.</p>
     <div class="stats">
       <div class="stat"><b>48</b><span>treinos</span></div>
       <div class="stat"><b>989 m</b><span>main set médio</span></div>
@@ -380,6 +385,68 @@
     </div>
     <p class="st-count" id="st-count"></p>
     <div class="st-list" id="st-list"></div>
+
+    <h3 id="popovici">Progressão de ritmo · 200 livres (David Popovici)</h3>
+    <p class="lead">Série de ritmo de prova (race-pace) para o 200 livres, das 6 semanas até à semana da prova. O número de rondas desce e cada ronda fica mais longa, até ao 4x50 final.</p>
+    <div class="grid pp-grid">
+      <article class="card st">
+        <header><span class="st-n">6 semanas antes</span><span class="tipo t-ritmo">6 rondas</span><b class="st-m">600 m</b></header>
+        <p class="st-set">2x50 por ronda</p>
+        <ul class="pp-list">
+          <li>1x50 com partida do bloco</li>
+          <li>1x50 com impulso na parede</li>
+          <li>Saída: 1'30" (partida) / 1'00" (impulso)</li>
+          <li>Recuperação ativa entre rondas</li>
+        </ul>
+      </article>
+      <article class="card st">
+        <header><span class="st-n">5 semanas antes</span><span class="tipo t-ritmo">4 rondas</span><b class="st-m">600 m</b></header>
+        <p class="st-set">3x50 por ronda</p>
+        <ul class="pp-list">
+          <li>1x50 com partida do bloco</li>
+          <li>2x50 com impulso na parede</li>
+          <li>Saída: 1'30" (partida) / 1'00" (impulso)</li>
+          <li>Recuperação ativa entre rondas</li>
+        </ul>
+      </article>
+      <article class="card st">
+        <header><span class="st-n">4–3 semanas antes</span><span class="tipo t-ritmo">3 rondas</span><b class="st-m">600 m</b></header>
+        <p class="st-set">4x50 por ronda</p>
+        <ul class="pp-list">
+          <li>1x50 com partida do bloco</li>
+          <li>3x50 com impulso na parede</li>
+          <li>Saída: 1'30" (partida) / 1'00" (impulso)</li>
+          <li>Recuperação ativa entre rondas</li>
+        </ul>
+      </article>
+      <article class="card st">
+        <header><span class="st-n">2 semanas antes</span><span class="tipo t-ritmo">2 rondas</span><b class="st-m">400 m</b></header>
+        <p class="st-set">4x50 por ronda</p>
+        <ul class="pp-list">
+          <li>1x50 com partida do bloco</li>
+          <li>3x50 com impulso na parede</li>
+          <li>Saída: 1'00" (todos)</li>
+          <li>Recuperação ativa entre rondas</li>
+        </ul>
+      </article>
+      <article class="card st">
+        <header><span class="st-n">1 semana antes</span><span class="tipo t-ritmo">1 ronda</span><b class="st-m">200 m</b></header>
+        <p class="st-set">4x50</p>
+        <ul class="pp-list">
+          <li>1x50 com partida do bloco</li>
+          <li>3x50 com impulso na parede</li>
+          <li>Saída: 1'00" (todos)</li>
+        </ul>
+      </article>
+      <article class="card st pp-alvo">
+        <header><span class="st-n">Tempos-alvo</span></header>
+        <div class="pp-tempos">
+          <div><span>1.º 50 (partida do bloco)</span><b>24,00</b></div>
+          <div><span>50 seguintes (impulso)</span><b>25 alto → 26 baixo</b></div>
+        </div>
+        <p class="st-ind">Tempos de referência do Popovici. Para cada nadador, usa o ritmo do seu tempo objetivo (P200).</p>
+      </article>
+    </div>
 
     <h3>Tipos de série</h3>
     <div class="table-scroll">
