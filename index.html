@@ -227,6 +227,7 @@
   .aniv { display: inline-block; font-size: .72rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: var(--z-a3); color: #0d2340; margin-left: 4px; }
   .aniv.hoje { font-size: .8rem; }
   .trein-aniv { border-color: var(--z-a3); box-shadow: 0 0 0 2px var(--z-a3); }
+  tr.atl-aniv td { background: color-mix(in srgb, var(--z-a3) 22%, transparent); font-weight: 600; }
 </style>
 </head>
 <body>
@@ -745,15 +746,16 @@
   <!-- ATLETAS -->
   <section id="atletas">
     <h2>Atletas 2026/27</h2>
-    <p class="lead">Atletas inscritos na época, por escalão de filiação, com o n.º de licença FPN. Escolhe o escalão na lista.</p>
+    <p class="lead">Atletas inscritos na época, por escalão de filiação, com o n.º de licença FPN e o dia de aniversário. Escolhe o escalão na lista.</p>
     <div class="pickers">
       <label>Escalão
         <select id="atl-esc"></select>
       </label>
     </div>
+    <p class="note-line" id="atl-aniv" hidden></p>
     <div class="table-scroll">
       <table>
-        <thead><tr><th>Nome</th><th class="num">Ano</th><th>Escalão</th><th class="num">Licença</th></tr></thead>
+        <thead><tr><th>Nome</th><th class="num">Ano</th><th>Escalão</th><th class="num">Licença</th><th>Aniversário</th></tr></thead>
         <tbody id="atl-rows"></tbody>
       </table>
     </div>
@@ -1108,97 +1110,97 @@
 
 <script>
 const atletas = [
-  ["Beatriz Oliveira Faria", 2018, "Cadete D", "228967"],
-  ["Benedita Correia e Santos", 2018, "Cadete D", "228980"],
-  ["Daniela Rodrigues Tavares", 2018, "Cadete D", "228969"],
-  ["Duarte Carvalho Costa", 2018, "Cadete D", "229120"],
-  ["Estrela Peixoto e Silva", 2018, "Cadete D", "228970"],
-  ["Francisco Cariano Barbosa", 2018, "Cadete D", "228971"],
-  ["Leonor Sofia Silva", 2017, "Cadete D", "223851"],
-  ["Lourenço Braga Oliveira", 2018, "Cadete D", "228972"],
-  ["Maria Francisca Vieira", 2018, "Cadete D", "228973"],
-  ["Nicollas Lage Carolino", 2018, "Cadete D", ""],
-  ["Sofia Carneiro Silva", 2018, "Cadete D", "227659"],
-  ["Sofia Dias Mendes", 2018, "Cadete D", "226274"],
-  ["Beatriz de Sá Rodrigues", 2018, "Cadete C", "228968"],
-  ["Diana Marques Braga", 2017, "Cadete C", "228979"],
-  ["Mafalda Marques Teixeira", 2017, "Cadete C", "223849"],
-  ["Mariana Flor Ferreira", 2017, "Cadete C", "223847"],
-  ["Santiago Cardoso Garcia", 2017, "Cadete C", "225878"],
-  ["Vitória de Oliveira Carvalho", 2017, "Cadete C", "223843"],
-  ["Enzo Vasconcelos Oliveira", 2016, "Cadete B", "223853"],
-  ["Gustavo Garcia Carvalho", 2016, "Cadete B", ""],
-  ["Luísa Machado Sousa", 2016, "Cadete B", ""],
-  ["Maria Clara Cardoso Leal", 2016, "Cadete B", ""],
-  ["Maria Miguel Cunha", 2016, "Cadete B", "220856"],
-  ["Marina Abreu", 2016, "Cadete B", ""],
-  ["Martim Rodrigues Miranda", 2016, "Cadete B", "223846"],
-  ["Miriam Oliveira Peixoto", 2016, "Cadete B", "221042"],
-  ["Rita Costa Bezerra", 2016, "Cadete B", "224096"],
-  ["Clara Araújo Silva", 2015, "Cadete A", "221317"],
-  ["Dinis Silva Azevedo", 2015, "Cadete A", "226143"],
-  ["Duarte Moreira Ribeiro", 2015, "Cadete A", ""],
-  ["João Lucas Veloso", 2015, "Cadete A", "217317"],
-  ["Leonardo Ferreira Monteiro", 2015, "Cadete A", "220849"],
-  ["Matilde Reis Campelos", 2015, "Cadete A", "220859"],
-  ["Matilde Sousa de Barros", 2016, "Cadete A", "223855"],
-  ["Sofia Magalhães Lopes", 2015, "Cadete A", "217320"],
-  ["Ana Teresa Martins Almeida", 2014, "Infantil B", "215345"],
-  ["Anastacia Mandziak", 2014, "Infantil B", "219767"],
-  ["Dora Cunha Paiva", 2014, "Infantil B", "215291"],
-  ["Eduardo Guimarães Rodrigues", 2014, "Infantil B", "217313"],
-  ["Francisco Lemos Barbosa", 2014, "Infantil B", "217315"],
-  ["Gonçalo Lopes Pereira", 2014, "Infantil B", "216230"],
-  ["Inês Silva Oliveira", 2014, "Infantil B", "218351"],
-  ["Isabella Schaab Torres", 2014, "Infantil B", "217372"],
-  ["Joana Veloso Machado", 2014, "Infantil B", "215299"],
-  ["José Martins Oliveira", 2013, "Infantil B", "222711"],
-  ["Lucas Maia", 2014, "Infantil B", "219770"],
-  ["Margarida Silva Gomes", 2014, "Infantil B", "215346"],
-  ["Maria Francisca Machado", 2014, "Infantil B", "223244"],
-  ["Sara Marques Braga", 2014, "Infantil B", "228094"],
-  ["Francisco Pinto Costa", 2013, "Infantil A", "218352"],
-  ["Gabriel Manuel da Silva Costa", 2013, "Infantil A", "216841"],
-  ["Gabriela Sofia Silva", 2013, "Infantil A", "213803"],
-  ["Inês Barbosa Amorim", 2013, "Infantil A", "213805"],
-  ["Margarida Peixoto Bragança", 2013, "Infantil A", "213808"],
-  ["Maria Alves Martins", 2013, "Infantil A", "214320"],
-  ["Maria Ribeiro de Oliveira", 2013, "Infantil A", "219886"],
-  ["Matilde Neves Sa", 2013, "Infantil A", "213809"],
-  ["Rita Oliveira Araújo", 2013, "Infantil A", "213810"],
-  ["Salomé Ferreira Pereira", 2013, "Infantil A", "213867"],
-  ["Salvador Oliveira Sousa", 2013, "Infantil A", "218075"],
-  ["Vasco Ferreira Sá", 2013, "Infantil A", "213811"],
-  ["Victória Filipe Grilo", 2013, "Infantil A", "215279"],
-  ["Vitória Sofia Ferreira", 2013, "Infantil A", "213813"],
-  ["Carolina Miguel Fernandes", 2012, "Juvenil B", "219558"],
-  ["Iana Cheltigmacheva", 2012, "Juvenil B", "227660"],
-  ["Inês Gomes Ribeiro", 2012, "Juvenil B", "211664"],
-  ["Leonor Cunha Alves", 2012, "Juvenil B", "217136"],
-  ["Lucas Rafael Sá", 2012, "Juvenil B", "213807"],
-  ["Catarina Miguel Encarnação", 2011, "Juvenil A", "208289"],
-  ["Dinis Araújo Silva", 2011, "Juvenil A", "211658"],
-  ["Leonardo da Silva Antunes", 2011, "Juvenil A", "211981"],
-  ["Afonso Carvalho Monteiro", 2010, "Júnior B", "208116"],
-  ["Afonso Oliveira Ribeiro", 2010, "Júnior B", "208991"],
-  ["Matheus Tramonti Messuca", 2010, "Júnior B", "226286"],
-  ["Rodrigo Saldanha Ferreira", 2010, "Júnior B", "208260"],
-  ["Ana Miguel Felgueiras Moreira Antunes", 2009, "Júnior A", "203682"],
-  ["Mafalda Brandão Reis", 2009, "Júnior A", "203693"],
-  ["Miguel Araújo Carriço", 2009, "Júnior A", "206125"],
-  ["Rafael Rui Sampaio", 2009, "Júnior A", "206128"],
-  ["Ana Carolina Cruz", 2008, "Sub 21", "201055"],
-  ["Beatriz da Silva Coentrão", 2008, "Sub 21", "201062"],
-  ["Mafalda Martins Mesquita", 2007, "Sub 21", "202805"],
-  ["Rodrigo Ferreira Pereira", 2006, "Sub 21", "205524"],
-  ["Santiago Carvalho Pereira", 2008, "Sub 21", "206129"],
-  ["Tomás Ferreira e Sá", 2008, "Sub 21", "209928"],
-  ["Afonso Eiró Carvalho da Silva", 2005, "Sénior", "130127"],
-  ["Francisco Araújo da Silva", 2006, "Sénior", "132331"],
-  ["Gabriel Moreira dos Santos", 2004, "Sénior", "127679"],
+  ["Beatriz Oliveira Faria", 2018, "Cadete D", "228967", "11-16"],
+  ["Benedita Correia e Santos", 2018, "Cadete D", "228980", "02-20"],
+  ["Daniela Rodrigues Tavares", 2018, "Cadete D", "228969", "07-02"],
+  ["Duarte Carvalho Costa", 2018, "Cadete D", "229120", "01-01"],
+  ["Estrela Peixoto e Silva", 2018, "Cadete D", "228970", "04-19"],
+  ["Francisco Cariano Barbosa", 2018, "Cadete D", "228971", "04-29"],
+  ["Leonor Sofia Silva", 2017, "Cadete D", "223851", "05-26"],
+  ["Lourenço Braga Oliveira", 2018, "Cadete D", "228972", "04-10"],
+  ["Maria Francisca Vieira", 2018, "Cadete D", "228973", "02-02"],
+  ["Nicollas Lage Carolino", 2018, "Cadete D", "", "05-07"],
+  ["Sofia Carneiro Silva", 2018, "Cadete D", "227659", "02-18"],
+  ["Sofia Dias Mendes", 2018, "Cadete D", "226274", "06-07"],
+  ["Beatriz de Sá Rodrigues", 2018, "Cadete C", "228968", "06-05"],
+  ["Diana Marques Braga", 2017, "Cadete C", "228979", "08-13"],
+  ["Mafalda Marques Teixeira", 2017, "Cadete C", "223849", "11-16"],
+  ["Mariana Flor Ferreira", 2017, "Cadete C", "223847", "10-19"],
+  ["Santiago Cardoso Garcia", 2017, "Cadete C", "225878", "08-31"],
+  ["Vitória de Oliveira Carvalho", 2017, "Cadete C", "223843", "01-22"],
+  ["Enzo Vasconcelos Oliveira", 2016, "Cadete B", "223853", "12-24"],
+  ["Gustavo Garcia Carvalho", 2016, "Cadete B", "", "03-08"],
+  ["Luísa Machado Sousa", 2016, "Cadete B", "", "01-11"],
+  ["Maria Clara Cardoso Leal", 2016, "Cadete B", "", "02-13"],
+  ["Maria Miguel Cunha", 2016, "Cadete B", "220856", "06-07"],
+  ["Marina Abreu", 2016, "Cadete B", "", "01-21"],
+  ["Martim Rodrigues Miranda", 2016, "Cadete B", "223846", "08-02"],
+  ["Miriam Oliveira Peixoto", 2016, "Cadete B", "221042", "04-30"],
+  ["Rita Costa Bezerra", 2016, "Cadete B", "224096", "01-30"],
+  ["Clara Araújo Silva", 2015, "Cadete A", "221317", "11-24"],
+  ["Dinis Silva Azevedo", 2015, "Cadete A", "226143", "07-19"],
+  ["Duarte Moreira Ribeiro", 2015, "Cadete A", "", "04-01"],
+  ["João Lucas Veloso", 2015, "Cadete A", "217317", "04-06"],
+  ["Leonardo Ferreira Monteiro", 2015, "Cadete A", "220849", "01-26"],
+  ["Matilde Reis Campelos", 2015, "Cadete A", "220859", "02-23"],
+  ["Matilde Sousa de Barros", 2016, "Cadete A", "223855", "08-14"],
+  ["Sofia Magalhães Lopes", 2015, "Cadete A", "217320", "03-30"],
+  ["Ana Teresa Martins Almeida", 2014, "Infantil B", "215345", "05-20"],
+  ["Anastacia Mandziak", 2014, "Infantil B", "219767", "04-15"],
+  ["Dora Cunha Paiva", 2014, "Infantil B", "215291", "09-02"],
+  ["Eduardo Guimarães Rodrigues", 2014, "Infantil B", "217313", "11-14"],
+  ["Francisco Lemos Barbosa", 2014, "Infantil B", "217315", "10-13"],
+  ["Gonçalo Lopes Pereira", 2014, "Infantil B", "216230", "10-10"],
+  ["Inês Silva Oliveira", 2014, "Infantil B", "218351", "02-11"],
+  ["Isabella Schaab Torres", 2014, "Infantil B", "217372", "10-07"],
+  ["Joana Veloso Machado", 2014, "Infantil B", "215299", "02-14"],
+  ["José Martins Oliveira", 2013, "Infantil B", "222711", "02-02"],
+  ["Lucas Maia", 2014, "Infantil B", "219770", "10-22"],
+  ["Margarida Silva Gomes", 2014, "Infantil B", "215346", "02-14"],
+  ["Maria Francisca Machado", 2014, "Infantil B", "223244", "03-28"],
+  ["Sara Marques Braga", 2014, "Infantil B", "228094", "09-27"],
+  ["Francisco Pinto Costa", 2013, "Infantil A", "218352", "07-21"],
+  ["Gabriel Manuel da Silva Costa", 2013, "Infantil A", "216841", "04-11"],
+  ["Gabriela Sofia Silva", 2013, "Infantil A", "213803", "03-08"],
+  ["Inês Barbosa Amorim", 2013, "Infantil A", "213805", "01-03"],
+  ["Margarida Peixoto Bragança", 2013, "Infantil A", "213808", "02-05"],
+  ["Maria Alves Martins", 2013, "Infantil A", "214320", "08-27"],
+  ["Maria Ribeiro de Oliveira", 2013, "Infantil A", "219886", "07-20"],
+  ["Matilde Neves Sa", 2013, "Infantil A", "213809", "10-17"],
+  ["Rita Oliveira Araújo", 2013, "Infantil A", "213810", "01-15"],
+  ["Salomé Ferreira Pereira", 2013, "Infantil A", "213867", "01-07"],
+  ["Salvador Oliveira Sousa", 2013, "Infantil A", "218075", "09-08"],
+  ["Vasco Ferreira Sá", 2013, "Infantil A", "213811", "02-04"],
+  ["Victória Filipe Grilo", 2013, "Infantil A", "215279", "06-05"],
+  ["Vitória Sofia Ferreira", 2013, "Infantil A", "213813", "03-09"],
+  ["Carolina Miguel Fernandes", 2012, "Juvenil B", "219558", "05-03"],
+  ["Iana Cheltigmacheva", 2012, "Juvenil B", "227660", "01-19"],
+  ["Inês Gomes Ribeiro", 2012, "Juvenil B", "211664", "02-28"],
+  ["Leonor Cunha Alves", 2012, "Juvenil B", "217136", "02-24"],
+  ["Lucas Rafael Sá", 2012, "Juvenil B", "213807", "01-31"],
+  ["Catarina Miguel Encarnação", 2011, "Juvenil A", "208289", "03-29"],
+  ["Dinis Araújo Silva", 2011, "Juvenil A", "211658", "11-01"],
+  ["Leonardo da Silva Antunes", 2011, "Juvenil A", "211981", "02-10"],
+  ["Afonso Carvalho Monteiro", 2010, "Júnior B", "208116", "10-20"],
+  ["Afonso Oliveira Ribeiro", 2010, "Júnior B", "208991", "12-05"],
+  ["Matheus Tramonti Messuca", 2010, "Júnior B", "226286", "02-09"],
+  ["Rodrigo Saldanha Ferreira", 2010, "Júnior B", "208260", "09-29"],
+  ["Ana Miguel Felgueiras Moreira Antunes", 2009, "Júnior A", "203682", "07-02"],
+  ["Mafalda Brandão Reis", 2009, "Júnior A", "203693", "01-07"],
+  ["Miguel Araújo Carriço", 2009, "Júnior A", "206125", "09-21"],
+  ["Rafael Rui Sampaio", 2009, "Júnior A", "206128", "05-04"],
+  ["Ana Carolina Cruz", 2008, "Sub 21", "201055", "02-16"],
+  ["Beatriz da Silva Coentrão", 2008, "Sub 21", "201062", "05-26"],
+  ["Mafalda Martins Mesquita", 2007, "Sub 21", "202805", "11-07"],
+  ["Rodrigo Ferreira Pereira", 2006, "Sub 21", "205524", "04-29"],
+  ["Santiago Carvalho Pereira", 2008, "Sub 21", "206129", "09-01"],
+  ["Tomás Ferreira e Sá", 2008, "Sub 21", "209928", "04-17"],
+  ["Afonso Eiró Carvalho da Silva", 2005, "Sénior", "130127", "03-21"],
+  ["Francisco Araújo da Silva", 2006, "Sénior", "132331", "03-14"],
+  ["Gabriel Moreira dos Santos", 2004, "Sénior", "127679", "03-18"],
   ["João António Melo", 2003, "Sénior", "", "03-14"],
-  ["João Miguel Encarnação", 2008, "Sénior", "217002"],
-  ["Ruben Fortunas Couto", 2006, "Sénior", "222927"]
+  ["João Miguel Encarnação", 2008, "Sénior", "217002", "06-17"],
+  ["Ruben Fortunas Couto", 2006, "Sénior", "222927", "11-04"]
 ];
 const escaloes = ["Cadete D", "Cadete C", "Cadete B", "Cadete A", "Infantil B", "Infantil A", "Juvenil B", "Juvenil A", "Júnior B", "Júnior A", "Sub 21", "Sénior"];
 const selEsc = document.getElementById("atl-esc");
@@ -1207,7 +1209,15 @@ selEsc.innerHTML = `<option value="">Todos os escalões (${atletas.length})</opt
 function showAtl() {
   const e = selEsc.value;
   document.getElementById("atl-rows").innerHTML = atletas.filter(a => !e || a[2] === e)
-    .map(([n, a, es, l]) => `<tr><td>${n}</td><td class="num">${a}</td><td>${es}</td><td class="num">${l || "–"}</td></tr>`).join("");
+    .map(([n, a, es, l, an]) => `<tr${an === atlHoje ? ' class="atl-aniv"' : ""}><td>${n}${an === atlHoje ? " 🎂" : ""}</td><td class="num">${a}</td><td>${es}</td><td class="num">${l || "–"}</td><td>${an ? atlData(an) : "–"}</td></tr>`).join("");
+}
+const atlMeses = ["jan.", "fev.", "mar.", "abr.", "maio", "jun.", "jul.", "ago.", "set.", "out.", "nov.", "dez."];
+const atlData = an => { const [m, d] = an.split("-").map(Number); return `${d} ${atlMeses[m - 1]}`; };
+const atlHoje = (() => { const d = new Date(); return `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; })();
+{
+  const hoje = atletas.filter(a => a[4] === atlHoje).map(a => a[0]);
+  const el = document.getElementById("atl-aniv");
+  if (hoje.length) { el.hidden = false; el.innerHTML = `🎂 <strong>Faz${hoje.length > 1 ? "em" : ""} anos hoje:</strong> ${hoje.join(", ")}. Parabéns!`; }
 }
 selEsc.addEventListener("change", showAtl);
 showAtl();
