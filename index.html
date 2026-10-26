@@ -1656,7 +1656,10 @@ showSeries();
 const treinadores = [
   ["Pedro Filipe Faia", "Coordenador técnico", 4, "2026-11-01", "102321", "962973228", "8611", "Faia"],
   ["João António Melo", "Treinador", 2, "2029-09-25", "118226", "967269409", "173468", "Melo"],
-  ["Cátia Oliveira Campos", "Treinador", 1, "2028-05-09", "118206", "926085488", "187156", "Cátia"]
+  ["Cátia Oliveira Campos", "Treinador", 1, "2028-05-09", "118206", "926085488", "187156", "Cátia"],
+  ["Sílvio João Cardoso", "Treinador", 2, "2026-11-01", "111423", "", "44112", "Sílvio"],
+  ["Andreia Raquel Granjo", "Treinador", 2, "2029-05-31", "102639", "", "172193", "Andreia"],
+  ["Carla Luísa Alves", "Treinador", 1, "2029-10-19", "117522", "", "176074", "Carla"]
 ];
 function showTreinadores() {
   const hoje = new Date();
@@ -1668,7 +1671,7 @@ function showTreinadores() {
     <span class="grau">Grau ${["", "I", "II", "III", "IV"][g]}</span>
     <h3>${n}</h3>
     <p class="sub">${f}</p>
-    <p><b>Telemóvel</b> <a href="tel:+351${tel}">${tel.replace(/(\d{3})(?=\d)/g, "$1 ")}</a></p>
+    ${tel ? `<p><b>Telemóvel</b> <a href="tel:+351${tel}">${tel.replace(/(\d{3})(?=\d)/g, "$1 ")}</a></p>` : ""}
     <p><b>Cartão FPN</b> ${fpn}</p>
     <p><b>Cédula IPDJ</b> n.º ${ced} · válida até ${val.split("-").reverse().join("/")} ${estado}</p>
     ${grupos.length ? `<p><b>Grupos</b> ${grupos.join(" · ")}</p>` : ""}
