@@ -216,6 +216,10 @@
   .pp-tempos b { font-size: 1.35rem; line-height: 1.2; }
   .pp-calc { display: block; font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 10px; }
   .pp-calc input { display: block; width: 100%; margin-top: 4px; font: inherit; font-size: 1.1rem; font-weight: 700; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; text-transform: none; }
+  .gu-cont p { margin: 6px 0; } .gu-cont b { display: inline-block; min-width: 110px; }
+  .gu-hor { list-style: none; margin: 0; padding: 0; } .gu-hor li { padding: 5px 0; border-bottom: 1px solid var(--line); } .gu-hor li:last-child { border-bottom: 0; }
+  .gu-hor b { display: inline-block; width: 38px; }
+  .gu-img { width: 100%; max-width: 760px; height: auto; display: block; border-radius: 12px; border: 1px solid var(--line); background: #fff; }
 </style>
 </head>
 <body>
@@ -241,6 +245,7 @@
     <a href="#series">Séries-tipo</a>
     <a href="#atletas">Atletas</a>
     <a href="#treinadores">Treinadores</a>
+    <a href="#guia">Guia do Atleta</a>
     <a href="#calendario">Calendário</a>
     <a href="#macrociclo">Macrociclo 1</a>
     <a href="#zonas">Zonas</a>
@@ -662,6 +667,87 @@
     <h2>Treinadores</h2>
     <p class="lead">Equipa técnica com cédula de Treinador de Desporto (IPDJ). Os grupos vêm dos horários 2026/27.</p>
     <div class="grid" id="trein-grid"></div>
+  </section>
+
+  <!-- GUIA DO ATLETA -->
+  <section id="guia">
+    <h2>Guia do Atleta 2026/27</h2>
+    <p class="lead"><em>«O sonho… o futuro»</em> · Convidamos-te a fazer parte desta família.</p>
+
+    <h3>O clube</h3>
+    <p>O Grupo Desportivo de Natação de Vila Nova de Famalicão (GDNF) é um clube de formação, com escola de natação e vocação competitiva e olímpica. Foi fundado em 1993 e tem como casa-mãe a piscina do centro da cidade. Também compete nas piscinas municipais de Joane e de Oliveira S. Mateus. Em mais de 30 anos, o GDNF esteve em Campeonatos da Europa de Juniores, Mundiais Júnior e Absolutos, Mundiais Universitários e nos Jogos Olímpicos de Atenas 2004.</p>
+    <div class="stats">
+      <div class="stat"><b>~225</b><span>títulos nacionais</span></div>
+      <div class="stat"><b>&gt;125</b><span>recordes nacionais</span></div>
+      <div class="stat"><b>1993</b><span>ano de fundação</span></div>
+    </div>
+
+    <h3>Contactos</h3>
+    <div class="card gu-cont">
+      <p><b>Clube</b> <a href="mailto:secretaria@gdnf.pt">secretaria@gdnf.pt</a> · <a href="mailto:gdnf.secretaria@gmail.com">gdnf.secretaria@gmail.com</a></p>
+      <p><b>Telefone</b> <a href="tel:+351252316587">252 316 587</a> (fixo) · <a href="tel:+351960004293">960 004 293</a> (móvel)</p>
+      <p><b>Diretor técnico</b> <a href="mailto:pfafaia@gmail.com">pfafaia@gmail.com</a></p>
+    </div>
+
+    <h3>Época desportiva · secção de competição</h3>
+    <div class="grid">
+      <div class="card"><h3>Início</h3><p><b>2 set. 2026, 19h00</b> · Cadetes A/B/C/D e Infantis</p><p><b>7 set. 2026, 19h00</b> · Juvenis, Juniores, Sub-21 e Seniores</p><p class="sub">Final da época: julho de 2027, todos os escalões.</p></div>
+      <div class="card"><h3>Nota importante</h3><p>A secção de competição é composta por treinadores certificados (grau I a IV), filiados na FPN.</p><p><b>⚠ É expressamente proibido ter treino ou apoio suplementar sem consentimento prévio dos treinadores.</b></p><p>Os contactos com os encarregados de educação são feitos pela secretaria e, em casos excecionais, pelos treinadores fora do horário de treino.</p></div>
+    </div>
+
+    <h3>Categorias e escalões</h3>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Escalão (M e F)</th><th class="num">Nascidos em</th></tr></thead>
+      <tbody><tr><td>Cadetes D</td><td class="num">2018</td></tr><tr><td>Cadetes C</td><td class="num">2017</td></tr><tr><td>Cadetes B</td><td class="num">2016</td></tr><tr><td>Cadetes A</td><td class="num">2015</td></tr><tr><td>Infantis B</td><td class="num">2014</td></tr><tr><td>Infantis A</td><td class="num">2013</td></tr><tr><td>Juvenis B</td><td class="num">2012</td></tr><tr><td>Juvenis A</td><td class="num">2011</td></tr><tr><td>Juniores B</td><td class="num">2010</td></tr><tr><td>Juniores A</td><td class="num">2009</td></tr><tr><td>Seniores Sub-21</td><td class="num">2006–2008</td></tr><tr><td>Seniores</td><td class="num">2008 e anteriores</td></tr></tbody>
+    </table></div>
+
+    <h3>Plano de carreira</h3>
+    <p class="lead"><em>«A natação não é o que eu sou, mas o que quero ser!»</em></p>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Escalão</th><th>Objetivo</th><th>Volume de treino</th></tr></thead>
+      <tbody><tr><td><b>Cadetes C/D</b><span class="sub">2017–2018</span></td><td style="min-width:200px">Trabalho técnico dos 4 estilos e hábitos de trabalho em equipa.</td><td style="min-width:170px">3 sessões/semana · 40 min · 2 h/semana</td></tr><tr><td><b>Cadetes A/B</b><span class="sub">2015–2016</span></td><td style="min-width:200px">Reforço técnico, partidas e viragens. Introdução ao treino intervalado, resistência e velocidade.</td><td style="min-width:170px">4 sessões/semana · 55–90 min · 6 h/semana · 2000–3000 m</td></tr><tr><td><b>Infantis</b><span class="sub">2013–2014</span></td><td style="min-width:200px">Desenvolvimento do treino intervalado e introdução ao treino anaeróbio. Incrementar compromisso.</td><td style="min-width:170px">6 sessões/semana · 100 min · 10 h/semana · 3000–4500 m</td></tr><tr><td><b>Juvenis</b><span class="sub">2011–2012</span></td><td style="min-width:200px">Eficiência de nado. Treino aeróbio e anaeróbio. Otimização para elite nacional.</td><td style="min-width:170px">6–8 sessões/semana · 100–120 min · 10–16 h/semana · 4500–6500 m</td></tr><tr><td><b>Juniores / Seniores</b><span class="sub">2010 e anteriores</span></td><td style="min-width:200px">Otimizar capacidades condicionais e eficiência de nado. Potenciar o rendimento.</td><td style="min-width:170px">6–10 sessões/semana · 100–120 min · 10–20 h/semana · 5000–7500 m</td></tr></tbody>
+    </table></div>
+
+    <h3>Filiação e mensalidades</h3>
+    <div class="grid">
+      <div class="card"><h3>Filiação</h3><p><b>6 a 31 de julho de 2026</b></p><p>Secretaria do clube, das 15h00 às 19h00.</p></div>
+      <div class="card"><h3>Requisitos</h3><ul class="pp-list"><li>Declarações 1 e 2 do Guia do Nadador (GDNF)</li><li>Ficha de identificação do atleta (FPN)</li><li>Autorização dos encarregados de educação (menores)</li><li>Exame médico-desportivo</li><li>Taxa de filiação anual</li><li>Mensalidade do 1.º mês</li></ul></div>
+      <div class="card"><h3>Mensalidades</h3><p>Cadetes A/B/C, Infantis, Juvenis e Juniores: <b>30 €/mês</b></p><p>Sub-21 e Seniores: <b>isentos</b></p><p class="sub">Pagamento até ao dia 8 de cada mês. Atrasos sujeitos a penalização.</p></div>
+    </div>
+
+    <h3>Exame médico e seguro desportivo</h3>
+    <div class="grid">
+      <div class="card"><h3>Exame médico-desportivo</h3><p>Obrigatório para todos os praticantes federados (Despacho n.º 9613/2020). Válido por 1 ano, em impresso próprio do IPDJ.</p><p><b>Entrega até 19 de setembro de 2026.</b></p><p class="sub">O GDNF tem protocolo com o Município de Famalicão e a CESPU para o exame gratuito. Identifica-te como atleta do GDNF com 4 semanas de antecedência.</p></div>
+      <div class="card"><h3>Seguro desportivo</h3><p>Obrigatório (DL n.º 10/2009). Cobre acidentes em treinos, provas e deslocações, em Portugal e no estrangeiro.</p><p>É pago na filiação. A franquia é suportada pelo encarregado de educação ou pelo atleta.</p><p class="sub">Em caso de acidente, a secretaria dá o impresso para acionar o seguro.</p></div>
+    </div>
+
+    <h3>Competições · transporte e equipamento</h3>
+    <div class="grid">
+      <div class="card"><h3>Transporte</h3><ul class="pp-list"><li>Provas ANNP (regionais): transporte e refeições por conta dos encarregados de educação.</li><li>Zonais e calendário nacional: transporte, estadia, refeições e inscrições pagos pelo GDNF.</li><li>Os atletas não podem sair do local da competição sem autorização do responsável do clube.</li></ul></div>
+      <div class="card"><h3>Equipamento</h3><ul class="pp-list"><li>Uso exclusivo do equipamento oficial do GDNF em todas as competições.</li><li>Touca oficial obrigatória.</li><li>Os novos atletas compram o «Pack Essencial» na secretaria.</li><li>O GDNF não disponibiliza material para o treino.</li></ul></div>
+    </div>
+
+    <h3>Horários e locais de treino</h3>
+    <div class="grid" style="align-items:start"><div class="card"><h3>Cadetes D</h3><ul class="gu-hor"><li><b>Seg</b> 18h50–19h25 <span class="sub">Famalicão</span></li><li><b>Qui</b> 18h50–19h25 <span class="sub">Famalicão</span></li><li><b>Sáb</b> 9h30–10h15 <span class="sub">Famalicão</span></li></ul></div><div class="card"><h3>Cadetes C</h3><ul class="gu-hor"><li><b>Seg</b> 19h25–20h00 <span class="sub">Famalicão</span></li><li><b>Qua</b> 18h10–18h45 <span class="sub">Famalicão</span></li><li><b>Sáb</b> 10h15–11h00 <span class="sub">Famalicão</span></li></ul></div><div class="card"><h3>Cadetes A/B</h3><ul class="gu-hor"><li><b>Ter</b> 18h50–19h45 <span class="sub">Famalicão</span></li><li><b>Qua</b> 18h10–19h05 <span class="sub">Famalicão</span></li><li><b>Sex</b> 19h00–20h30 <span class="sub">Oliveira</span></li><li><b>Sáb</b> 9h00–10h20 <span class="sub">Famalicão</span></li></ul></div><div class="card"><h3>Infantis</h3><ul class="gu-hor"><li><b>Seg</b> 19h00–20h30 <span class="sub">Joane</span></li><li><b>Ter</b> 19h45–20h50 <span class="sub">Famalicão</span></li><li><b>Qua</b> 18h45–20h30 <span class="sub">Famalicão</span></li><li><b>Qui</b> 19h00–20h30 <span class="sub">Joane</span></li><li><b>Sex</b> 18h50–20h50 <span class="sub">Famalicão</span></li><li><b>Sáb</b> 7h15–9h00 <span class="sub">Famalicão</span></li></ul></div><div class="card"><h3>Juvenis / Juniores / Seniores</h3><ul class="gu-hor"><li><b>Seg</b> 18h50–20h50 <span class="sub">Famalicão</span></li><li><b>Ter</b> 18h50–20h50 <span class="sub">Famalicão</span></li><li><b>Qua</b> 19h05–20h50 <span class="sub">Famalicão</span></li><li><b>Qui</b> 18h50–20h50 <span class="sub">Famalicão</span></li><li><b>Sex</b> 18h50–20h50 <span class="sub">Famalicão</span></li><li><b>Sáb</b> 7h30–9h30 <span class="sub">Famalicão</span></li></ul></div></div>
+
+    <h3>Antidoping</h3>
+    <div class="card">
+      <p>Os atletas podem ser sujeitos a controlo antidoping em treino ou competição. Qualquer medicação deve ser verificada nas listas da Agência Mundial Antidopagem (AMA).</p>
+      <p><b>Atenção aos suplementos nutricionais:</b> há estudos que mostram que muitos estão contaminados com substâncias proibidas.</p>
+      <p>Para uso terapêutico, comunicar à ADoP em impresso próprio (na secretaria e em <a href="https://www.idesporto.pt" rel="noopener">idesporto.pt</a>).</p>
+      <p class="sub">A Direção pede a todos os agentes desportivos que consultem, em cada época, as normas e as listas de substâncias proibidas, e a posição da ADoP sobre suplementos.</p>
+    </div>
+
+    <h3>Plano de atividades 2026/27</h3>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Data</th><th>Evento</th><th>Local</th><th>Observações</th></tr></thead>
+      <tbody><tr><td style="white-space:nowrap">04 out 2026</td><td>Gala do GDNF/AMA</td><td>Auditório AEDSI</td><td>Homenagem aos atletas 25/26</td></tr><tr><td style="white-space:nowrap">18–19 out 2026</td><td>Provas de Preparação Absolutos</td><td>Felgueiras</td><td></td></tr><tr><td style="white-space:nowrap">25–26 out 2026</td><td>Provas de Preparação Infantis / Cadetes A/B/C</td><td>Folgosa</td><td></td></tr><tr><td style="white-space:nowrap">14–16 nov 2026</td><td>Camp. Territoriais Juniores e Seniores</td><td>A definir</td><td></td></tr><tr><td style="white-space:nowrap">16 nov 2026</td><td>Torneio Regional de Fundo Infantis e Juvenis</td><td>A definir</td><td></td></tr><tr><td style="white-space:nowrap">27 nov 2026</td><td>Camp. Nacional 3.ª Divisão</td><td>A definir</td><td></td></tr><tr><td style="white-space:nowrap">28–29 nov 2026</td><td>Camp. Nacional 2.ª Divisão</td><td>Mealhada</td><td></td></tr><tr><td style="white-space:nowrap">04–06 dez 2026</td><td>Torneio Zonal de Juvenis</td><td>Bragança</td><td></td></tr><tr><td style="white-space:nowrap">06 dez 2026</td><td>Torneio Técnico Alternadas – Cadetes B2/C</td><td>A definir</td><td></td></tr><tr><td style="white-space:nowrap">10–13 dez 2026</td><td>Camp. Nacionais Juniores e Seniores</td><td>Tomar</td><td></td></tr><tr><td style="white-space:nowrap">16 dez 2026</td><td>Jantar de Natal – Absolutos</td><td>Bar da Piscina</td><td>Lúdico/desportivo</td></tr><tr><td style="white-space:nowrap">19–20 dez 2026</td><td>Camp. Nacional 1.ª Divisão</td><td>Albufeira</td><td></td></tr><tr><td style="white-space:nowrap">21 dez 2026</td><td>Atividade de Natal – Cadetes A/B</td><td>A definir</td><td>Lúdico/desportivo</td></tr><tr><td style="white-space:nowrap">21 dez 2026</td><td>Passeio de Comboio – Cadetes C/D</td><td>Famalicão</td><td>Lúdico/desportivo</td></tr><tr><td style="white-space:nowrap">09 jan 2027</td><td>Convívio de Reis – GDNF</td><td>A definir</td><td>Jantar Direção/Professores</td></tr><tr><td style="white-space:nowrap">30–31 fev 2027</td><td>Meeting da Póvoa</td><td>Póvoa de Varzim</td><td></td></tr><tr><td style="white-space:nowrap">06–07 fev 2027</td><td>Torneio Territorial de Clubes ANNP – Infantis</td><td>Folgosa</td><td></td></tr><tr><td style="white-space:nowrap">16 fev 2027</td><td>Atividades de Carnaval</td><td>Famalicão</td><td>Lúdico/desportivo</td></tr><tr><td style="white-space:nowrap">26–28 fev 2027</td><td>Torneio Zonal de Infantis</td><td>Cantanhede</td><td></td></tr><tr><td style="white-space:nowrap">27 fev 2027</td><td>Famalicão a Nadar – Técnicas Alternadas</td><td>Famalicão</td><td>Câmara – GDNF</td></tr><tr><td style="white-space:nowrap">22 mar–02 abr 2027</td><td>Atividades da Páscoa</td><td>Famalicão</td><td>Lúdico/desportivo</td></tr><tr><td style="white-space:nowrap">02–04 abr 2027</td><td>Camp. Nacional Juvenis</td><td>Jamor – Oeiras</td><td></td></tr><tr><td style="white-space:nowrap">03 abr 2027</td><td>Encontro Técnico Simultâneas – Cadetes C/D</td><td>A definir</td><td></td></tr><tr><td style="white-space:nowrap">03–04 abr 2027</td><td>TORREGRI 2 – Cadetes A/B</td><td>A definir</td><td></td></tr><tr><td style="white-space:nowrap">08–11 abr 2027</td><td>Camp. Nacional Juniores e Absolutos</td><td>Coimbra</td><td></td></tr><tr><td style="white-space:nowrap">17 abr 2027</td><td>Famalicão a Nadar – Técnicas Simultâneas</td><td>Oliveira</td><td>Câmara – GDNF</td></tr><tr><td style="white-space:nowrap">05–06 jun 2027</td><td>Meeting Internacional do Porto</td><td>Campanhã</td><td></td></tr><tr><td style="white-space:nowrap">12–13 jun 2027</td><td>TORREGRI 3 – Cadetes A/B</td><td>A definir</td><td></td></tr><tr><td style="white-space:nowrap">19 jun 2027</td><td>Famalicão a Nadar – Técnicas Alternadas</td><td>Ribeirão</td><td>Câmara – GDNF</td></tr><tr><td style="white-space:nowrap">25–27 jun 2027</td><td>Camp. Territoriais Juvenis, Juniores e Seniores</td><td>A definir</td><td></td></tr><tr><td style="white-space:nowrap">10 jul 2027</td><td>Sunset</td><td>Famalicão</td><td>Pré-competição · Competição · Pais · Professores</td></tr><tr><td style="white-space:nowrap">23–25 jul 2027</td><td>Camp. Nacional Infantis</td><td>Reguengos de Monsaraz</td><td></td></tr><tr><td style="white-space:nowrap">29 jul–01 ago 2027</td><td>Camp. Nacional Juvenis, Juniores e Seniores</td><td>Coimbra</td><td></td></tr><tr><td style="white-space:nowrap">08 ago 2027</td><td>Barragem da Queimadela</td><td>Queimadela</td><td>Lúdico/desportivo</td></tr></tbody>
+    </table></div>
+
+    <h3>O homem sonha… a obra nasce</h3>
+    <p class="lead">Ampliação do complexo de piscinas municipais, com 4 pistas de 50 m cobertas.</p>
+    <img class="gu-img" src="img/ampliacao-piscinas.jpg" alt="Esboço da ampliação do complexo de piscinas municipais de Famalicão, com nova piscina coberta de 50 m" loading="lazy">
+    <p class="sub">Vila Nova de Famalicão, 1 de julho de 2026 · A Direção</p>
   </section>
 
   <!-- CALENDÁRIO -->
