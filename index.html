@@ -224,6 +224,9 @@
   .fo-main { color: var(--text); } .fo-pr { color: var(--text); font-weight: 600; }
   .fo-t { margin-top: 10px; font-size: .88rem; } .fo-t summary { cursor: pointer; font-weight: 700; }
   .pickers input { width: 100%; min-width: 0; font: inherit; font-size: 1rem; text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .aniv { display: inline-block; font-size: .72rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: var(--z-a3); color: #0d2340; margin-left: 4px; }
+  .aniv.hoje { font-size: .8rem; }
+  .trein-aniv { border-color: var(--z-a3); box-shadow: 0 0 0 2px var(--z-a3); }
 </style>
 </head>
 <body>
@@ -1193,7 +1196,7 @@ const atletas = [
   ["Afonso Eiró Carvalho da Silva", 2005, "Sénior", "130127"],
   ["Francisco Araújo da Silva", 2006, "Sénior", "132331"],
   ["Gabriel Moreira dos Santos", 2004, "Sénior", "127679"],
-  ["João António Melo", 2003, "Sénior", ""],
+  ["João António Melo", 2003, "Sénior", "", "03-14"],
   ["João Miguel Encarnação", 2008, "Sénior", "217002"],
   ["Ruben Fortunas Couto", 2006, "Sénior", "222927"]
 ];
@@ -1654,25 +1657,33 @@ stComp.addEventListener("change", showSeries);
 showSeries();
 
 const treinadores = [
-  ["Pedro Filipe Faia", "Coordenador técnico", 4, "2026-11-01", "102321", "962973228", "8611", "Faia"],
-  ["João António Melo", "Treinador", 2, "2029-09-25", "118226", "967269409", "173468", "Melo"],
-  ["Cátia Oliveira Campos", "Treinador", 1, "2028-05-09", "118206", "926085488", "187156", "Cátia"],
-  ["Sílvio João Cardoso", "Treinador", 2, "2026-11-01", "111423", "", "44112", "Sílvio"],
-  ["Andreia Raquel Granjo", "Treinador", 2, "2029-05-31", "102639", "", "172193", "Andreia"],
-  ["Carla Luísa Alves", "Treinador", 1, "2029-10-19", "117522", "", "176074", "Carla"],
-  ["Jorge Manuel Maia", "Treinador", 2, "2028-04-17", "23220", "", "139005", "Jorge"]
+  ["Pedro Filipe Faia", "Coordenador técnico", 4, "2026-11-01", "102321", "962973228", "8611", "Faia", "07-27"],
+  ["João António Melo", "Treinador", 2, "2029-09-25", "118226", "967269409", "173468", "Melo", "03-14"],
+  ["Cátia Oliveira Campos", "Treinador", 1, "2028-05-09", "118206", "926085488", "187156", "Cátia", "01-27"],
+  ["Sílvio João Cardoso", "Treinador", 2, "2026-11-01", "111423", "", "44112", "Sílvio", "06-29"],
+  ["Andreia Raquel Granjo", "Treinador", 2, "2029-05-31", "102639", "", "172193", "Andreia", "04-19"],
+  ["Carla Luísa Alves", "Treinador", 1, "2029-10-19", "117522", "", "176074", "Carla", "01-18"],
+  ["Jorge Manuel Maia", "Treinador", 2, "2028-04-17", "23220", "", "139005", "Jorge", "05-02"]
 ];
 function showTreinadores() {
   const hoje = new Date();
-  document.getElementById("trein-grid").innerHTML = treinadores.map(([n, f, g, val, fpn, tel, ced, k]) => {
+  document.getElementById("trein-grid").innerHTML = treinadores.map(([n, f, g, val, fpn, tel, ced, k, aniv]) => {
+    const [am, ad] = aniv.split("-").map(Number);
+    let prox = new Date(hoje.getFullYear(), am - 1, ad);
+    const hoje0 = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+    if (prox < hoje0) prox = new Date(hoje.getFullYear() + 1, am - 1, ad);
+    const faltam = Math.round((prox - hoje0) / 864e5);
+    const meses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+    const anivTxt = faltam === 0 ? '<span class="aniv hoje">🎂 Faz anos hoje!</span>' : faltam <= 7 ? `<span class="aniv">Faz anos ${faltam === 1 ? "amanhã" : `daqui a ${faltam} dias`}</span>` : "";
     const grupos = horarios.filter(h => h.sessoes.some(s => s[4].split(/,\s*/).some(t => t.startsWith(k)))).map(h => h.nome);
     const dias = (new Date(val) - hoje) / 864e5;
     const estado = dias < 0 ? '<span class="ced exp">Caducada</span>' : dias < 60 ? '<span class="ced warn">Renovar</span>' : "";
-    return `<div class="card trein">
+    return `<div class="card trein${faltam === 0 ? " trein-aniv" : ""}">
     <span class="grau">Grau ${["", "I", "II", "III", "IV"][g]}</span>
     <h3>${n}</h3>
     <p class="sub">${f}</p>
     ${tel ? `<p><b>Telemóvel</b> <a href="tel:+351${tel}">${tel.replace(/(\d{3})(?=\d)/g, "$1 ")}</a></p>` : ""}
+    <p><b>Aniversário</b> ${ad} de ${meses[am - 1]} ${anivTxt}</p>
     <p><b>Cartão FPN</b> ${fpn}</p>
     <p><b>Cédula IPDJ</b> n.º ${ced} · válida até ${val.split("-").reverse().join("/")} ${estado}</p>
     ${grupos.length ? `<p><b>Grupos</b> ${grupos.join(" · ")}</p>` : ""}
