@@ -248,24 +248,30 @@
   :is(#rk-ep, #rk-esc) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
   :is(#rk-ep, #rk-esc) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
   .es-list { padding-left: 16px; } .es-list li { margin-bottom: 8px; } .es-list b { color: var(--text); }
-  /* app no telemóvel: botão de secções ao alcance do polegar */
-  .menu-fab { display: none; }
-  .menu-sheet[hidden] { display: none; }
+  /* app no telemóvel: uma secção de cada vez, barra fixa em baixo e ecrã "Mais" */
+  .app-bar, .tabbar, body:not(.app) main > #mais { display: none; }
+  .mais-item { display: flex; align-items: center; gap: 12px; padding: 14px; margin-bottom: 10px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--text); text-decoration: none; }
+  .mais-item .sigla { flex: none; width: 38px; height: 38px; border-radius: 10px; background: var(--accent); color: #fff; display: grid; place-items: center; font-size: .74rem; font-weight: 800; letter-spacing: .02em; }
+  .mais-item b { display: block; }
+  .mais-item small { display: block; color: var(--muted); font-size: .82rem; }
+  .mais-item .seta { margin-left: auto; color: var(--muted); font-size: 1.3rem; }
   @media (max-width: 760px) {
-    body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
     /* no iPhone, campos com letra abaixo de 16px fazem zoom ao tocar e a página fica a deslizar para o lado */
     input, select, textarea { font-size: 16px !important; }
-    nav.menu a { padding: 14px 12px; }
-    .menu-fab { display: block; position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 30; border: 0; border-radius: 999px; padding: 14px 20px; font: inherit; font-weight: 700; font-size: 1rem; background: var(--navy); color: #fff; box-shadow: 0 6px 18px rgba(0,0,0,.25); }
-    .menu-sheet { position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.4); display: flex; align-items: flex-end; }
-    .menu-sheet-in { width: 100%; max-height: 80vh; overflow-y: auto; background: var(--surface); color: var(--text); border-radius: 18px 18px 0 0; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); }
-    .menu-sheet-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 700; }
-    .menu-sheet-top button { border: 0; background: none; font: inherit; font-size: 1.6rem; line-height: 1; color: var(--muted); padding: 4px 8px; }
-    .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .menu-grid a { display: block; padding: 14px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--text); text-decoration: none; font-weight: 600; }
-    .menu-grid a.topo { grid-column: 1 / -1; text-align: center; background: var(--soft); }
+    body.app { padding-bottom: calc(66px + env(safe-area-inset-bottom)); }
+    body.app header.hero, body.app .stripe, body.app nav.menu { display: none; }
+    body.app main > section { display: none; }
+    body.app main > section.ativa { display: block; }
+    body.app main [id] { scroll-margin-top: 70px; }
+    #mais > h2 { display: none; }
+    body.app .app-bar { display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 20; background: var(--navy); color: #fff; padding: calc(10px + env(safe-area-inset-top)) 16px 12px; font-weight: 700; font-size: 1.15rem; }
+    .app-bar img { width: 30px; height: 30px; border-radius: 50%; background: #fff; padding: 2px; object-fit: contain; }
+    body.app .tabbar { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .tabbar a { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 2px 6px; color: var(--muted); text-decoration: none; font-size: .68rem; font-weight: 600; }
+    .tabbar a.on { color: var(--accent); }
+    .tabbar svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   }
-  @media print { .menu-fab, .menu-sheet { display: none !important; } }
+  @media print { .app-bar, .tabbar { display: none !important; } }
 </style>
 </head>
 <body>
@@ -302,13 +308,7 @@
     <a href="#recordes">Recordes</a>
   </div>
 </nav>
-<button type="button" class="menu-fab" id="menu-fab" aria-expanded="false" aria-controls="menu-sheet">☰ Secções</button>
-<div class="menu-sheet" id="menu-sheet" hidden>
-  <div class="menu-sheet-in" role="dialog" aria-label="Secções">
-    <div class="menu-sheet-top"><span>Secções</span><button type="button" id="menu-fechar" aria-label="Fechar">×</button></div>
-    <div class="menu-grid" id="menu-grid"></div>
-  </div>
-</div>
+<div class="app-bar" id="app-bar"><img src="img/logo-gdnf.png" alt=""><span id="app-titulo">Época</span></div>
 
 <main class="wrap">
 
@@ -1192,7 +1192,18 @@
     <p class="docs"><a href="docs/recordes-p25.pdf">Recordes P25 (PDF)</a><a href="docs/recordes-p50.pdf">Recordes P50 (PDF)</a></p>
   </section>
 
+  <section id="mais">
+    <h2>Mais</h2>
+    <div id="mais-list"></div>
+  </section>
 </main>
+<nav class="tabbar" id="tabbar" aria-label="Secções principais">
+  <a href="#ranking" data-tab="ranking"><svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg>Ranking</a>
+  <a href="#minimos" data-tab="minimos"><svg viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M10 2.5h4M18.5 6.5l1.5-1.5"/></svg>Mínimos</a>
+  <a href="#internacionais" data-tab="internacionais"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>Internac.</a>
+  <a href="#series" data-tab="series"><svg viewBox="0 0 24 24"><path d="M2.5 8c2-1.5 3.5-1.5 5 0s3 1.5 5 0 3.5-1.5 5 0 3 1.5 4 0.5M2.5 13c2-1.5 3.5-1.5 5 0s3 1.5 5 0 3.5-1.5 5 0 3 1.5 4 0.5M2.5 18c2-1.5 3.5-1.5 5 0s3 1.5 5 0 3.5-1.5 5 0 3 1.5 4 0.5"/></svg>Séries</a>
+  <a href="#mais" data-tab="mais"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>Mais</a>
+</nav>
 
 <footer>GDNF · Grupo Desportivo de Natação de Famalicão · Coordenação técnica: Pedro Faia · 2026/27</footer>
 
@@ -3463,19 +3474,54 @@ esPisc.addEventListener("change", showEstafetas);
 rkS.addEventListener("change", showEstafetas);
 showEstafetas();
 
-// App no telemóvel: menu de secções em baixo e funcionamento sem rede
-const menuFab = document.getElementById("menu-fab"), menuSheet = document.getElementById("menu-sheet");
-document.getElementById("menu-grid").innerHTML = `<a href="#top" class="topo">↑ Início</a>` + [...document.querySelectorAll("nav.menu a")].map(a => a.outerHTML).join("");
-const menuAbrir = v => { menuSheet.hidden = !v; menuFab.setAttribute("aria-expanded", v); };
-menuFab.addEventListener("click", () => menuAbrir(true));
-document.getElementById("menu-fechar").addEventListener("click", () => menuAbrir(false));
-menuSheet.addEventListener("click", ev => {
-  if (ev.target === menuSheet) return menuAbrir(false);
+// App no telemóvel: uma secção de cada vez, barra em baixo com as 4 secções principais e "Mais" com as restantes
+// (para trocar as secções da barra, muda os href/data-tab do nav.tabbar)
+const appSec = [
+  ["epoca", "EP", "Época", "Resumo, escalões e mapa de provas"],
+  ["minimos", "MF", "Mínimos FPN", "Tempos de acesso aos nacionais"],
+  ["internacionais", "IN", "Internacionais", "Mínimos para as provas FPN 2027"],
+  ["deslocacoes", "DE", "Deslocações", "Provas, viagens e hotéis"],
+  ["series", "ST", "Séries-tipo", "SprintSalo, Popovici, FOCA e séries GDNF"],
+  ["atletas", "AT", "Atletas", "Lista por escalão e aniversários"],
+  ["ranking", "RK", "Ranking", "Top 10 do clube e estafetas"],
+  ["treinadores", "TR", "Treinadores", "Contactos, cédulas e aniversários"],
+  ["guia", "GA", "Guia do Atleta", "Regras, horários e mensalidades"],
+  ["calendario", "CA", "Calendário", "Quadro competitivo FPN"],
+  ["macrociclo", "M1", "Macrociclo 1", "Setembro a dezembro de 2026"],
+  ["zonas", "ZI", "Zonas", "Zonas de intensidade"],
+  ["horarios", "HO", "Horários", "Treinos e treinadores por grupo"],
+  ["fama-a-nadar", "FN", "FAMA a Nadar", "Torneio de escolas, 17 abr. 2027"],
+  ["plano", "PD", "Plano diário", "Plano de treino guardado no telemóvel"],
+  ["recordes", "RE", "Recordes", "Recordes absolutos do clube"]
+];
+const appTabs = [...document.querySelectorAll("#tabbar a")].map(a => a.dataset.tab);
+document.getElementById("mais-list").innerHTML = appSec.filter(([id]) => !appTabs.includes(id))
+  .map(([id, sg, t, sub]) => `<a class="mais-item" href="#${id}"><span class="sigla">${sg}</span><span><b>${t}</b><small>${sub}</small></span><span class="seta">›</span></a>`).join("");
+const appMQ = matchMedia("(max-width: 760px)");
+function appMostrar() {
+  const ativo = appMQ.matches;
+  document.body.classList.toggle("app", ativo);
+  if (!ativo) return;
+  // sem endereço, abre o primeiro separador da barra
+  const inicio = document.getElementById(appTabs[0]);
+  const alvo = document.getElementById(decodeURIComponent(location.hash.slice(1))) || inicio;
+  const sec = alvo.closest("main > section") || inicio;
+  document.querySelectorAll("main > section.ativa").forEach(x => x.classList.remove("ativa"));
+  sec.classList.add("ativa");
+  const info = appSec.find(x => x[0] === sec.id);
+  document.getElementById("app-titulo").textContent = info ? info[2] : "Mais";
+  const tab = appTabs.includes(sec.id) ? sec.id : "mais";
+  document.querySelectorAll("#tabbar a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
+  if (alvo === sec) window.scrollTo({ top: 0, behavior: "instant" }); else alvo.scrollIntoView({ behavior: "instant" });
+}
+// tocar outra vez no separador já aberto volta ao início dessa secção
+document.getElementById("tabbar").addEventListener("click", ev => {
   const a = ev.target.closest("a");
-  if (!a) return;
-  menuAbrir(false);
-  if (a.getAttribute("href") === "#top") { ev.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  if (a && a.hash === location.hash) { ev.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }
 });
+addEventListener("hashchange", appMostrar);
+appMQ.addEventListener("change", appMostrar);
+appMostrar();
 if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
 </body>
