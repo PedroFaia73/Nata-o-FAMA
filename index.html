@@ -765,7 +765,7 @@
   <!-- TREINADORES -->
   <section id="ranking">
     <h2>Ranking do Clube</h2>
-    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos são juvenis, juniores e seniores; Infantis são 12–13 anos. Escolhe o escalão e a prova, ou um atleta para ver todas as suas provas.</p>
+    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos são juvenis, juniores e seniores; Infantis são 12–13 anos. Escolhe o escalão e a prova, um atleta para ver todas as suas provas, ou uma época para ver os tempos conseguidos nessa altura.</p>
     <div class="pickers">
       <label>Escalão
         <select id="rk-esc"><option value="0">Absolutos Masc.</option><option value="1">Absolutos Fem.</option><option value="2">Infantis Masc.</option><option value="3">Infantis Fem.</option></select>
@@ -775,6 +775,9 @@
       </label>
       <label>Atleta
         <select id="rk-atl"></select>
+      </label>
+      <label>Época (data)
+        <select id="rk-ep"></select>
       </label>
     </div>
     <p class="st-count" id="rk-count"></p>
@@ -3061,23 +3064,30 @@ const ranking = [
   [1, 17, 9, "Mafalda Martins Mesquita", "07", "5:18.53", "25m", "11/01/25", "Águas Santas (POR)", 515, ""],
   [1, 17, 10, "Mariana Martins Costa", "05", "5:19.44", "25m", "21/12/19", "Porto (POR)", 511, ""]
 ];
-const rkE = document.getElementById("rk-esc"), rkP = document.getElementById("rk-prova"), rkA = document.getElementById("rk-atl");
+const rkE = document.getElementById("rk-esc"), rkP = document.getElementById("rk-prova"), rkA = document.getElementById("rk-atl"), rkS = document.getElementById("rk-ep");
 const rkAno = (e, v) => e < 2 ? `${+v > 30 ? "19" : "20"}${v}` : `${v} anos`;
+// época desportiva (set.–ago.) a partir da data dd/mm/aa
+const rkEpoca = dt => { const [, m, a] = dt.split("/").map(Number); const y = 2000 + a - (m < 9 ? 1 : 0); return `${y}/${String((y + 1) % 100).padStart(2, "0")}`; };
+const rkData = dt => { const [d, m, a] = dt.split("/"); return `20${a}${m}${d}`; };
 function rkAtletas() {
-  const e = +rkE.value;
-  const nomes = [...new Set(ranking.filter(r => r[0] === e).map(r => r[3]))].sort((a, b) => a.localeCompare(b, "pt"));
-  rkA.innerHTML = `<option value="">Todos (top 10 da prova)</option>` + nomes.map(n => `<option>${escH(n)}</option>`).join("");
+  const e = +rkE.value, l = ranking.filter(r => r[0] === e);
+  const nomes = [...new Set(l.map(r => r[3]))].sort((a, b) => a.localeCompare(b, "pt"));
+  rkA.innerHTML = `<option value="">Todos</option>` + nomes.map(n => `<option>${escH(n)}</option>`).join("");
+  const eps = [...new Set(l.map(r => rkEpoca(r[7])))].sort().reverse();
+  rkS.innerHTML = `<option value="">Todas</option>` + eps.map(x => `<option>${x}</option>`).join("");
 }
 function showRanking() {
-  const e = +rkE.value, p = +rkP.value, a = rkA.value;
-  rkP.disabled = !!a;
+  const e = +rkE.value, p = +rkP.value, a = rkA.value, ep = rkS.value;
+  rkP.disabled = !!(a || ep);
   const head = document.getElementById("rk-head"), body = document.getElementById("rk-rows");
   const cel = r => `<td class="num">${r[5]}</td><td>${r[6]}</td><td class="num">${r[7]}</td><td>${escH(r[8].replace(/ \(POR\)$/, ""))}</td><td class="num">${r[9] || "–"}</td>`;
-  if (a) {
-    const l = ranking.filter(r => r[0] === e && r[3] === a).sort((x, y) => x[1] - y[1]);
-    document.getElementById("rk-count").textContent = `${a}: ${l.length} ${l.length === 1 ? "prova" : "provas"} no top 10 (${rkAno(e, l[0][4])})`;
-    head.innerHTML = `<tr><th>Prova</th><th class="num">Lugar</th><th class="num">Tempo</th><th>Pisc.</th><th class="num">Data</th><th>Local</th><th class="num">Pts</th></tr>`;
-    body.innerHTML = l.map(r => `<tr><td>${rkProvas[r[1]]}</td><td class="num">${r[2]}.º</td>${cel(r)}</tr>`).join("");
+  if (a || ep) {
+    const l = ranking.filter(r => r[0] === e && (!a || r[3] === a) && (!ep || rkEpoca(r[7]) === ep))
+      .sort((x, y) => ep && !a ? rkData(y[7]).localeCompare(rkData(x[7])) : x[1] - y[1] || x[2] - y[2]);
+    const quem = a ? `${a}${l.length ? ` (${rkAno(e, l[0][4])})` : ""}` : rkEsc[e];
+    document.getElementById("rk-count").textContent = `${quem}${ep ? ` · época ${ep}` : ""}: ${l.length} ${l.length === 1 ? "tempo" : "tempos"} no top 10`;
+    head.innerHTML = `<tr><th>Prova</th><th class="num">Lugar</th>${a ? "" : "<th>Nome</th>"}<th class="num">Tempo</th><th>Pisc.</th><th class="num">Data</th><th>Local</th><th class="num">Pts</th></tr>`;
+    body.innerHTML = l.map(r => `<tr><td>${rkProvas[r[1]]}</td><td class="num">${r[2]}.º</td>${a ? "" : `<td>${escH(r[3])}</td>`}${cel(r)}</tr>`).join("") || `<tr><td colspan="8">Sem tempos no top 10 com esta escolha.</td></tr>`;
   } else {
     const l = ranking.filter(r => r[0] === e && r[1] === p);
     document.getElementById("rk-count").textContent = `${rkEsc[e]} · ${rkProvas[p]}: ${l.length} ${l.length === 1 ? "atleta" : "atletas"}`;
@@ -3088,6 +3098,7 @@ function showRanking() {
 rkE.addEventListener("change", () => { rkAtletas(); showRanking(); });
 rkP.addEventListener("change", showRanking);
 rkA.addEventListener("change", showRanking);
+rkS.addEventListener("change", showRanking);
 rkAtletas();
 showRanking();
 </script>
