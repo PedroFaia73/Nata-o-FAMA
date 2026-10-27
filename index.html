@@ -3111,7 +3111,13 @@ const rkNasc = r => +r[4] + (+r[4] > 30 ? 1900 : 2000);
 const rkEpoca = dt => { const [, m, a] = dt.split("/").map(Number); const y = 2000 + a - (m < 9 ? 1 : 0); return `${y}/${String((y + 1) % 100).padStart(2, "0")}`; };
 const rkIdade = r => +rkEpoca(r[7]).slice(0, 4) + 1 - rkNasc(r);
 const rkData = dt => { const [d, m, a] = dt.split("/"); return `20${a}${m}${d}`; };
-const rkEpocas = () => [...rkS.querySelectorAll("input:checked")].map(i => i.value);
+const rkEpocas = () => [...rkS.querySelectorAll("input:checked:not([data-todas])")].map(i => i.value);
+// "Todas as épocas" liga ou desliga todas; fica ligado quando estão todas escolhidas
+const rkTodasSync = () => { const t = rkS.querySelector("[data-todas]"), l = rkS.querySelectorAll("input:not([data-todas])"); t.checked = [...l].every(i => i.checked); };
+rkS.addEventListener("change", ev => {
+  if (ev.target.matches("[data-todas]")) rkS.querySelectorAll("input").forEach(i => { i.checked = ev.target.checked; });
+  else rkTodasSync();
+}, true);
 // escalões escolhidos juntos: [chave, nome, teste da idade]
 const rkEscAtual = () => {
   const sel = rkEscs.filter(([k]) => rkG.querySelector(`input[value="${k}"]`).checked);
@@ -3131,11 +3137,12 @@ function rkTempos(g) {
   return l;
 }
 function rkAtletas() {
-  const l = rkTempos(+rkGen.value), sel = rkEpocas(), a = rkA.value;
+  const l = rkTempos(+rkGen.value), sel = rkEpocas(), a = rkA.value, todas = rkS.querySelector("[data-todas]:checked");
   const nomes = [...new Set(l.map(x => x.r[3]))].sort((a, b) => a.localeCompare(b, "pt"));
   rkA.innerHTML = `<option value="">Todos</option>` + nomes.map(n => `<option${n === a ? " selected" : ""}>${escH(n)}</option>`).join("");
   const eps = [...new Set(["2026/27", ...l.map(x => rkEpoca(x.r[7]))])].sort().reverse();
-  rkS.innerHTML = eps.map(x => `<label><input type="checkbox" value="${x}"${sel.includes(x) ? " checked" : ""}><span>${x}</span></label>`).join("");
+  rkS.innerHTML = `<label><input type="checkbox" data-todas><span>Todas as épocas</span></label>` + eps.map(x => `<label><input type="checkbox" value="${x}"${todas || sel.includes(x) ? " checked" : ""}><span>${x}</span></label>`).join("");
+  rkTodasSync();
 }
 function showRanking() {
   const g = +rkGen.value, p = rkP.value === "" ? -1 : +rkP.value, a = rkA.value, eps = rkEpocas();
@@ -3145,10 +3152,11 @@ function showRanking() {
   const todos = rkTempos(g);
   if (a || eps.length || p < 0) {
     const l = todos.filter(({ r }) => (p < 0 || r[1] === p) && (!a || r[3] === a) && (!eps.length || eps.includes(rkEpoca(r[7]))))
-      .sort((x, y) => eps.length && !a ? rkData(y.r[7]).localeCompare(rkData(x.r[7])) : x.r[1] - y.r[1] || (x.pos || 99) - (y.pos || 99));
+      .sort((x, y) => eps.length && !a && p < 0 ? rkData(y.r[7]).localeCompare(rkData(x.r[7])) : x.r[1] - y.r[1] || rkSeg(x.r[5]) - rkSeg(y.r[5]));
     const partes = [a ? `${a}${l.length ? ` (${rkNasc(l[0].r)})` : ""}` : nomeEsc];
     if (p >= 0) partes.push(rkProvas[p]);
-    if (eps.length) partes.push(`${eps.length > 1 ? "épocas" : "época"} ${eps.slice().sort().join(" + ")}`);
+    if (rkS.querySelector("[data-todas]:checked")) partes.push("todas as épocas");
+    else if (eps.length) partes.push(`${eps.length > 1 ? "épocas" : "época"} ${eps.slice().sort().join(" + ")}`);
     document.getElementById("rk-count").textContent = `${partes.join(" · ")}: ${l.length} ${l.length === 1 ? "tempo" : "tempos"}`;
     head.innerHTML = `<tr><th>Prova</th><th class="num">Lugar</th>${a ? "" : "<th>Nome</th>"}<th class="num">Tempo</th><th>Pisc.</th><th class="num">Data</th><th>Local</th><th class="num">Pts</th></tr>`;
     body.innerHTML = l.map(({ r, pos }) => `<tr><td>${rkProvas[r[1]]}</td><td class="num">${pos ? pos + ".º" : "–"}</td>${a ? "" : `<td>${escH(r[3])}</td>`}${cel(r)}</tr>`).join("") || `<tr><td colspan="8">Sem tempos com esta escolha.</td></tr>`;
