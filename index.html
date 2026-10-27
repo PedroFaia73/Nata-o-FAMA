@@ -774,10 +774,10 @@
   <!-- TREINADORES -->
   <section id="ranking">
     <h2>Ranking do Clube</h2>
-    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos é o ranking geral do clube. Os outros escalões são calculados pelo ano de nascimento e pela época de cada tempo, com a regra da FPN (idade no ano em que a época acaba: Infantis B 13 anos, Infantis A 14, Juvenis B 15, Juvenis A 16, Juniores B 17, Juniores A 18, Sub 21 dos 19 aos 21, Seniores 19 ou mais). Escolhe o escalão, o género e a prova, um atleta para ver todas as suas provas, ou uma ou mais épocas para ver os tempos conseguidos nessa altura. Os filtros funcionam juntos.</p>
+    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos é o ranking geral do clube. Os outros escalões são calculados pelo ano de nascimento e pela época de cada tempo, com a regra da FPN (idade no ano em que a época acaba: Infantis B 13 anos, Infantis A 14, Juvenis B 15, Juvenis A 16, Juniores B 17, Juniores A 18, Sub 21 dos 19 aos 21, Seniores 19 ou mais, que inclui os Sub 21). Os grupos Infantis, Juvenis e Juniores juntam o A e o B. Escolhe o escalão, o género e a prova, um atleta para ver todas as suas provas, ou uma ou mais épocas para ver os tempos conseguidos nessa altura. Os filtros funcionam juntos.</p>
     <div class="pickers">
       <label>Escalão
-        <select id="rk-esc"><option value="infA">Infantis A</option><option value="infB">Infantis B</option><option value="juvA">Juvenis A</option><option value="juvB">Juvenis B</option><option value="junA">Juniores A</option><option value="junB">Juniores B</option><option value="sub21">Sub 21</option><option value="sen">Seniores</option><option value="abs" selected>Absolutos</option></select>
+        <select id="rk-esc"><optgroup label="Grupos"><option value="abs" selected>Absolutos</option><option value="inf">Infantis (A + B)</option><option value="juv">Juvenis (A + B)</option><option value="jun">Juniores (A + B)</option><option value="sen">Seniores (Sub 21 + Seniores)</option></optgroup><optgroup label="Escalões"><option value="infA">Infantis A</option><option value="infB">Infantis B</option><option value="juvA">Juvenis A</option><option value="juvB">Juvenis B</option><option value="junA">Juniores A</option><option value="junB">Juniores B</option><option value="sub21">Sub 21</option></optgroup></select>
       </label>
       <label>Género
         <select id="rk-gen"><option value="0">Masculino</option><option value="1">Feminino</option></select>
@@ -3093,7 +3093,8 @@ const rkEscs = [
   ["infA", "Infantis A", i => i === 14], ["infB", "Infantis B", i => i === 13],
   ["juvA", "Juvenis A", i => i === 16], ["juvB", "Juvenis B", i => i === 15],
   ["junA", "Juniores A", i => i === 18], ["junB", "Juniores B", i => i === 17],
-  ["sub21", "Sub 21", i => i >= 19 && i <= 21], ["sen", "Seniores", i => i >= 19], ["abs", "Absolutos", () => true]
+  ["sub21", "Sub 21", i => i >= 19 && i <= 21], ["sen", "Seniores", i => i >= 19], ["abs", "Absolutos", () => true],
+  ["inf", "Infantis", i => i === 13 || i === 14], ["juv", "Juvenis", i => i === 15 || i === 16], ["jun", "Juniores", i => i === 17 || i === 18]
 ];
 const rkGenNome = ["Masc.", "Fem."];
 const rkSeg = t => t.split(":").reduce((a, x) => a * 60 + parseFloat(x), 0);
