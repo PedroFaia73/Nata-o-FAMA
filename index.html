@@ -236,6 +236,7 @@
   #rk-ep span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
   #rk-ep input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
   #rk-ep input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
+  .es-list { padding-left: 16px; } .es-list li { margin-bottom: 8px; } .es-list b { color: var(--text); }
 </style>
 </head>
 <body>
@@ -797,6 +798,16 @@
       </table>
     </div>
     <p class="note-line">Fonte: rankings top 10 do clube (27/10/2026). Pts = pontos FINA. Nas Infantis a coluna Idade é a idade na época da prova; nos Absolutos é o ano de nascimento.</p>
+
+    <h3 id="estafetas">Melhores estafetas</h3>
+    <p class="lead">As estafetas mais rápidas possíveis com o melhor tempo de cada atleta nas épocas escolhidas acima (sem épocas escolhidas, usa todos os tempos). Usa o grupo do escalão escolhido (Absolutos ou Infantis). Nas estafetas de estilos é escolhida a melhor combinação, com um atleta por estilo e sem repetir.</p>
+    <div class="pickers">
+      <label>Piscina
+        <select id="es-pisc"><option value="25m">25 m</option><option value="50m">50 m</option><option value="">Juntar 25 m e 50 m</option></select>
+      </label>
+    </div>
+    <div class="grid" id="es-grid"></div>
+    <p class="note-line">Atenção: só há dados dos 10 melhores de sempre em cada prova, por isso pode faltar quem não está no ranking (por exemplo, atletas atuais que ainda não entraram no top 10). O tempo é a soma dos tempos individuais, sem contar as partidas lançadas.</p>
   </section>
 
   <section id="treinadores">
@@ -3112,6 +3123,63 @@ rkA.addEventListener("change", showRanking);
 rkS.addEventListener("change", showRanking);
 rkAtletas();
 showRanking();
+
+// Melhores estafetas a partir do ranking
+const esPisc = document.getElementById("es-pisc");
+const esSeg = t => t.split(":").reduce((a, x) => a * 60 + parseFloat(x), 0);
+const esFmt = x => { const m = Math.floor(x / 60), r = (x - m * 60).toFixed(2); return m ? `${m}:${r.padStart(5, "0")}` : r; };
+const esTipos = [
+  ["4x50 Livres", [0, 0, 0, 0]], ["4x100 Livres", [1, 1, 1, 1]], ["4x200 Livres", [2, 2, 2, 2]],
+  ["4x50 Estilos", [6, 9, 12, 0]], ["4x100 Estilos", [7, 10, 13, 1]]
+];
+const esNadoNome = ["Costas", "Bruços", "Mariposa", "Livres"];
+function esMelhores(esc, prova) {
+  const eps = rkEpocas(), pisc = esPisc.value, best = new Map();
+  ranking.filter(r => r[0] === esc && r[1] === prova && (!pisc || r[6] === pisc) && (!eps.length || eps.includes(rkEpoca(r[7]))))
+    .forEach(r => { const t = esSeg(r[5]); if (!best.has(r[3]) || t < best.get(r[3]).t) best.set(r[3], { n: r[3], t, tt: r[5], esc }); });
+  return [...best.values()].sort((a, b) => a.t - b.t);
+}
+function esLivres(provas, escs) {
+  // escs: lista de escalões e quantos de cada, ex. [[0,4]] ou [[0,2],[1,2]]
+  const ord = escs.flatMap(([e, k]) => esMelhores(e, provas[0]).slice(0, k));
+  return ord.length === 4 ? ord : null;
+}
+function esEstilos(provas, escs) {
+  const cand = provas.map(p => escs.flatMap(([e]) => esMelhores(e, p).slice(0, 8)));
+  const quota = Object.fromEntries(escs.map(([e, k]) => [e, k]));
+  let melhor = null;
+  const rec = (i, usados, cont, soma, sel) => {
+    if (melhor && soma >= melhor.soma) return;
+    if (i === 4) { melhor = { soma, sel: sel.slice() }; return; }
+    for (const c of cand[i]) {
+      const key = c.esc + "|" + c.n;
+      if (usados.has(key) || (cont[c.esc] || 0) >= quota[c.esc]) continue;
+      usados.add(key); cont[c.esc] = (cont[c.esc] || 0) + 1; sel.push(c);
+      rec(i + 1, usados, cont, soma + c.t, sel);
+      sel.pop(); cont[c.esc]--; usados.delete(key);
+    }
+  };
+  rec(0, new Set(), {}, 0, []);
+  return melhor && melhor.sel;
+}
+function showEstafetas() {
+  const base = +rkE.value < 2 ? 0 : 2, grupo = base ? "Infantis" : "Absolutos";
+  const generos = [["Masculinos", [[base, 4]]], ["Femininos", [[base + 1, 4]]], ["Mistas (2M + 2F)", [[base, 2], [base + 1, 2]]]];
+  document.getElementById("es-grid").innerHTML = esTipos.map(([nome, provas]) => {
+    const estilos = provas[0] !== provas[1];
+    const linhas = generos.map(([g, escs]) => {
+      const sel = estilos ? esEstilos(provas, escs) : esLivres(provas, escs);
+      if (!sel) return `<li><b>${g}:</b> <span class="sub">sem atletas suficientes</span></li>`;
+      const tot = sel.reduce((a, c) => a + c.t, 0);
+      return `<li><b>${g}: ${esFmt(tot)}</b><br><span class="sub">${sel.map((c, i) => `${estilos ? esNadoNome[i] + " – " : ""}${escH(c.n)}${escs.length > 1 ? (c.esc === base ? " (M)" : " (F)") : ""} ${c.tt}`).join(" · ")}</span></li>`;
+    }).join("");
+    return `<article class="card st"><header><span class="st-n">${nome}</span><span class="tipo t-ritmo">${grupo}</span></header><ul class="pp-list es-list">${linhas}</ul></article>`;
+  }).join("");
+}
+esPisc.addEventListener("change", showEstafetas);
+rkE.addEventListener("change", showEstafetas);
+rkS.addEventListener("change", showEstafetas);
+showEstafetas();
 </script>
 </body>
 </html>
