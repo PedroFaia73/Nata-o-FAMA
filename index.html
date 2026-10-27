@@ -774,7 +774,7 @@
   <!-- TREINADORES -->
   <section id="ranking">
     <h2>Ranking do Clube</h2>
-    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos é o ranking geral do clube. Os outros escalões são calculados pelo ano de nascimento e pela época de cada tempo, com a regra da FPN (idade no ano em que a época acaba: Infantis B 13 anos, Infantis A 14, Juvenis B 15, Juvenis A 16, Juniores B 17, Juniores A 18, Sub 21 dos 19 aos 21, Seniores 19 ou mais, que inclui os Sub 21). Podes escolher vários escalões ao mesmo tempo, por exemplo Juniores A e Juniores B. Escolhe o escalão, o género e a prova, um atleta para ver todas as suas provas, ou uma ou mais épocas para ver os tempos conseguidos nessa altura. Os filtros funcionam juntos.</p>
+    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos é o ranking geral do clube. Os outros escalões são calculados pelo ano de nascimento e pela época de cada tempo, com a regra da FPN (idade no ano em que a época acaba: Infantis B 13 anos, Infantis A 14, Juvenis B 15, Juvenis A 16, Juniores B 17, Juniores A 18, Sub 21 dos 19 aos 21, Seniores 19 ou mais, que inclui os Sub 21). Podes escolher vários escalões ao mesmo tempo, por exemplo Juniores A e Juniores B. Escolhe o escalão, o género e a prova, um atleta para ver todas as suas provas, ou uma ou mais épocas para ver os tempos conseguidos nessa altura. Os filtros funcionam juntos e o lugar é calculado dentro da escolha feita (melhor tempo de cada atleta).</p>
     <div class="pickers">
       <label>Género
         <select id="rk-gen"><option value="0">Masculino</option><option value="1">Feminino</option></select>
@@ -801,7 +801,7 @@
         <tbody id="rk-rows"></tbody>
       </table>
     </div>
-    <p class="note-line">Fonte: rankings top 10 do clube (27/10/2026). Pts = pontos FINA. Só existem os tempos do top 10 absoluto e do top 10 de infantis, por isso nos escalões de juvenis e juniores aparecem só os tempos que entraram nesses rankings. Nos escalões, o lugar conta o melhor tempo de cada atleta.</p>
+    <p class="note-line">Fonte: rankings top 10 do clube (27/10/2026): top 10 de sempre absoluto e de infantis, e top 10 absoluto da época 2025/26. Pts = pontos FINA. A época 2025/26 está completa até ao 10.º lugar. Nas outras épocas só aparecem os tempos que entraram no top 10 de sempre, por isso podem faltar atletas.</p>
 
     <h3 id="estafetas">Melhores estafetas</h3>
     <p class="lead">As estafetas mais rápidas possíveis com o melhor tempo de cada atleta nas épocas escolhidas acima (sem épocas escolhidas, usa todos os tempos). Usa o escalão escolhido acima. Nas estafetas de estilos é escolhida a melhor combinação, com um atleta por estilo e sem repetir.</p>
@@ -2447,7 +2447,8 @@ gzQ.addEventListener("input", showGz);
 gzSubs();
 showGz();
 
-// Ranking do clube: [escalão, prova, pos, nome, idade/ano, tempo, piscina, data, local, pontos, clube]
+// Ranking do clube: [lista, prova, pos, nome, ano, tempo, piscina, data, local, pontos, clube]
+// lista: 0/1 top 10 absoluto masc./fem., 2/3 top 10 infantis masc./fem., 4/5 top 10 da época 2025/26 masc./fem.; o género é lista % 2
 const rkProvas = ["50 Livres", "100 Livres", "200 Livres", "400 Livres", "800 Livres", "1500 Livres", "50 Costas", "100 Costas", "200 Costas", "50 Bruços", "100 Bruços", "200 Bruços", "50 Mariposa", "100 Mariposa", "200 Mariposa", "100 Estilos", "200 Estilos", "400 Estilos"];
 const ranking = [
   [2, 0, 1, "Jose Duarte Oliveira", "13", "29.21", "50m", "17/07/26", "Setubal (POR)", 366, ""],
@@ -3085,7 +3086,200 @@ const ranking = [
   [1, 17, 7, "Eduarda Reis Silva", "03", "5:15.33", "25m", "05/05/18", "Porto (POR)", 531, ""],
   [1, 17, 8, "Rafaela Araujo Silva", "00", "5:15.84", "25m", "13/05/17", "Condeixa (POR)", 529, ""],
   [1, 17, 9, "Mafalda Martins Mesquita", "07", "5:18.53", "25m", "11/01/25", "Águas Santas (POR)", 515, ""],
-  [1, 17, 10, "Mariana Martins Costa", "05", "5:19.44", "25m", "21/12/19", "Porto (POR)", 511, ""]
+  [1, 17, 10, "Mariana Martins Costa", "05", "5:19.44", "25m", "21/12/19", "Porto (POR)", 511, ""],
+  [4, 0, 3, "Rafael Rui Sampaio", "09", "25.25", "25m", "14/11/25", "Felgueiras (POR)", 489, ""],
+  [4, 0, 4, "Afonso Oliveira Ribeiro", "10", "25.46", "25m", "11/04/26", "Felgueiras (POR)", 477, ""],
+  [4, 0, 5, "Santiago Carvalho Pereira", "08", "25.66", "25m", "11/04/26", "Felgueiras (POR)", 466, ""],
+  [4, 0, 6, "Rodrigo Saldanha Ferreira", "10", "26.00", "25m", "15/11/25", "Felgueiras (POR)", 448, ""],
+  [4, 0, 7, "Tiago Carvalho Costa", "07", "26.09", "25m", "15/11/25", "Felgueiras (POR)", 443, ""],
+  [4, 0, 8, "Tomas Ferreira Sa", "08", "26.50", "25m", "15/11/25", "Felgueiras (POR)", 423, ""],
+  [4, 0, 9, "Leonardo Freitas Fernandes", "06", "26.56", "25m", "15/11/25", "Felgueiras (POR)", 420, ""],
+  [4, 0, 10, "Leonardo Silva Antunes", "11", "26.80", "25m", "06/12/25", "Estarreja (POR)", 409, ""],
+  [4, 1, 2, "Santiago Carvalho Pereira", "08", "54.46", "25m", "11/04/26", "Felgueiras (POR)", 558, ""],
+  [4, 1, 3, "Rafael Rui Sampaio", "09", "55.00", "25m", "14/11/25", "Felgueiras (POR)", 541, ""],
+  [4, 1, 4, "Afonso Carvalho Monteiro", "10", "56.86", "25m", "20/12/25", "Albufeira (POR)", 490, ""],
+  [4, 1, 5, "Afonso Oliveira Ribeiro", "10", "56.92", "50m", "08/07/26", "Famalicão (POR)", 541, ""],
+  [4, 1, 6, "Rodrigo Saldanha Ferreira", "10", "56.93", "25m", "10/05/26", "Folgosa (Maia) (POR)", 488, ""],
+  [4, 1, 7, "Afonso Carvalho Silva", "05", "57.15", "25m", "20/12/25", "Albufeira (POR)", 483, ""],
+  [4, 1, 8, "Leonardo Freitas Fernandes", "06", "57.59", "50m", "08/07/26", "Famalicão (POR)", 523, ""],
+  [4, 1, 9, "Leonardo Silva Antunes", "11", "58.31", "25m", "14/11/25", "Felgueiras (POR)", 454, ""],
+  [4, 1, 10, "Tiago Carvalho Costa", "07", "58.49", "25m", "14/11/25", "Felgueiras (POR)", 450, ""],
+  [4, 2, 2, "Afonso Carvalho Silva", "05", "1:58.72", "25m", "20/12/25", "Albufeira (POR)", 573, ""],
+  [4, 2, 3, "Afonso Carvalho Monteiro", "10", "1:59.67", "25m", "20/12/25", "Albufeira (POR)", 559, ""],
+  [4, 2, 4, "Rafael Rui Sampaio", "09", "2:00.39", "25m", "15/12/25", "Leiria (POR)", 549, ""],
+  [4, 2, 5, "Santiago Carvalho Pereira", "08", "2:02.06", "25m", "12/04/26", "Felgueiras (POR)", 527, ""],
+  [4, 2, 6, "Santiago Carvalho Pereira", "08", "2:02.97", "25m", "10/01/26", "Águas Santas (POR)", 515, ""],
+  [4, 2, 7, "Henrique Goncalves Lobo", "09", "2:08.81", "25m", "16/11/25", "Felgueiras (POR)", 448, ""],
+  [4, 2, 8, "Joao Miguel Encarnacao", "08", "2:10.71", "50m", "07/07/26", "Famalicão (POR)", 475, ""],
+  [4, 2, 9, "Matheus Tramonti Messuca", "10", "2:14.58", "50m", "07/07/26", "Famalicão (POR)", 435, ""],
+  [4, 2, 10, "Leonardo Silva Antunes", "11", "2:15.74", "50m", "07/03/26", "Póvoa de Varzim (POR)", 424, ""],
+  [4, 3, 3, "Rafael Rui Sampaio", "09", "4:19.23", "25m", "15/11/25", "Felgueiras (POR)", 548, ""],
+  [4, 3, 4, "Rodrigo Ferreira Pereira", "06", "4:26.14", "50m", "06/07/26", "Famalicão (POR)", 564, ""],
+  [4, 3, 5, "Santiago Carvalho Pereira", "08", "4:28.98", "25m", "15/11/25", "Felgueiras (POR)", 491, ""],
+  [4, 3, 6, "Joao Miguel Encarnacao", "08", "4:32.26", "25m", "15/11/25", "Felgueiras (POR)", 473, ""],
+  [4, 3, 7, "Henrique Goncalves Lobo", "09", "4:36.03", "25m", "15/11/25", "Felgueiras (POR)", 454, ""],
+  [4, 3, 8, "Afonso Oliveira Ribeiro", "10", "4:44.49", "50m", "28/02/26", "Póvoa de Varzim (POR)", 462, ""],
+  [4, 3, 9, "Filipe Martins Azevedo", "08", "4:46.09", "50m", "01/03/26", "Póvoa de Varzim (POR)", 454, ""],
+  [4, 3, 10, "Goncalo Sampaio Salgado", "02", "4:48.98", "25m", "15/11/25", "Felgueiras (POR)", 396, ""],
+  [4, 4, 2, "Rodrigo Ferreira Pereira", "06", "9:08.64", "50m", "06/07/26", "Famalicão (POR)", 559, ""],
+  [4, 4, 3, "Santiago Carvalho Pereira", "08", "9:33.82", "50m", "28/02/26", "Póvoa de Varzim (POR)", 489, ""],
+  [4, 4, 4, "Afonso Oliveira Ribeiro", "10", "9:35.77", "50m", "28/02/26", "Póvoa de Varzim (POR)", 484, ""],
+  [4, 4, 5, "Henrique Goncalves Lobo", "09", "9:36.19", "25m", "14/11/25", "Felgueiras (POR)", 446, ""],
+  [4, 4, 6, "Joao Miguel Encarnacao", "08", "9:45.43", "50m", "28/02/26", "Póvoa de Varzim (POR)", 460, ""],
+  [4, 5, 2, "Rodrigo Ferreira Pereira", "06", "17:48.69", "50m", "07/07/26", "Famalicão (POR)", 540, ""],
+  [4, 5, 3, "Henrique Goncalves Lobo", "09", "19:26.15", "50m", "08/03/26", "Póvoa de Varzim (POR)", 416, ""],
+  [4, 6, 3, "Leonardo Silva Antunes", "11", "29.88", "25m", "12/04/26", "Felgueiras (POR)", 405, ""],
+  [4, 6, 4, "Rodrigo Ferreira Pereira", "06", "30.65", "25m", "19/10/25", "Penafiel (POR)", 375, ""],
+  [4, 6, 5, "Matheus Tramonti Messuca", "10", "30.98", "25m", "11/04/26", "Felgueiras (POR)", 363, ""],
+  [4, 6, 6, "Afonso Carvalho Silva", "05", "31.98", "50m", "08/07/26", "Famalicão (POR)", 399, ""],
+  [4, 6, 7, "Afonso Carvalho Monteiro", "10", "32.37", "25m", "09/05/26", "Folgosa (Maia) (POR)", 318, ""],
+  [4, 6, 8, "Miguel Araujo Carrico", "09", "32.83", "25m", "15/11/25", "Felgueiras (POR)", 305, ""],
+  [4, 6, 9, "Henrique Goncalves Lobo", "09", "33.04", "50m", "01/03/26", "Póvoa de Varzim (POR)", 362, ""],
+  [4, 6, 10, "Lucas Rafael Sa", "12", "33.60", "25m", "20/02/26", "Penafiel (POR)", 284, ""],
+  [4, 7, 2, "Rodrigo Saldanha Ferreira", "10", "1:00.95", "25m", "11/04/26", "Felgueiras (POR)", 493, ""],
+  [4, 7, 3, "Leonardo Silva Antunes", "11", "1:03.04", "25m", "11/04/26", "Felgueiras (POR)", 445, ""],
+  [4, 7, 4, "Rodrigo Ferreira Pereira", "06", "1:04.20", "25m", "19/10/25", "Penafiel (POR)", 422, ""],
+  [4, 7, 5, "Matheus Tramonti Messuca", "10", "1:04.39", "25m", "11/04/26", "Felgueiras (POR)", 418, ""],
+  [4, 7, 6, "Afonso Carvalho Monteiro", "10", "1:04.97", "25m", "09/05/26", "Folgosa (Maia) (POR)", 407, ""],
+  [4, 7, 7, "Afonso Carvalho Silva", "05", "1:07.15", "50m", "08/07/26", "Famalicão (POR)", 453, ""],
+  [4, 7, 8, "Miguel Araujo Carrico", "09", "1:08.37", "25m", "16/11/25", "Felgueiras (POR)", 349, ""],
+  [4, 7, 9, "Lucas Rafael Sa", "12", "1:09.59", "25m", "20/02/26", "Penafiel (POR)", 331, ""],
+  [4, 7, 10, "Henrique Goncalves Lobo", "09", "1:11.55", "50m", "28/02/26", "Póvoa de Varzim (POR)", 375, ""],
+  [4, 8, 3, "Matheus Tramonti Messuca", "10", "2:15.44", "25m", "12/04/26", "Felgueiras (POR)", 467, ""],
+  [4, 8, 4, "Afonso Carvalho Silva", "05", "2:17.35", "50m", "08/07/26", "Famalicão (POR)", 541, ""],
+  [4, 8, 5, "Afonso Carvalho Monteiro", "10", "2:18.62", "25m", "19/10/25", "Penafiel (POR)", 436, ""],
+  [4, 8, 6, "Leonardo Silva Antunes", "11", "2:20.38", "25m", "07/12/25", "Estarreja (POR)", 419, ""],
+  [4, 8, 7, "Rodrigo Saldanha Ferreira", "10", "2:21.92", "50m", "01/03/26", "Póvoa de Varzim (POR)", 490, ""],
+  [4, 8, 8, "Miguel Araujo Carrico", "09", "2:25.93", "25m", "15/11/25", "Felgueiras (POR)", 373, ""],
+  [4, 8, 9, "Lucas Rafael Sa", "12", "2:32.83", "25m", "31/01/26", "Felgueiras (POR)", 325, ""],
+  [4, 9, 6, "Afonso Carvalho Monteiro", "10", "32.89", "50m", "07/02/26", "Póvoa de Varzim (POR)", 491, ""],
+  [4, 9, 7, "Tiago Carvalho Costa", "07", "33.40", "25m", "16/11/25", "Felgueiras (POR)", 416, ""],
+  [4, 9, 8, "Filipe Martins Azevedo", "08", "38.56", "50m", "07/05/26", "Póvoa de Varzim (POR)", 304, ""],
+  [4, 9, 9, "Leonardo Silva Antunes", "11", "38.66", "25m", "10/05/26", "Folgosa (Maia) (POR)", 268, ""],
+  [4, 9, 10, "Dinis Araujo Silva", "11", "39.72", "25m", "16/11/25", "Felgueiras (POR)", 247, ""],
+  [4, 10, 4, "Afonso Carvalho Monteiro", "10", "1:09.18", "25m", "10/05/26", "Folgosa (Maia) (POR)", 510, ""],
+  [4, 10, 5, "Rodrigo Ferreira Pereira", "06", "1:09.35", "50m", "28/02/26", "Póvoa de Varzim (POR)", 551, ""],
+  [4, 10, 6, "Francisco Araujo Silva", "06", "1:11.32", "50m", "28/02/26", "Póvoa de Varzim (POR)", 507, ""],
+  [4, 10, 7, "Leonardo Silva Antunes", "11", "1:21.53", "25m", "10/05/26", "Folgosa (Maia) (POR)", 311, ""],
+  [4, 10, 8, "Rodrigo Saldanha Ferreira", "10", "1:24.13", "25m", "10/05/26", "Folgosa (Maia) (POR)", 283, ""],
+  [4, 10, 10, "Matheus Tramonti Messuca", "10", "1:25.67", "25m", "10/05/26", "Folgosa (Maia) (POR)", 268, ""],
+  [4, 11, 1, "Leonardo Freitas Fernandes", "06", "2:19.67", "25m", "21/12/25", "Albufeira (POR)", 626, ""],
+  [4, 11, 4, "Afonso Carvalho Monteiro", "10", "2:30.63", "25m", "18/10/25", "Penafiel (POR)", 499, ""],
+  [4, 11, 5, "Tomas Ferreira Sa", "08", "2:41.26", "25m", "15/11/25", "Felgueiras (POR)", 407, ""],
+  [4, 11, 7, "Dinis Araujo Silva", "11", "3:19.78", "50m", "07/05/26", "Póvoa de Varzim (POR)", 247, ""],
+  [4, 12, 3, "Rodrigo Saldanha Ferreira", "10", "26.76", "25m", "11/04/26", "Felgueiras (POR)", 505, ""],
+  [4, 12, 4, "Afonso Carvalho Silva", "05", "26.98", "25m", "20/12/25", "Albufeira (POR)", 493, ""],
+  [4, 12, 5, "Santiago Carvalho Pereira", "08", "27.68", "25m", "18/10/25", "Penafiel (POR)", 456, ""],
+  [4, 12, 6, "Afonso Carvalho Monteiro", "10", "28.19", "25m", "12/04/26", "Felgueiras (POR)", 432, ""],
+  [4, 12, 7, "Leonardo Freitas Fernandes", "06", "28.59", "25m", "25/04/26", "Bragança (POR)", 414, ""],
+  [4, 12, 8, "Filipe Martins Azevedo", "08", "29.21", "25m", "18/10/25", "Penafiel (POR)", 388, ""],
+  [4, 12, 9, "Tomas Ferreira Sa", "08", "29.99", "25m", "18/10/25", "Penafiel (POR)", 359, ""],
+  [4, 12, 10, "Leonardo Silva Antunes", "11", "30.27", "50m", "01/03/26", "Póvoa de Varzim (POR)", 398, ""],
+  [4, 13, 3, "Rodrigo Saldanha Ferreira", "10", "59.44", "25m", "12/04/26", "Felgueiras (POR)", 516, ""],
+  [4, 13, 4, "Afonso Carvalho Silva", "05", "59.99", "25m", "21/12/25", "Albufeira (POR)", 502, ""],
+  [4, 13, 5, "Afonso Carvalho Monteiro", "10", "1:01.82", "25m", "11/04/26", "Felgueiras (POR)", 458, ""],
+  [4, 13, 6, "Santiago Carvalho Pereira", "08", "1:03.77", "50m", "08/03/26", "Póvoa de Varzim (POR)", 466, ""],
+  [4, 13, 7, "Filipe Martins Azevedo", "08", "1:04.22", "25m", "15/11/25", "Felgueiras (POR)", 409, ""],
+  [4, 13, 8, "Leonardo Silva Antunes", "11", "1:05.63", "25m", "15/11/25", "Felgueiras (POR)", 383, ""],
+  [4, 13, 9, "Joao Miguel Encarnacao", "08", "1:08.49", "25m", "19/10/25", "Penafiel (POR)", 337, ""],
+  [4, 13, 10, "Lucas Rafael Sa", "12", "1:13.21", "25m", "13/12/25", "Lousada (POR)", 276, ""],
+  [4, 14, 2, "Afonso Carvalho Monteiro", "10", "2:16.75", "50m", "10/06/26", "Porto (POR)", 525, ""],
+  [4, 14, 3, "Rodrigo Saldanha Ferreira", "10", "2:18.01", "25m", "08/12/25", "Estarreja (POR)", 464, ""],
+  [4, 15, 2, "Leonardo Freitas Fernandes", "06", "1:02.94", "25m", "14/11/25", "Felgueiras (POR)", 479, ""],
+  [4, 15, 3, "Afonso Oliveira Ribeiro", "10", "1:03.53", "25m", "14/11/25", "Felgueiras (POR)", 466, ""],
+  [4, 15, 4, "Filipe Martins Azevedo", "08", "1:05.01", "25m", "14/11/25", "Felgueiras (POR)", 435, ""],
+  [4, 15, 5, "Tomas Ferreira Sa", "08", "1:06.49", "25m", "14/11/25", "Felgueiras (POR)", 407, ""],
+  [4, 15, 6, "Santiago Carvalho Pereira", "08", "1:07.93", "25m", "14/11/25", "Felgueiras (POR)", 381, ""],
+  [4, 15, 7, "Joao Miguel Encarnacao", "08", "1:10.42", "25m", "14/11/25", "Felgueiras (POR)", 342, ""],
+  [4, 15, 9, "Joao Lucas Veloso", "15", "1:32.32", "25m", "13/06/26", "Folgosa (Maia) (POR)", 152, ""],
+  [4, 15, 10, "Jose Diogo Pardal", "15", "1:42.04", "25m", "13/06/26", "Folgosa (Maia) (POR)", 112, ""],
+  [4, 16, 2, "Francisco Araujo Silva", "06", "2:09.33", "50m", "27/02/26", "Póvoa de Varzim (POR)", 661, ""],
+  [4, 16, 4, "Leonardo Freitas Fernandes", "06", "2:21.02", "50m", "06/07/26", "Famalicão (POR)", 510, ""],
+  [4, 16, 5, "Filipe Martins Azevedo", "08", "2:22.94", "25m", "18/10/25", "Penafiel (POR)", 441, ""],
+  [4, 16, 6, "Afonso Oliveira Ribeiro", "10", "2:23.52", "25m", "18/10/25", "Penafiel (POR)", 436, ""],
+  [4, 16, 7, "Rodrigo Saldanha Ferreira", "10", "2:24.69", "25m", "09/05/26", "Folgosa (Maia) (POR)", 426, ""],
+  [4, 16, 8, "Leonardo Silva Antunes", "11", "2:26.65", "25m", "09/05/26", "Folgosa (Maia) (POR)", 409, ""],
+  [4, 16, 9, "Matheus Tramonti Messuca", "10", "2:30.63", "25m", "09/05/26", "Folgosa (Maia) (POR)", 377, ""],
+  [4, 16, 10, "Lucas Rafael Sa", "12", "2:31.39", "25m", "01/02/26", "Felgueiras (POR)", 372, ""],
+  [4, 17, 2, "Afonso Carvalho Monteiro", "10", "4:40.62", "25m", "11/04/26", "Felgueiras (POR)", 585, ""],
+  [4, 17, 3, "Francisco Araujo Silva", "06", "4:46.92", "50m", "07/07/26", "Famalicão (POR)", 603, ""],
+  [4, 17, 4, "Filipe Martins Azevedo", "08", "5:22.02", "50m", "07/07/26", "Famalicão (POR)", 427, ""],
+  [5, 0, 2, "Ana Carolina Cruz", "08", "28.36", "25m", "11/04/26", "Felgueiras (POR)", 521, ""],
+  [5, 0, 3, "Mafalda Martins Mesquita", "07", "28.48", "25m", "18/10/25", "Penafiel (POR)", 515, ""],
+  [5, 0, 4, "Beatriz Silva Coentrao", "08", "28.59", "25m", "13/12/25", "Leiria (POR)", 509, ""],
+  [5, 0, 6, "Ana Moreira Antunes", "09", "30.13", "25m", "18/10/25", "Penafiel (POR)", 435, ""],
+  [5, 0, 7, "Catarina Miguel Encarnacao", "11", "30.96", "50m", "20/03/26", "Coimbra (POR)", 443, ""],
+  [5, 0, 8, "Maria Barroso Lopes", "11", "31.44", "25m", "15/11/25", "Felgueiras (POR)", 382, ""],
+  [5, 1, 1, "Mafalda Martins Mesquita", "07", "59.31", "25m", "30/11/25", "Tomar (POR)", 596, ""],
+  [5, 1, 4, "Beatriz Silva Coentrao", "08", "1:02.33", "25m", "14/11/25", "Felgueiras (POR)", 514, ""],
+  [5, 1, 6, "Ines Gomes Ribeiro", "12", "1:05.62", "25m", "31/01/26", "Felgueiras (POR)", 440, ""],
+  [5, 1, 8, "Catarina Miguel Encarnacao", "11", "1:06.99", "50m", "21/03/26", "Coimbra (POR)", 459, ""],
+  [5, 1, 10, "Maria Barroso Lopes", "11", "1:08.38", "25m", "14/11/25", "Felgueiras (POR)", 389, ""],
+  [5, 2, 1, "Mafalda Martins Mesquita", "07", "2:05.64", "25m", "30/11/25", "Tomar (POR)", 659, ""],
+  [5, 2, 2, "Leonor Cunha Alves", "12", "2:14.30", "25m", "11/04/26", "Felgueiras (POR)", 539, ""],
+  [5, 2, 3, "Ana Carolina Cruz", "08", "2:16.60", "25m", "16/11/25", "Felgueiras (POR)", 513, ""],
+  [5, 2, 5, "Catarina Miguel Encarnacao", "11", "2:23.74", "25m", "16/11/25", "Felgueiras (POR)", 440, ""],
+  [5, 2, 6, "Mafalda Brandao Reis", "09", "2:23.94", "25m", "11/04/26", "Felgueiras (POR)", 438, ""],
+  [5, 2, 7, "Ines Gomes Ribeiro", "12", "2:25.67", "25m", "01/02/26", "Felgueiras (POR)", 423, ""],
+  [5, 2, 10, "Constanca Faria Gomes", "11", "2:29.78", "25m", "16/11/25", "Felgueiras (POR)", 389, ""],
+  [5, 3, 1, "Mafalda Martins Mesquita", "07", "4:27.72", "25m", "30/11/25", "Tomar (POR)", 636, ""],
+  [5, 3, 2, "Ana Carolina Cruz", "08", "4:50.02", "25m", "16/11/25", "Felgueiras (POR)", 500, ""],
+  [5, 3, 3, "Leonor Cunha Alves", "12", "4:52.34", "25m", "01/02/26", "Felgueiras (POR)", 488, ""],
+  [5, 3, 4, "Mafalda Brandao Reis", "09", "5:08.39", "25m", "15/11/25", "Felgueiras (POR)", 416, ""],
+  [5, 3, 8, "Catarina Miguel Encarnacao", "11", "5:16.23", "50m", "01/03/26", "Póvoa de Varzim (POR)", 406, ""],
+  [5, 3, 10, "Ines Gomes Ribeiro", "12", "5:20.81", "25m", "14/12/25", "Lousada (POR)", 369, ""],
+  [5, 4, 1, "Mafalda Martins Mesquita", "07", "9:19.92", "25m", "15/12/25", "Leiria (POR)", 606, ""],
+  [5, 4, 2, "Ana Carolina Cruz", "08", "9:49.29", "25m", "01/12/25", "Tomar (POR)", 520, ""],
+  [5, 4, 3, "Mafalda Brandao Reis", "09", "10:31.76", "25m", "16/11/25", "Felgueiras (POR)", 422, ""],
+  [5, 4, 10, "Joana Veloso Machado", "14", "14:07.79", "25m", "13/06/26", "Folgosa (Maia) (POR)", 174, ""],
+  [5, 5, 1, "Mafalda Martins Mesquita", "07", "17:36.69", "25m", "15/12/25", "Leiria (POR)", 634, ""],
+  [5, 5, 2, "Mafalda Brandao Reis", "09", "20:56.46", "50m", "08/03/26", "Póvoa de Varzim (POR)", 393, ""],
+  [5, 6, 1, "Mafalda Martins Mesquita", "07", "30.61", "25m", "16/12/25", "Leiria (POR)", 559, ""],
+  [5, 6, 5, "Leonor Cunha Alves", "12", "34.65", "25m", "10/05/26", "Folgosa (Maia) (POR)", 386, ""],
+  [5, 6, 6, "Catarina Miguel Encarnacao", "11", "35.35", "25m", "11/04/26", "Felgueiras (POR)", 363, ""],
+  [5, 7, 1, "Mafalda Martins Mesquita", "07", "1:04.75", "25m", "16/11/25", "Felgueiras (POR)", 580, ""],
+  [5, 7, 3, "Ines Gomes Ribeiro", "12", "1:10.47", "25m", "20/02/26", "Penafiel (POR)", 450, ""],
+  [5, 7, 4, "Ana Moreira Antunes", "09", "1:12.06", "50m", "28/03/26", "Coimbra (POR)", 498, ""],
+  [5, 7, 5, "Leonor Cunha Alves", "12", "1:12.08", "25m", "10/05/26", "Folgosa (Maia) (POR)", 420, ""],
+  [5, 7, 6, "Catarina Miguel Encarnacao", "11", "1:15.94", "25m", "12/04/26", "Felgueiras (POR)", 359, ""],
+  [5, 8, 1, "Mafalda Martins Mesquita", "07", "2:20.74", "25m", "15/11/25", "Felgueiras (POR)", 579, ""],
+  [5, 8, 2, "Ines Gomes Ribeiro", "12", "2:33.56", "25m", "22/02/26", "Penafiel (POR)", 446, ""],
+  [5, 8, 3, "Beatriz Silva Coentrao", "08", "2:35.40", "25m", "10/01/26", "Águas Santas (POR)", 430, ""],
+  [5, 8, 6, "Catarina Miguel Encarnacao", "11", "2:45.60", "25m", "15/11/25", "Felgueiras (POR)", 355, ""],
+  [5, 9, 4, "Maria Barroso Lopes", "11", "40.63", "25m", "16/11/25", "Felgueiras (POR)", 340, ""],
+  [5, 9, 7, "Carolina Miguel Fernandes", "12", "43.16", "25m", "31/01/26", "Felgueiras (POR)", 284, ""],
+  [5, 9, 9, "Constanca Faria Gomes", "11", "43.48", "25m", "19/10/25", "Penafiel (POR)", 277, ""],
+  [5, 9, 10, "Ines Gomes Ribeiro", "12", "43.70", "25m", "09/05/26", "Folgosa (Maia) (POR)", 273, ""],
+  [5, 10, 3, "Ana Carolina Cruz", "08", "1:21.10", "25m", "14/11/25", "Felgueiras (POR)", 454, ""],
+  [5, 10, 7, "Ines Gomes Ribeiro", "12", "1:30.96", "25m", "09/05/26", "Folgosa (Maia) (POR)", 322, ""],
+  [5, 10, 8, "Maria Barroso Lopes", "11", "1:31.30", "25m", "09/05/26", "Folgosa (Maia) (POR)", 318, ""],
+  [5, 10, 9, "Carolina Miguel Fernandes", "12", "1:32.41", "25m", "31/01/26", "Felgueiras (POR)", 307, ""],
+  [5, 11, 2, "Ana Carolina Cruz", "08", "2:55.05", "25m", "15/11/25", "Felgueiras (POR)", 433, ""],
+  [5, 11, 3, "Leonor Cunha Alves", "12", "2:55.72", "25m", "25/10/25", "Vila Mea (POR)", 428, ""],
+  [5, 11, 4, "Carolina Miguel Fernandes", "12", "3:14.27", "25m", "31/01/26", "Felgueiras (POR)", 317, ""],
+  [5, 11, 5, "Constanca Faria Gomes", "11", "3:17.38", "25m", "19/10/25", "Penafiel (POR)", 302, ""],
+  [5, 12, 2, "Leonor Cunha Alves", "12", "32.08", "25m", "21/02/26", "Penafiel (POR)", 404, ""],
+  [5, 12, 3, "Mafalda Martins Mesquita", "07", "32.57", "25m", "18/10/25", "Penafiel (POR)", 386, ""],
+  [5, 12, 4, "Ana Moreira Antunes", "09", "32.58", "50m", "01/03/26", "Póvoa de Varzim (POR)", 421, ""],
+  [5, 12, 6, "Ines Gomes Ribeiro", "12", "33.61", "25m", "21/02/26", "Penafiel (POR)", 351, ""],
+  [5, 12, 10, "Maria Ribeiro Oliveira", "13", "36.62", "25m", "09/05/26", "Folgosa (Maia) (POR)", 271, ""],
+  [5, 13, 2, "Leonor Cunha Alves", "12", "1:10.59", "25m", "09/05/26", "Folgosa (Maia) (POR)", 416, ""],
+  [5, 13, 3, "Beatriz Silva Coentrao", "08", "1:10.75", "25m", "01/12/25", "Tomar (POR)", 413, ""],
+  [5, 13, 5, "Ana Moreira Antunes", "09", "1:13.65", "25m", "15/11/25", "Felgueiras (POR)", 366, ""],
+  [5, 13, 8, "Ines Gomes Ribeiro", "12", "1:17.69", "25m", "09/05/26", "Folgosa (Maia) (POR)", 312, ""],
+  [5, 14, 1, "Ana Moreira Antunes", "09", "2:43.41", "25m", "30/11/25", "Tomar (POR)", 389, ""],
+  [5, 15, 1, "Maria Barroso Lopes", "11", "1:17.96", "25m", "14/11/25", "Felgueiras (POR)", 353, ""],
+  [5, 15, 4, "Matilde Reis Campelos", "15", "1:33.34", "25m", "14/06/26", "Folgosa (Maia) (POR)", 205, ""],
+  [5, 15, 6, "Sofia Magalhaes Lopes", "15", "1:37.97", "25m", "14/06/26", "Folgosa (Maia) (POR)", 177, ""],
+  [5, 15, 7, "Katerina Mandziak", "15", "1:40.91", "25m", "14/06/26", "Folgosa (Maia) (POR)", 162, ""],
+  [5, 15, 8, "Carolina Araujo Pereira", "15", "1:41.47", "25m", "14/06/26", "Folgosa (Maia) (POR)", 160, ""],
+  [5, 15, 9, "Dora Luis Paiva", "14", "1:42.70", "25m", "15/02/26", "Paços de Ferreira (POR)", 154, ""],
+  [5, 15, 10, "Clara Araujo Silva", "15", "1:49.47", "25m", "14/06/26", "Folgosa (Maia) (POR)", 127, ""],
+  [5, 16, 1, "Leonor Cunha Alves", "12", "2:33.04", "25m", "10/05/26", "Folgosa (Maia) (POR)", 502, ""],
+  [5, 16, 2, "Ana Moreira Antunes", "09", "2:33.31", "25m", "30/11/25", "Tomar (POR)", 499, ""],
+  [5, 16, 6, "Ines Gomes Ribeiro", "12", "2:43.72", "25m", "21/02/26", "Penafiel (POR)", 410, ""],
+  [5, 16, 7, "Beatriz Silva Coentrao", "08", "2:43.99", "50m", "08/03/26", "Póvoa de Varzim (POR)", 450, ""],
+  [5, 17, 1, "Ana Moreira Antunes", "09", "5:24.83", "25m", "01/12/25", "Tomar (POR)", 486, ""]
 ];
 const rkG = document.getElementById("rk-esc"), rkGen = document.getElementById("rk-gen");
 const rkP = document.getElementById("rk-prova"), rkA = document.getElementById("rk-atl"), rkS = document.getElementById("rk-ep");
@@ -3124,15 +3318,15 @@ const rkEscAtual = () => {
   if (!sel.length || sel[0][0] === "abs") return rkEscs.find(x => x[0] === "abs");
   return [sel.map(x => x[0]).join("+"), sel.map(x => x[1]).join(" + "), i => sel.some(x => x[2](i))];
 };
-// tempos do escalão e género escolhidos, com o lugar de cada um (melhor tempo de cada atleta por prova)
-function rkTempos(g) {
-  const [k, , ok] = rkEscAtual();
-  if (k === "abs") return ranking.filter(r => r[0] === g).map(r => ({ r, pos: r[2] }));
-  const l = ranking.filter(r => r[0] % 2 === g && ok(rkIdade(r))).map(r => ({ r, pos: null }));
+// tempos do género, escalões e épocas escolhidos; o lugar é calculado dentro da escolha
+// (melhor tempo de cada atleta por prova; só o top 10, porque fora dele os dados não estão completos)
+function rkTempos(g, eps = []) {
+  const ok = rkEscAtual()[2];
+  const l = ranking.filter(r => r[0] % 2 === g && ok(rkIdade(r)) && (!eps.length || eps.includes(rkEpoca(r[7])))).map(r => ({ r, pos: null }));
   rkProvas.forEach((_, p) => {
     const vistos = new Set();
     l.filter(x => x.r[1] === p).sort((a, b) => rkSeg(a.r[5]) - rkSeg(b.r[5]))
-      .forEach(x => { if (!vistos.has(x.r[3])) { vistos.add(x.r[3]); x.pos = vistos.size; } });
+      .forEach(x => { if (!vistos.has(x.r[3])) { vistos.add(x.r[3]); if (vistos.size <= 10) x.pos = vistos.size; } });
   });
   return l;
 }
@@ -3149,20 +3343,20 @@ function showRanking() {
   const nomeEsc = `${rkEscAtual()[1]} ${rkGenNome[g]}`;
   const head = document.getElementById("rk-head"), body = document.getElementById("rk-rows");
   const cel = r => `<td class="num">${r[5]}</td><td>${r[6]}</td><td class="num">${r[7]}</td><td>${escH(r[8].replace(/ \(POR\)$/, ""))}</td><td class="num">${r[9] || "–"}</td>`;
-  const todos = rkTempos(g);
-  if (a || eps.length || p < 0) {
-    const l = todos.filter(({ r }) => (p < 0 || r[1] === p) && (!a || r[3] === a) && (!eps.length || eps.includes(rkEpoca(r[7]))))
+  const todos = rkTempos(g, eps);
+  const epTxt = rkS.querySelector("[data-todas]:checked") ? "todas as épocas" : eps.length ? `${eps.length > 1 ? "épocas" : "época"} ${eps.slice().sort().join(" + ")}` : "";
+  if (a || p < 0) {
+    const l = todos.filter(({ r }) => (p < 0 || r[1] === p) && (!a || r[3] === a))
       .sort((x, y) => eps.length && !a && p < 0 ? rkData(y.r[7]).localeCompare(rkData(x.r[7])) : x.r[1] - y.r[1] || rkSeg(x.r[5]) - rkSeg(y.r[5]));
     const partes = [a ? `${a}${l.length ? ` (${rkNasc(l[0].r)})` : ""}` : nomeEsc];
     if (p >= 0) partes.push(rkProvas[p]);
-    if (rkS.querySelector("[data-todas]:checked")) partes.push("todas as épocas");
-    else if (eps.length) partes.push(`${eps.length > 1 ? "épocas" : "época"} ${eps.slice().sort().join(" + ")}`);
+    if (epTxt) partes.push(epTxt);
     document.getElementById("rk-count").textContent = `${partes.join(" · ")}: ${l.length} ${l.length === 1 ? "tempo" : "tempos"}`;
     head.innerHTML = `<tr><th>Prova</th><th class="num">Lugar</th>${a ? "" : "<th>Nome</th>"}<th class="num">Tempo</th><th>Pisc.</th><th class="num">Data</th><th>Local</th><th class="num">Pts</th></tr>`;
     body.innerHTML = l.map(({ r, pos }) => `<tr><td>${rkProvas[r[1]]}</td><td class="num">${pos ? pos + ".º" : "–"}</td>${a ? "" : `<td>${escH(r[3])}</td>`}${cel(r)}</tr>`).join("") || `<tr><td colspan="8">Sem tempos com esta escolha.</td></tr>`;
   } else {
     const l = todos.filter(x => x.r[1] === p && x.pos).sort((x, y) => x.pos - y.pos);
-    document.getElementById("rk-count").textContent = `${nomeEsc} · ${rkProvas[p]}: ${l.length} ${l.length === 1 ? "atleta" : "atletas"}`;
+    document.getElementById("rk-count").textContent = `${[nomeEsc, rkProvas[p], epTxt].filter(Boolean).join(" · ")}: top ${l.length}`;
     head.innerHTML = `<tr><th class="num">#</th><th>Nome</th><th class="num">Ano</th><th class="num">Tempo</th><th>Pisc.</th><th class="num">Data</th><th>Local</th><th class="num">Pts</th></tr>`;
     body.innerHTML = l.map(({ r, pos }) => `<tr><td class="num">${pos}</td><td>${escH(r[3])}${r[10] ? ` <small>(${r[10]})</small>` : ""}</td><td class="num">${rkNasc(r)}</td>${cel(r)}</tr>`).join("") || '<tr><td colspan="8">Sem tempos nesta prova.</td></tr>';
   }
@@ -3186,7 +3380,7 @@ const esNadoNome = ["Costas", "Bruços", "Mariposa", "Livres"];
 // melhor tempo de cada atleta do género g (0 masc., 1 fem.) no escalão escolhido
 function esMelhores(g, prova) {
   const eps = rkEpocas(), pisc = esPisc.value, best = new Map();
-  rkTempos(g).map(x => x.r).filter(r => r[1] === prova && (!pisc || r[6] === pisc) && (!eps.length || eps.includes(rkEpoca(r[7]))))
+  rkTempos(g, eps).map(x => x.r).filter(r => r[1] === prova && (!pisc || r[6] === pisc))
     .forEach(r => { const t = esSeg(r[5]); if (!best.has(r[3]) || t < best.get(r[3]).t) best.set(r[3], { n: r[3], t, tt: r[5], esc: g }); });
   return [...best.values()].sort((a, b) => a.t - b.t);
 }
