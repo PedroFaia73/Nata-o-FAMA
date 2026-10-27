@@ -774,10 +774,13 @@
   <!-- TREINADORES -->
   <section id="ranking">
     <h2>Ranking do Clube</h2>
-    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos são juvenis, juniores e seniores; Infantis são 12–13 anos. Escolhe o escalão e a prova, um atleta para ver todas as suas provas, ou uma ou mais épocas para ver os tempos conseguidos nessa altura. Os filtros funcionam juntos.</p>
+    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos são juvenis, juniores e seniores; Infantis são 12–13 anos. Escolhe o escalão, o género e a prova, um atleta para ver todas as suas provas, ou uma ou mais épocas para ver os tempos conseguidos nessa altura. Os filtros funcionam juntos.</p>
     <div class="pickers">
       <label>Escalão
-        <select id="rk-esc"><option value="0">Absolutos Masc.</option><option value="1">Absolutos Fem.</option><option value="2">Infantis Masc.</option><option value="3">Infantis Fem.</option></select>
+        <select id="rk-esc"><option value="0">Absolutos</option><option value="2">Infantis</option></select>
+      </label>
+      <label>Género
+        <select id="rk-gen"><option value="0">Masculino</option><option value="1">Feminino</option></select>
       </label>
       <label>Prova
         <select id="rk-prova"><option value="">Todas as provas</option><option value="0" selected>50 Livres</option><option value="1">100 Livres</option><option value="2">200 Livres</option><option value="3">400 Livres</option><option value="4">800 Livres</option><option value="5">1500 Livres</option><option value="6">50 Costas</option><option value="7">100 Costas</option><option value="8">200 Costas</option><option value="9">50 Bruços</option><option value="10">100 Bruços</option><option value="11">200 Bruços</option><option value="12">50 Mariposa</option><option value="13">100 Mariposa</option><option value="14">200 Mariposa</option><option value="15">100 Estilos</option><option value="16">200 Estilos</option><option value="17">400 Estilos</option></select>
@@ -3084,7 +3087,10 @@ const ranking = [
   [1, 17, 9, "Mafalda Martins Mesquita", "07", "5:18.53", "25m", "11/01/25", "Águas Santas (POR)", 515, ""],
   [1, 17, 10, "Mariana Martins Costa", "05", "5:19.44", "25m", "21/12/19", "Porto (POR)", 511, ""]
 ];
-const rkE = document.getElementById("rk-esc"), rkP = document.getElementById("rk-prova"), rkA = document.getElementById("rk-atl"), rkS = document.getElementById("rk-ep");
+const rkG = document.getElementById("rk-esc"), rkGen = document.getElementById("rk-gen");
+// escalão + género combinados no índice de rkEsc (0–3)
+const rkE = { get value() { return +rkG.value + +rkGen.value; }, addEventListener(t, f) { rkG.addEventListener(t, f); rkGen.addEventListener(t, f); } };
+const rkP = document.getElementById("rk-prova"), rkA = document.getElementById("rk-atl"), rkS = document.getElementById("rk-ep");
 const rkAno = (e, v) => e < 2 ? `${+v > 30 ? "19" : "20"}${v}` : `${v} anos`;
 // época desportiva (set.–ago.) a partir da data dd/mm/aa
 const rkEpoca = dt => { const [, m, a] = dt.split("/").map(Number); const y = 2000 + a - (m < 9 ? 1 : 0); return `${y}/${String((y + 1) % 100).padStart(2, "0")}`; };
