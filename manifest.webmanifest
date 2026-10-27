@@ -1,0 +1,16 @@
+{
+  "name": "GDNF · Planificação 2026/27",
+  "short_name": "GDNF",
+  "description": "Planificação geral da época do Grupo Desportivo de Natação de Famalicão.",
+  "lang": "pt-PT",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0d2340",
+  "theme_color": "#0d2340",
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "img/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
