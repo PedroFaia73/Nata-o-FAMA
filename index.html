@@ -236,6 +236,7 @@
   #rk-ep span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
   #rk-ep input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
   #rk-ep input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
+  .es-list { padding-left: 16px; } .es-list li { margin-bottom: 8px; } .es-list b { color: var(--text); }
 </style>
 </head>
 <body>
@@ -773,10 +774,13 @@
   <!-- TREINADORES -->
   <section id="ranking">
     <h2>Ranking do Clube</h2>
-    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos são juvenis, juniores e seniores; Infantis são 12–13 anos. Escolhe o escalão e a prova, um atleta para ver todas as suas provas, ou uma ou mais épocas para ver os tempos conseguidos nessa altura. Os filtros funcionam juntos.</p>
+    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos são juvenis, juniores e seniores; Infantis são 12–13 anos. Escolhe o escalão, o género e a prova, um atleta para ver todas as suas provas, ou uma ou mais épocas para ver os tempos conseguidos nessa altura. Os filtros funcionam juntos.</p>
     <div class="pickers">
       <label>Escalão
-        <select id="rk-esc"><option value="0">Absolutos Masc.</option><option value="1">Absolutos Fem.</option><option value="2">Infantis Masc.</option><option value="3">Infantis Fem.</option></select>
+        <select id="rk-esc"><option value="0">Absolutos</option><option value="2">Infantis</option></select>
+      </label>
+      <label>Género
+        <select id="rk-gen"><option value="0">Masculino</option><option value="1">Feminino</option></select>
       </label>
       <label>Prova
         <select id="rk-prova"><option value="">Todas as provas</option><option value="0" selected>50 Livres</option><option value="1">100 Livres</option><option value="2">200 Livres</option><option value="3">400 Livres</option><option value="4">800 Livres</option><option value="5">1500 Livres</option><option value="6">50 Costas</option><option value="7">100 Costas</option><option value="8">200 Costas</option><option value="9">50 Bruços</option><option value="10">100 Bruços</option><option value="11">200 Bruços</option><option value="12">50 Mariposa</option><option value="13">100 Mariposa</option><option value="14">200 Mariposa</option><option value="15">100 Estilos</option><option value="16">200 Estilos</option><option value="17">400 Estilos</option></select>
@@ -797,6 +801,16 @@
       </table>
     </div>
     <p class="note-line">Fonte: rankings top 10 do clube (27/10/2026). Pts = pontos FINA. Nas Infantis a coluna Idade é a idade na época da prova; nos Absolutos é o ano de nascimento.</p>
+
+    <h3 id="estafetas">Melhores estafetas</h3>
+    <p class="lead">As estafetas mais rápidas possíveis com o melhor tempo de cada atleta nas épocas escolhidas acima (sem épocas escolhidas, usa todos os tempos). Usa o grupo do escalão escolhido (Absolutos ou Infantis). Nas estafetas de estilos é escolhida a melhor combinação, com um atleta por estilo e sem repetir.</p>
+    <div class="pickers">
+      <label>Piscina
+        <select id="es-pisc"><option value="25m">25 m</option><option value="50m">50 m</option><option value="">Juntar 25 m e 50 m</option></select>
+      </label>
+    </div>
+    <div class="grid" id="es-grid"></div>
+    <p class="note-line">Atenção: só há dados dos 10 melhores de sempre em cada prova, por isso pode faltar quem não está no ranking (por exemplo, atletas atuais que ainda não entraram no top 10). O tempo é a soma dos tempos individuais, sem contar as partidas lançadas.</p>
   </section>
 
   <section id="treinadores">
@@ -3073,7 +3087,10 @@ const ranking = [
   [1, 17, 9, "Mafalda Martins Mesquita", "07", "5:18.53", "25m", "11/01/25", "Águas Santas (POR)", 515, ""],
   [1, 17, 10, "Mariana Martins Costa", "05", "5:19.44", "25m", "21/12/19", "Porto (POR)", 511, ""]
 ];
-const rkE = document.getElementById("rk-esc"), rkP = document.getElementById("rk-prova"), rkA = document.getElementById("rk-atl"), rkS = document.getElementById("rk-ep");
+const rkG = document.getElementById("rk-esc"), rkGen = document.getElementById("rk-gen");
+// escalão + género combinados no índice de rkEsc (0–3)
+const rkE = { get value() { return +rkG.value + +rkGen.value; }, addEventListener(t, f) { rkG.addEventListener(t, f); rkGen.addEventListener(t, f); } };
+const rkP = document.getElementById("rk-prova"), rkA = document.getElementById("rk-atl"), rkS = document.getElementById("rk-ep");
 const rkAno = (e, v) => e < 2 ? `${+v > 30 ? "19" : "20"}${v}` : `${v} anos`;
 // época desportiva (set.–ago.) a partir da data dd/mm/aa
 const rkEpoca = dt => { const [, m, a] = dt.split("/").map(Number); const y = 2000 + a - (m < 9 ? 1 : 0); return `${y}/${String((y + 1) % 100).padStart(2, "0")}`; };
@@ -3112,6 +3129,63 @@ rkA.addEventListener("change", showRanking);
 rkS.addEventListener("change", showRanking);
 rkAtletas();
 showRanking();
+
+// Melhores estafetas a partir do ranking
+const esPisc = document.getElementById("es-pisc");
+const esSeg = t => t.split(":").reduce((a, x) => a * 60 + parseFloat(x), 0);
+const esFmt = x => { const m = Math.floor(x / 60), r = (x - m * 60).toFixed(2); return m ? `${m}:${r.padStart(5, "0")}` : r; };
+const esTipos = [
+  ["4x50 Livres", [0, 0, 0, 0]], ["4x100 Livres", [1, 1, 1, 1]], ["4x200 Livres", [2, 2, 2, 2]],
+  ["4x50 Estilos", [6, 9, 12, 0]], ["4x100 Estilos", [7, 10, 13, 1]]
+];
+const esNadoNome = ["Costas", "Bruços", "Mariposa", "Livres"];
+function esMelhores(esc, prova) {
+  const eps = rkEpocas(), pisc = esPisc.value, best = new Map();
+  ranking.filter(r => r[0] === esc && r[1] === prova && (!pisc || r[6] === pisc) && (!eps.length || eps.includes(rkEpoca(r[7]))))
+    .forEach(r => { const t = esSeg(r[5]); if (!best.has(r[3]) || t < best.get(r[3]).t) best.set(r[3], { n: r[3], t, tt: r[5], esc }); });
+  return [...best.values()].sort((a, b) => a.t - b.t);
+}
+function esLivres(provas, escs) {
+  // escs: lista de escalões e quantos de cada, ex. [[0,4]] ou [[0,2],[1,2]]
+  const ord = escs.flatMap(([e, k]) => esMelhores(e, provas[0]).slice(0, k));
+  return ord.length === 4 ? ord : null;
+}
+function esEstilos(provas, escs) {
+  const cand = provas.map(p => escs.flatMap(([e]) => esMelhores(e, p).slice(0, 8)));
+  const quota = Object.fromEntries(escs.map(([e, k]) => [e, k]));
+  let melhor = null;
+  const rec = (i, usados, cont, soma, sel) => {
+    if (melhor && soma >= melhor.soma) return;
+    if (i === 4) { melhor = { soma, sel: sel.slice() }; return; }
+    for (const c of cand[i]) {
+      const key = c.esc + "|" + c.n;
+      if (usados.has(key) || (cont[c.esc] || 0) >= quota[c.esc]) continue;
+      usados.add(key); cont[c.esc] = (cont[c.esc] || 0) + 1; sel.push(c);
+      rec(i + 1, usados, cont, soma + c.t, sel);
+      sel.pop(); cont[c.esc]--; usados.delete(key);
+    }
+  };
+  rec(0, new Set(), {}, 0, []);
+  return melhor && melhor.sel;
+}
+function showEstafetas() {
+  const base = +rkE.value < 2 ? 0 : 2, grupo = base ? "Infantis" : "Absolutos";
+  const generos = [["Masculinos", [[base, 4]]], ["Femininos", [[base + 1, 4]]], ["Mistas (2M + 2F)", [[base, 2], [base + 1, 2]]]];
+  document.getElementById("es-grid").innerHTML = esTipos.map(([nome, provas]) => {
+    const estilos = provas[0] !== provas[1];
+    const linhas = generos.map(([g, escs]) => {
+      const sel = estilos ? esEstilos(provas, escs) : esLivres(provas, escs);
+      if (!sel) return `<li><b>${g}:</b> <span class="sub">sem atletas suficientes</span></li>`;
+      const tot = sel.reduce((a, c) => a + c.t, 0);
+      return `<li><b>${g}: ${esFmt(tot)}</b><br><span class="sub">${sel.map((c, i) => `${estilos ? esNadoNome[i] + " – " : ""}${escH(c.n)}${escs.length > 1 ? (c.esc === base ? " (M)" : " (F)") : ""} ${c.tt}`).join(" · ")}</span></li>`;
+    }).join("");
+    return `<article class="card st"><header><span class="st-n">${nome}</span><span class="tipo t-ritmo">${grupo}</span></header><ul class="pp-list es-list">${linhas}</ul></article>`;
+  }).join("");
+}
+esPisc.addEventListener("change", showEstafetas);
+rkE.addEventListener("change", showEstafetas);
+rkS.addEventListener("change", showEstafetas);
+showEstafetas();
 </script>
 </body>
 </html>
