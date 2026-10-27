@@ -1,6 +1,6 @@
 // App do GDNF: guarda o site no telemóvel para abrir sem rede.
 // A página vem primeiro da rede (para ver logo as versões novas); o resto vem da cache e atualiza-se em segundo plano.
-const CACHE = "gdnf-v2";
+const CACHE = "gdnf-v3";
 const BASE = ["./", "index.html", "manifest.webmanifest", "img/logo-gdnf.png", "img/icon-180.png", "img/icon-192.png", "img/icon-512.png"];
 
 self.addEventListener("install", e => {
