@@ -774,10 +774,10 @@
   <!-- TREINADORES -->
   <section id="ranking">
     <h2>Ranking do Clube</h2>
-    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos são juvenis, juniores e seniores; Infantis são 12–13 anos. Escolhe o escalão, o género e a prova, um atleta para ver todas as suas provas, ou uma ou mais épocas para ver os tempos conseguidos nessa altura. Os filtros funcionam juntos.</p>
+    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos é o ranking geral do clube. Os outros escalões são calculados pelo ano de nascimento e pela época de cada tempo, com a regra da FPN (idade no ano em que a época acaba: Infantis B 13 anos, Infantis A 14, Juvenis B 15, Juvenis A 16, Juniores B 17, Juniores A 18, Sub 21 dos 19 aos 21, Seniores 19 ou mais). Escolhe o escalão, o género e a prova, um atleta para ver todas as suas provas, ou uma ou mais épocas para ver os tempos conseguidos nessa altura. Os filtros funcionam juntos.</p>
     <div class="pickers">
       <label>Escalão
-        <select id="rk-esc"><option value="0">Absolutos</option><option value="2">Infantis</option></select>
+        <select id="rk-esc"><option value="infA">Infantis A</option><option value="infB">Infantis B</option><option value="juvA">Juvenis A</option><option value="juvB">Juvenis B</option><option value="junA">Juniores A</option><option value="junB">Juniores B</option><option value="sub21">Sub 21</option><option value="sen">Seniores</option><option value="abs" selected>Absolutos</option></select>
       </label>
       <label>Género
         <select id="rk-gen"><option value="0">Masculino</option><option value="1">Feminino</option></select>
@@ -800,10 +800,10 @@
         <tbody id="rk-rows"></tbody>
       </table>
     </div>
-    <p class="note-line">Fonte: rankings top 10 do clube (27/10/2026). Pts = pontos FINA. Nas Infantis a coluna Idade é a idade na época da prova; nos Absolutos é o ano de nascimento.</p>
+    <p class="note-line">Fonte: rankings top 10 do clube (27/10/2026). Pts = pontos FINA. Só existem os tempos do top 10 absoluto e do top 10 de infantis, por isso nos escalões de juvenis e juniores aparecem só os tempos que entraram nesses rankings. Nos escalões, o lugar conta o melhor tempo de cada atleta.</p>
 
     <h3 id="estafetas">Melhores estafetas</h3>
-    <p class="lead">As estafetas mais rápidas possíveis com o melhor tempo de cada atleta nas épocas escolhidas acima (sem épocas escolhidas, usa todos os tempos). Usa o grupo do escalão escolhido (Absolutos ou Infantis). Nas estafetas de estilos é escolhida a melhor combinação, com um atleta por estilo e sem repetir.</p>
+    <p class="lead">As estafetas mais rápidas possíveis com o melhor tempo de cada atleta nas épocas escolhidas acima (sem épocas escolhidas, usa todos os tempos). Usa o escalão escolhido acima. Nas estafetas de estilos é escolhida a melhor combinação, com um atleta por estilo e sem repetir.</p>
     <div class="pickers">
       <label>Piscina
         <select id="es-pisc"><option value="25m">25 m</option><option value="50m">50 m</option><option value="">Juntar 25 m e 50 m</option></select>
@@ -2447,7 +2447,6 @@ gzSubs();
 showGz();
 
 // Ranking do clube: [escalão, prova, pos, nome, idade/ano, tempo, piscina, data, local, pontos, clube]
-const rkEsc = ["Absolutos Masc.", "Absolutos Fem.", "Infantis Masc.", "Infantis Fem."];
 const rkProvas = ["50 Livres", "100 Livres", "200 Livres", "400 Livres", "800 Livres", "1500 Livres", "50 Costas", "100 Costas", "200 Costas", "50 Bruços", "100 Bruços", "200 Bruços", "50 Mariposa", "100 Mariposa", "200 Mariposa", "100 Estilos", "200 Estilos", "400 Estilos"];
 const ranking = [
   [2, 0, 1, "Jose Duarte Oliveira", "13", "29.21", "50m", "17/07/26", "Setubal (POR)", 366, ""],
@@ -3088,42 +3087,65 @@ const ranking = [
   [1, 17, 10, "Mariana Martins Costa", "05", "5:19.44", "25m", "21/12/19", "Porto (POR)", 511, ""]
 ];
 const rkG = document.getElementById("rk-esc"), rkGen = document.getElementById("rk-gen");
-// escalão + género combinados no índice de rkEsc (0–3)
-const rkE = { get value() { return +rkG.value + +rkGen.value; }, addEventListener(t, f) { rkG.addEventListener(t, f); rkGen.addEventListener(t, f); } };
 const rkP = document.getElementById("rk-prova"), rkA = document.getElementById("rk-atl"), rkS = document.getElementById("rk-ep");
-const rkAno = (e, v) => e < 2 ? `${+v > 30 ? "19" : "20"}${v}` : `${v} anos`;
+// escalões FPN pela idade no ano em que a época acaba (2026/27: Infantis B = 2014 … Seniores = 2008 e anteriores)
+const rkEscs = [
+  ["infA", "Infantis A", i => i === 14], ["infB", "Infantis B", i => i === 13],
+  ["juvA", "Juvenis A", i => i === 16], ["juvB", "Juvenis B", i => i === 15],
+  ["junA", "Juniores A", i => i === 18], ["junB", "Juniores B", i => i === 17],
+  ["sub21", "Sub 21", i => i >= 19 && i <= 21], ["sen", "Seniores", i => i >= 19], ["abs", "Absolutos", () => true]
+];
+const rkGenNome = ["Masc.", "Fem."];
+const rkSeg = t => t.split(":").reduce((a, x) => a * 60 + parseFloat(x), 0);
+const rkNasc = r => +r[4] + (+r[4] > 30 ? 1900 : 2000);
 // época desportiva (set.–ago.) a partir da data dd/mm/aa
 const rkEpoca = dt => { const [, m, a] = dt.split("/").map(Number); const y = 2000 + a - (m < 9 ? 1 : 0); return `${y}/${String((y + 1) % 100).padStart(2, "0")}`; };
+const rkIdade = r => +rkEpoca(r[7]).slice(0, 4) + 1 - rkNasc(r);
 const rkData = dt => { const [d, m, a] = dt.split("/"); return `20${a}${m}${d}`; };
 const rkEpocas = () => [...rkS.querySelectorAll("input:checked")].map(i => i.value);
+const rkEscAtual = () => rkEscs.find(x => x[0] === rkG.value);
+// tempos do escalão e género escolhidos, com o lugar de cada um (melhor tempo de cada atleta por prova)
+function rkTempos(g) {
+  const [k, , ok] = rkEscAtual();
+  if (k === "abs") return ranking.filter(r => r[0] === g).map(r => ({ r, pos: r[2] }));
+  const l = ranking.filter(r => r[0] % 2 === g && ok(rkIdade(r))).map(r => ({ r, pos: null }));
+  rkProvas.forEach((_, p) => {
+    const vistos = new Set();
+    l.filter(x => x.r[1] === p).sort((a, b) => rkSeg(a.r[5]) - rkSeg(b.r[5]))
+      .forEach(x => { if (!vistos.has(x.r[3])) { vistos.add(x.r[3]); x.pos = vistos.size; } });
+  });
+  return l;
+}
 function rkAtletas() {
-  const e = +rkE.value, l = ranking.filter(r => r[0] === e), sel = rkEpocas();
-  const nomes = [...new Set(l.map(r => r[3]))].sort((a, b) => a.localeCompare(b, "pt"));
-  rkA.innerHTML = `<option value="">Todos</option>` + nomes.map(n => `<option>${escH(n)}</option>`).join("");
-  const eps = [...new Set(["2026/27", ...l.map(r => rkEpoca(r[7]))])].sort().reverse();
+  const l = rkTempos(+rkGen.value), sel = rkEpocas(), a = rkA.value;
+  const nomes = [...new Set(l.map(x => x.r[3]))].sort((a, b) => a.localeCompare(b, "pt"));
+  rkA.innerHTML = `<option value="">Todos</option>` + nomes.map(n => `<option${n === a ? " selected" : ""}>${escH(n)}</option>`).join("");
+  const eps = [...new Set(["2026/27", ...l.map(x => rkEpoca(x.r[7]))])].sort().reverse();
   rkS.innerHTML = eps.map(x => `<label><input type="checkbox" value="${x}"${sel.includes(x) ? " checked" : ""}><span>${x}</span></label>`).join("");
 }
 function showRanking() {
-  const e = +rkE.value, p = rkP.value === "" ? -1 : +rkP.value, a = rkA.value, eps = rkEpocas();
+  const g = +rkGen.value, p = rkP.value === "" ? -1 : +rkP.value, a = rkA.value, eps = rkEpocas();
+  const nomeEsc = `${rkEscAtual()[1]} ${rkGenNome[g]}`;
   const head = document.getElementById("rk-head"), body = document.getElementById("rk-rows");
   const cel = r => `<td class="num">${r[5]}</td><td>${r[6]}</td><td class="num">${r[7]}</td><td>${escH(r[8].replace(/ \(POR\)$/, ""))}</td><td class="num">${r[9] || "–"}</td>`;
+  const todos = rkTempos(g);
   if (a || eps.length || p < 0) {
-    const l = ranking.filter(r => r[0] === e && (p < 0 || r[1] === p) && (!a || r[3] === a) && (!eps.length || eps.includes(rkEpoca(r[7]))))
-      .sort((x, y) => eps.length && !a ? rkData(y[7]).localeCompare(rkData(x[7])) : x[1] - y[1] || x[2] - y[2]);
-    const partes = [a ? `${a}${l.length ? ` (${rkAno(e, l[0][4])})` : ""}` : rkEsc[e]];
+    const l = todos.filter(({ r }) => (p < 0 || r[1] === p) && (!a || r[3] === a) && (!eps.length || eps.includes(rkEpoca(r[7]))))
+      .sort((x, y) => eps.length && !a ? rkData(y.r[7]).localeCompare(rkData(x.r[7])) : x.r[1] - y.r[1] || (x.pos || 99) - (y.pos || 99));
+    const partes = [a ? `${a}${l.length ? ` (${rkNasc(l[0].r)})` : ""}` : nomeEsc];
     if (p >= 0) partes.push(rkProvas[p]);
     if (eps.length) partes.push(`${eps.length > 1 ? "épocas" : "época"} ${eps.slice().sort().join(" + ")}`);
-    document.getElementById("rk-count").textContent = `${partes.join(" · ")}: ${l.length} ${l.length === 1 ? "tempo" : "tempos"} no top 10`;
+    document.getElementById("rk-count").textContent = `${partes.join(" · ")}: ${l.length} ${l.length === 1 ? "tempo" : "tempos"}`;
     head.innerHTML = `<tr><th>Prova</th><th class="num">Lugar</th>${a ? "" : "<th>Nome</th>"}<th class="num">Tempo</th><th>Pisc.</th><th class="num">Data</th><th>Local</th><th class="num">Pts</th></tr>`;
-    body.innerHTML = l.map(r => `<tr><td>${rkProvas[r[1]]}</td><td class="num">${r[2]}.º</td>${a ? "" : `<td>${escH(r[3])}</td>`}${cel(r)}</tr>`).join("") || `<tr><td colspan="8">Sem tempos no top 10 com esta escolha.</td></tr>`;
+    body.innerHTML = l.map(({ r, pos }) => `<tr><td>${rkProvas[r[1]]}</td><td class="num">${pos ? pos + ".º" : "–"}</td>${a ? "" : `<td>${escH(r[3])}</td>`}${cel(r)}</tr>`).join("") || `<tr><td colspan="8">Sem tempos com esta escolha.</td></tr>`;
   } else {
-    const l = ranking.filter(r => r[0] === e && r[1] === p);
-    document.getElementById("rk-count").textContent = `${rkEsc[e]} · ${rkProvas[p]}: ${l.length} ${l.length === 1 ? "atleta" : "atletas"}`;
-    head.innerHTML = `<tr><th class="num">#</th><th>Nome</th><th class="num">${e < 2 ? "Ano" : "Idade"}</th><th class="num">Tempo</th><th>Pisc.</th><th class="num">Data</th><th>Local</th><th class="num">Pts</th></tr>`;
-    body.innerHTML = l.map(r => `<tr><td class="num">${r[2]}</td><td>${escH(r[3])}${r[10] ? ` <small>(${r[10]})</small>` : ""}</td><td class="num">${e < 2 ? rkAno(e, r[4]) : r[4]}</td>${cel(r)}</tr>`).join("") || '<tr><td colspan="8">Sem tempos nesta prova.</td></tr>';
+    const l = todos.filter(x => x.r[1] === p && x.pos).sort((x, y) => x.pos - y.pos);
+    document.getElementById("rk-count").textContent = `${nomeEsc} · ${rkProvas[p]}: ${l.length} ${l.length === 1 ? "atleta" : "atletas"}`;
+    head.innerHTML = `<tr><th class="num">#</th><th>Nome</th><th class="num">Ano</th><th class="num">Tempo</th><th>Pisc.</th><th class="num">Data</th><th>Local</th><th class="num">Pts</th></tr>`;
+    body.innerHTML = l.map(({ r, pos }) => `<tr><td class="num">${pos}</td><td>${escH(r[3])}${r[10] ? ` <small>(${r[10]})</small>` : ""}</td><td class="num">${rkNasc(r)}</td>${cel(r)}</tr>`).join("") || '<tr><td colspan="8">Sem tempos nesta prova.</td></tr>';
   }
 }
-rkE.addEventListener("change", () => { rkAtletas(); showRanking(); });
+[rkG, rkGen].forEach(el => el.addEventListener("change", () => { rkAtletas(); showRanking(); }));
 rkP.addEventListener("change", showRanking);
 rkA.addEventListener("change", showRanking);
 rkS.addEventListener("change", showRanking);
@@ -3132,17 +3154,18 @@ showRanking();
 
 // Melhores estafetas a partir do ranking
 const esPisc = document.getElementById("es-pisc");
-const esSeg = t => t.split(":").reduce((a, x) => a * 60 + parseFloat(x), 0);
+const esSeg = rkSeg;
 const esFmt = x => { const m = Math.floor(x / 60), r = (x - m * 60).toFixed(2); return m ? `${m}:${r.padStart(5, "0")}` : r; };
 const esTipos = [
   ["4x50 Livres", [0, 0, 0, 0]], ["4x100 Livres", [1, 1, 1, 1]], ["4x200 Livres", [2, 2, 2, 2]],
   ["4x50 Estilos", [6, 9, 12, 0]], ["4x100 Estilos", [7, 10, 13, 1]]
 ];
 const esNadoNome = ["Costas", "Bruços", "Mariposa", "Livres"];
-function esMelhores(esc, prova) {
+// melhor tempo de cada atleta do género g (0 masc., 1 fem.) no escalão escolhido
+function esMelhores(g, prova) {
   const eps = rkEpocas(), pisc = esPisc.value, best = new Map();
-  ranking.filter(r => r[0] === esc && r[1] === prova && (!pisc || r[6] === pisc) && (!eps.length || eps.includes(rkEpoca(r[7]))))
-    .forEach(r => { const t = esSeg(r[5]); if (!best.has(r[3]) || t < best.get(r[3]).t) best.set(r[3], { n: r[3], t, tt: r[5], esc }); });
+  rkTempos(g).map(x => x.r).filter(r => r[1] === prova && (!pisc || r[6] === pisc) && (!eps.length || eps.includes(rkEpoca(r[7]))))
+    .forEach(r => { const t = esSeg(r[5]); if (!best.has(r[3]) || t < best.get(r[3]).t) best.set(r[3], { n: r[3], t, tt: r[5], esc: g }); });
   return [...best.values()].sort((a, b) => a.t - b.t);
 }
 function esLivres(provas, escs) {
@@ -3169,8 +3192,8 @@ function esEstilos(provas, escs) {
   return melhor && melhor.sel;
 }
 function showEstafetas() {
-  const base = +rkE.value < 2 ? 0 : 2, grupo = base ? "Infantis" : "Absolutos";
-  const generos = [["Masculinos", [[base, 4]]], ["Femininos", [[base + 1, 4]]], ["Mistas (2M + 2F)", [[base, 2], [base + 1, 2]]]];
+  const base = 0, grupo = rkEscAtual()[1];
+  const generos = [["Masculinos", [[0, 4]]], ["Femininos", [[1, 4]]], ["Mistas (2M + 2F)", [[0, 2], [1, 2]]]];
   document.getElementById("es-grid").innerHTML = esTipos.map(([nome, provas]) => {
     const estilos = provas[0] !== provas[1];
     const linhas = generos.map(([g, escs]) => {
@@ -3183,7 +3206,7 @@ function showEstafetas() {
   }).join("");
 }
 esPisc.addEventListener("change", showEstafetas);
-rkE.addEventListener("change", showEstafetas);
+[rkG, rkGen].forEach(el => el.addEventListener("change", showEstafetas));
 rkS.addEventListener("change", showEstafetas);
 showEstafetas();
 </script>
