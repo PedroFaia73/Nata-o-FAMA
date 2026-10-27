@@ -228,6 +228,14 @@
   .aniv.hoje { font-size: .8rem; }
   .trein-aniv { border-color: var(--z-a3); box-shadow: 0 0 0 2px var(--z-a3); }
   tr.atl-aniv td { background: color-mix(in srgb, var(--z-a3) 22%, transparent); font-weight: 600; }
+  .rk-eps { border: 0; padding: 0; margin: 0 0 14px; min-width: 0; }
+  .rk-eps legend { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; padding: 0; }
+  #rk-ep { display: flex; flex-wrap: wrap; gap: 6px; }
+  #rk-ep label { cursor: pointer; }
+  #rk-ep input { position: absolute; opacity: 0; pointer-events: none; }
+  #rk-ep span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
+  #rk-ep input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
+  #rk-ep input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -765,21 +773,22 @@
   <!-- TREINADORES -->
   <section id="ranking">
     <h2>Ranking do Clube</h2>
-    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos são juvenis, juniores e seniores; Infantis são 12–13 anos. Escolhe o escalão e a prova, um atleta para ver todas as suas provas, ou uma época para ver os tempos conseguidos nessa altura.</p>
+    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos são juvenis, juniores e seniores; Infantis são 12–13 anos. Escolhe o escalão e a prova, um atleta para ver todas as suas provas, ou uma ou mais épocas para ver os tempos conseguidos nessa altura. Os filtros funcionam juntos.</p>
     <div class="pickers">
       <label>Escalão
         <select id="rk-esc"><option value="0">Absolutos Masc.</option><option value="1">Absolutos Fem.</option><option value="2">Infantis Masc.</option><option value="3">Infantis Fem.</option></select>
       </label>
       <label>Prova
-        <select id="rk-prova"><option value="0">50 Livres</option><option value="1">100 Livres</option><option value="2">200 Livres</option><option value="3">400 Livres</option><option value="4">800 Livres</option><option value="5">1500 Livres</option><option value="6">50 Costas</option><option value="7">100 Costas</option><option value="8">200 Costas</option><option value="9">50 Bruços</option><option value="10">100 Bruços</option><option value="11">200 Bruços</option><option value="12">50 Mariposa</option><option value="13">100 Mariposa</option><option value="14">200 Mariposa</option><option value="15">100 Estilos</option><option value="16">200 Estilos</option><option value="17">400 Estilos</option></select>
+        <select id="rk-prova"><option value="">Todas as provas</option><option value="0" selected>50 Livres</option><option value="1">100 Livres</option><option value="2">200 Livres</option><option value="3">400 Livres</option><option value="4">800 Livres</option><option value="5">1500 Livres</option><option value="6">50 Costas</option><option value="7">100 Costas</option><option value="8">200 Costas</option><option value="9">50 Bruços</option><option value="10">100 Bruços</option><option value="11">200 Bruços</option><option value="12">50 Mariposa</option><option value="13">100 Mariposa</option><option value="14">200 Mariposa</option><option value="15">100 Estilos</option><option value="16">200 Estilos</option><option value="17">400 Estilos</option></select>
       </label>
       <label>Atleta
         <select id="rk-atl"></select>
       </label>
-      <label>Época (data)
-        <select id="rk-ep"></select>
-      </label>
     </div>
+    <fieldset class="rk-eps">
+      <legend>Épocas (podes escolher várias)</legend>
+      <div id="rk-ep"></div>
+    </fieldset>
     <p class="st-count" id="rk-count"></p>
     <div class="table-scroll">
       <table>
@@ -3069,23 +3078,25 @@ const rkAno = (e, v) => e < 2 ? `${+v > 30 ? "19" : "20"}${v}` : `${v} anos`;
 // época desportiva (set.–ago.) a partir da data dd/mm/aa
 const rkEpoca = dt => { const [, m, a] = dt.split("/").map(Number); const y = 2000 + a - (m < 9 ? 1 : 0); return `${y}/${String((y + 1) % 100).padStart(2, "0")}`; };
 const rkData = dt => { const [d, m, a] = dt.split("/"); return `20${a}${m}${d}`; };
+const rkEpocas = () => [...rkS.querySelectorAll("input:checked")].map(i => i.value);
 function rkAtletas() {
-  const e = +rkE.value, l = ranking.filter(r => r[0] === e);
+  const e = +rkE.value, l = ranking.filter(r => r[0] === e), sel = rkEpocas();
   const nomes = [...new Set(l.map(r => r[3]))].sort((a, b) => a.localeCompare(b, "pt"));
   rkA.innerHTML = `<option value="">Todos</option>` + nomes.map(n => `<option>${escH(n)}</option>`).join("");
-  const eps = [...new Set(l.map(r => rkEpoca(r[7])))].sort().reverse();
-  rkS.innerHTML = `<option value="">Todas</option>` + eps.map(x => `<option>${x}</option>`).join("");
+  const eps = [...new Set(["2026/27", ...l.map(r => rkEpoca(r[7]))])].sort().reverse();
+  rkS.innerHTML = eps.map(x => `<label><input type="checkbox" value="${x}"${sel.includes(x) ? " checked" : ""}><span>${x}</span></label>`).join("");
 }
 function showRanking() {
-  const e = +rkE.value, p = +rkP.value, a = rkA.value, ep = rkS.value;
-  rkP.disabled = !!(a || ep);
+  const e = +rkE.value, p = rkP.value === "" ? -1 : +rkP.value, a = rkA.value, eps = rkEpocas();
   const head = document.getElementById("rk-head"), body = document.getElementById("rk-rows");
   const cel = r => `<td class="num">${r[5]}</td><td>${r[6]}</td><td class="num">${r[7]}</td><td>${escH(r[8].replace(/ \(POR\)$/, ""))}</td><td class="num">${r[9] || "–"}</td>`;
-  if (a || ep) {
-    const l = ranking.filter(r => r[0] === e && (!a || r[3] === a) && (!ep || rkEpoca(r[7]) === ep))
-      .sort((x, y) => ep && !a ? rkData(y[7]).localeCompare(rkData(x[7])) : x[1] - y[1] || x[2] - y[2]);
-    const quem = a ? `${a}${l.length ? ` (${rkAno(e, l[0][4])})` : ""}` : rkEsc[e];
-    document.getElementById("rk-count").textContent = `${quem}${ep ? ` · época ${ep}` : ""}: ${l.length} ${l.length === 1 ? "tempo" : "tempos"} no top 10`;
+  if (a || eps.length || p < 0) {
+    const l = ranking.filter(r => r[0] === e && (p < 0 || r[1] === p) && (!a || r[3] === a) && (!eps.length || eps.includes(rkEpoca(r[7]))))
+      .sort((x, y) => eps.length && !a ? rkData(y[7]).localeCompare(rkData(x[7])) : x[1] - y[1] || x[2] - y[2]);
+    const partes = [a ? `${a}${l.length ? ` (${rkAno(e, l[0][4])})` : ""}` : rkEsc[e]];
+    if (p >= 0) partes.push(rkProvas[p]);
+    if (eps.length) partes.push(`${eps.length > 1 ? "épocas" : "época"} ${eps.slice().sort().join(" + ")}`);
+    document.getElementById("rk-count").textContent = `${partes.join(" · ")}: ${l.length} ${l.length === 1 ? "tempo" : "tempos"} no top 10`;
     head.innerHTML = `<tr><th>Prova</th><th class="num">Lugar</th>${a ? "" : "<th>Nome</th>"}<th class="num">Tempo</th><th>Pisc.</th><th class="num">Data</th><th>Local</th><th class="num">Pts</th></tr>`;
     body.innerHTML = l.map(r => `<tr><td>${rkProvas[r[1]]}</td><td class="num">${r[2]}.º</td>${a ? "" : `<td>${escH(r[3])}</td>`}${cel(r)}</tr>`).join("") || `<tr><td colspan="8">Sem tempos no top 10 com esta escolha.</td></tr>`;
   } else {
