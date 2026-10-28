@@ -249,6 +249,21 @@
   :is(#rk-ep, #rk-esc) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
   :is(#rk-ep, #rk-esc) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
   .es-list { padding-left: 16px; } .es-list li { margin-bottom: 8px; } .es-list b { color: var(--text); }
+  /* capa de rosto (app): abre aqui, ecrã inteiro sem barra de cima */
+  body:not(.app) main > #capa { display: none; }
+  #capa { min-height: calc(100vh - 66px - env(safe-area-inset-bottom)); min-height: calc(100dvh - 66px - env(safe-area-inset-bottom)); margin: 0 -16px; padding: calc(40px + env(safe-area-inset-top)) 24px 32px; background: var(--navy); color: #fff; text-align: center; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+  body.app main > #capa.ativa { display: flex; }
+  body.app.na-capa .app-bar { display: none; }
+  body.app.na-capa { background: var(--navy); }
+  #capa img { width: 150px; height: 150px; border-radius: 50%; background: #fff; padding: 8px; object-fit: contain; margin-bottom: 18px; }
+  #capa .clube { font-size: 1.25rem; font-weight: 800; letter-spacing: .03em; }
+  #capa .terra { font-size: .85rem; font-weight: 700; opacity: .8; }
+  #capa .linha { width: 70%; border-top: 2px solid var(--paa); margin: 22px 0; }
+  #capa .ep { font-size: .78rem; letter-spacing: .12em; opacity: .8; }
+  #capa .anos { font-size: 2.3rem; font-weight: 800; color: var(--paa); }
+  #capa .lema { font-weight: 800; font-style: italic; font-size: 1.05rem; }
+  #capa .lema small { display: block; font-weight: 400; opacity: .8; font-size: .85rem; margin-top: 4px; }
+  #capa .entrar { margin-top: 30px; padding: 12px 34px; border-radius: 999px; background: var(--paa); color: var(--navy); font-weight: 800; text-decoration: none; }
   /* página inicial (app): capa do Plano Anual de Atividades */
   body:not(.app) main > #inicio { display: none; }
   .capa { text-align: center; background: var(--surface); border: 1px solid var(--line); border-top: 8px solid var(--navy); border-bottom: 8px solid var(--navy); border-radius: 14px; padding: 22px 16px 18px; margin-bottom: 18px; }
@@ -333,9 +348,22 @@
     <a href="#recordes">Recordes</a>
   </div>
 </nav>
-<div class="app-bar" id="app-bar"><a href="#inicio" aria-label="Página inicial"><img src="img/logo-gdnf.png" alt=""></a><span id="app-titulo">GDNF</span></div>
+<div class="app-bar" id="app-bar"><a href="#capa" aria-label="Capa"><img src="img/logo-gdnf.png" alt=""></a><span id="app-titulo">GDNF</span></div>
 
 <main class="wrap">
+
+  <!-- CAPA DE ROSTO (só na app do telemóvel) -->
+  <section id="capa">
+    <img src="img/logo-gdnf.png" alt="Logótipo do GDNF">
+    <div class="clube">GRUPO DESPORTIVO DE NATAÇÃO</div>
+    <div class="terra">VILA NOVA DE FAMALICÃO</div>
+    <div class="linha"></div>
+    <div class="ep">ÉPOCA DESPORTIVA</div>
+    <div class="anos">2026 | 2027</div>
+    <div class="linha"></div>
+    <div class="lema">"O SONHO... O FUTURO"<small>Convidamos-te a fazer parte desta família</small></div>
+    <a class="entrar" href="#inicio">Entrar</a>
+  </section>
 
   <!-- INÍCIO (só na app do telemóvel) -->
   <section id="inicio">
@@ -3882,15 +3910,16 @@ function appMostrar() {
   const ativo = appMQ.matches;
   document.body.classList.toggle("app", ativo);
   if (!ativo) return;
-  // sem endereço, abre a página inicial
-  const inicio = document.getElementById("inicio");
+  // sem endereço, abre a capa de rosto
+  const inicio = document.getElementById("capa");
   const alvo = document.getElementById(decodeURIComponent(location.hash.slice(1))) || inicio;
   const sec = alvo.closest("main > section") || inicio;
   document.querySelectorAll("main > section.ativa").forEach(x => x.classList.remove("ativa"));
   sec.classList.add("ativa");
   const info = appSec.find(x => x[0] === sec.id);
   document.getElementById("app-titulo").textContent = info ? info[2] : "Mais";
-  const tab = appTabs.includes(sec.id) ? sec.id : sec.id === "inicio" ? "" : "mais";
+  document.body.classList.toggle("na-capa", sec.id === "capa");
+  const tab = appTabs.includes(sec.id) ? sec.id : ["inicio", "capa"].includes(sec.id) ? "" : "mais";
   document.querySelectorAll("#tabbar a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
   if (alvo === sec) window.scrollTo({ top: 0, behavior: "instant" }); else alvo.scrollIntoView({ behavior: "instant" });
 }
