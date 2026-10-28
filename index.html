@@ -16,6 +16,7 @@
 <style>
   :root {
     --navy: #0d2340;
+    --paa: #e8a23a;
     --bg: #f3f6fa;
     --surface: #ffffff;
     --text: #13223a;
@@ -248,6 +249,30 @@
   :is(#rk-ep, #rk-esc) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
   :is(#rk-ep, #rk-esc) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
   .es-list { padding-left: 16px; } .es-list li { margin-bottom: 8px; } .es-list b { color: var(--text); }
+  /* página inicial (app): capa do Plano Anual de Atividades */
+  body:not(.app) main > #inicio { display: none; }
+  .capa { text-align: center; background: var(--surface); border: 1px solid var(--line); border-top: 8px solid var(--navy); border-bottom: 8px solid var(--navy); border-radius: 14px; padding: 22px 16px 18px; margin-bottom: 18px; }
+  .capa img { width: 92px; height: 92px; object-fit: contain; border-radius: 50%; background: #fff; }
+  .capa .clube { margin: 10px 0 2px; font-weight: 800; color: var(--accent); letter-spacing: .02em; }
+  .capa .terra { font-size: .78rem; font-weight: 700; color: var(--muted); }
+  .capa .titulo { border-top: 2px solid var(--paa); border-bottom: 2px solid var(--paa); margin: 16px -16px; padding: 14px 8px; }
+  .capa .titulo span { display: block; font-size: 1.15rem; font-weight: 800; color: var(--accent); }
+  .capa .titulo b { display: block; font-size: 1.7rem; color: var(--accent); }
+  .capa .ep { font-size: .72rem; color: var(--muted); }
+  .capa .anos { font-size: 1.6rem; font-weight: 800; color: var(--paa); margin: 2px 0 14px; }
+  .capa .lema { font-weight: 800; font-style: italic; font-size: .9rem; }
+  .capa .lema small { display: block; font-weight: 400; color: var(--muted); font-size: .8rem; }
+  .paa-item { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); margin-bottom: 8px; }
+  .paa-item .dt { flex: none; width: 54px; text-align: center; border-radius: 10px; background: var(--navy); color: #fff; padding: 5px 0; line-height: 1.1; font-weight: 800; font-size: .95rem; }
+  .paa-item .dt small { display: block; font-size: .66rem; font-weight: 600; text-transform: uppercase; color: var(--paa); }
+  .paa-item b { display: block; font-size: .95rem; }
+  .paa-item small.l { color: var(--muted); font-size: .8rem; }
+  .paa-item.lud .dt { background: var(--paa); } .paa-item.lud .dt small { color: var(--navy); }
+  .atalhos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 6px 0 18px; }
+  .atalhos a { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 4px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--text); text-decoration: none; font-size: .78rem; font-weight: 700; text-align: center; }
+  .atalhos .sigla { width: 36px; height: 36px; border-radius: 10px; background: var(--accent); color: #fff; display: grid; place-items: center; font-size: .72rem; font-weight: 800; }
+  #paa-todos summary { cursor: pointer; font-weight: 700; color: var(--accent); margin: 6px 0 10px; }
+  #paa-todos h3 { margin: 14px 0 8px; font-size: .9rem; text-transform: uppercase; color: var(--muted); }
   /* app no telemóvel: uma secção de cada vez, barra fixa em baixo e ecrã "Mais" */
   .app-bar, .tabbar, body:not(.app) main > #mais { display: none; }
   .mais-item { display: flex; align-items: center; gap: 12px; padding: 14px; margin-bottom: 10px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--text); text-decoration: none; }
@@ -308,9 +333,27 @@
     <a href="#recordes">Recordes</a>
   </div>
 </nav>
-<div class="app-bar" id="app-bar"><img src="img/logo-gdnf.png" alt=""><span id="app-titulo">Época</span></div>
+<div class="app-bar" id="app-bar"><a href="#inicio" aria-label="Página inicial"><img src="img/logo-gdnf.png" alt=""></a><span id="app-titulo">GDNF</span></div>
 
 <main class="wrap">
+
+  <!-- INÍCIO (só na app do telemóvel) -->
+  <section id="inicio">
+    <div class="capa">
+      <img src="img/logo-gdnf.png" alt="Logótipo do GDNF">
+      <div class="clube">GRUPO DESPORTIVO DE NATAÇÃO</div>
+      <div class="terra">VILA NOVA DE FAMALICÃO</div>
+      <div class="titulo"><span>PLANO ANUAL</span><b>DE ATIVIDADES</b></div>
+      <div class="ep">ÉPOCA DESPORTIVA</div>
+      <div class="anos">2026 | 2027</div>
+      <div class="lema">"O SONHO... O FUTURO"<small>Convidamos-te a fazer parte desta família</small></div>
+    </div>
+    <h3>Próximas atividades</h3>
+    <div id="paa-prox"></div>
+    <details id="paa-todos"><summary>Ver o plano anual completo</summary><div id="paa-lista"></div></details>
+    <h3>Atalhos</h3>
+    <div class="atalhos" id="atalhos"></div>
+  </section>
 
   <!-- ÉPOCA -->
   <section id="epoca">
@@ -3721,9 +3764,97 @@ esPisc.addEventListener("change", showEstafetas);
 rkS.addEventListener("change", showEstafetas);
 showEstafetas();
 
+
+// Plano Anual de Atividades 2026/27: [ano-mês, dias, evento, local, observações]
+const paa = [
+  ["2026-09", "4", "Reunião Inicial Equipa Técnica", "Famalicão", "Preparação da época"],
+  ["2026-09", "12-13", "Mercado Desportivo – Vai à Vila", "Praça Dª Maria", "Atividade Município"],
+  ["2026-09", "20-21", "MIUS", "Madeira", ""],
+  ["2026-10", "11", "GALA do GDNFAMA", "Mercado Municipal", ""],
+  ["2026-10", "16-18", "Provas Preparação ABS", "Penafiel", ""],
+  ["2026-10", "25-26", "Provas Preparação Infantis", "Folgosa", ""],
+  ["2026-10", "25-26", "APTN", "Rio Maior", "Congresso Treinadores"],
+  ["2026-10", "25-26", "Provas Preparação Cadetes A/B1", "Folgosa", ""],
+  ["2026-11", "8-9", "Torneio Regional de Fundo Infantis", "C. Fluvial Portuense", ""],
+  ["2026-11", "8", "GALA DO DESPORTO DE FAMALICÃO", "Pavilhão Municipal", ""],
+  ["2026-11", "14-16", "Camp. Territoriais Juniores e Seniores", "Felgueiras", ""],
+  ["2026-11", "28-29", "Camp. Nacional da 2ª divisão", "Mealhada", ""],
+  ["2026-12", "02-08", "Campeonato da Europa de Piscina Curta", "Lublin - POL", ""],
+  ["2026-12", "04-06", "Torneio Zonal de Juvenis", "Bragança", ""],
+  ["2026-12", "06", "Torneio Téc. Alternadas – Cadetes B2/C", "Paços de Ferreira", ""],
+  ["2026-12", "10-13", "Camp Nacionais Juniores e Seniores", "Tomar", ""],
+  ["2026-12", "13-14", "Torneio Territorial Clubes Infantis", "Lousada", ""],
+  ["2026-12", "13-14", "TORREGRI 1 – Cadetes A/B1", "Lousada", ""],
+  ["2026-12", "17", "Jantar de Natal e Futebol - Absolutos", "Bar Piscina", "Lúdico/Desportivas"],
+  ["2026-12", "19-20", "Camp. Nacional da 1ª divisão", "Albufeira", ""],
+  ["2026-12", "20", "Cinema + Treino FCP - Infantis", "Campanhã", "Lúdico/Desportivas"],
+  ["2026-12", "22", "JUMPERES Active – Cadetes A/B1", "Matosinhos", "Lúdico/Desportivas"],
+  ["2026-12", "22", "Passeio Comboio – Cadetes B2/C + Pré", "Famalicão", "Lúdico/Desportivas"],
+  ["2027-01", "09", "CONVÍVIO DE REIS - GDNF", "A definir", "Jantar (Direção|Profs)"],
+  ["2027-01", "10-11", "Meeting do Estoril", "Estoril - Alapraia", ""],
+  ["2027-01", "17", "Taça Vale do Tejo", "Abrantes", "Seleção ANNP"],
+  ["2027-01", "17", "Famalicão a Nadar – Técnicas Alternadas", "Oliveira", "Câmara - GDNF"],
+  ["2027-01", "30-31-01", "Campeonato Territorial de Infantis", "Felgueiras", ""],
+  ["2027-02", "07-08", "Meeting da Póvoa", "Póvoa de Varzim", ""],
+  ["2027-02", "14-15", "Encontro Territorial de Cadetes A/B1", "Paços de Ferreira", ""],
+  ["2027-02", "14-15", "Meeting de Lisboa", "Jamor", ""],
+  ["2027-02", "15", "Campeonato Nacional de Longa Distância", "Coimbra", ""],
+  ["2027-02", "17", "ATIVIDADES DE CARNAVAL", "Famalicão", "Lúdico/Desportivas"],
+  ["2027-02", "20-22", "Torneio Zonal de Infantis", "Felgueiras", ""],
+  ["2027-02", "27-01", "Camp. Territoriais Juv, Jun e Sen", "Póvoa de Varzim", ""],
+  ["2027-03", "07-08", "Torneio Especialista", "Póvoa de Varzim", ""],
+  ["2027-03", "14", "CMVNF - Fase de Apuramento", "Piscinas Municipais", "Fazer Observação"],
+  ["2027-03", "28-01", "Campeonato Territorial de Infantis", "Penafiel", ""],
+  ["2027-03", "28", "Encontro Téc Simultâneas Cadetes B2/C", "Vila Meã", ""],
+  ["2027-03", "28-29", "TORREGRI 2 – Cadetes A/B1", "Vila Meã", ""],
+  ["2027-04", "02-04", "Camp. Nacional Juvenis", "Jamor", ""],
+  ["2027-04", "08-11", "Camp. Nacional Juniores e Absolutos", "Coimbra", ""],
+  ["2027-04", "11-12", "Meeting Internacional de Felgueiras", "Felgueiras", ""],
+  ["2027-04", "18", "Famalicão a Nadar–Técnicas Simultâneas", "Oliveira", "Câmara - GDNF"],
+  ["2027-04", "22", "Reunião Intermédia Equipa Técnica", "Famalicão", "Ponto de situação da época"],
+  ["2027-04", "24-05", "ATIVIDADES DA PÁSCOA", "Famalicão", "Lúdico/Desportivas"],
+  ["2027-05", "09-10", "Torneio Nadador Completo Inf e Juv", "Folgosa", ""],
+  ["2027-05", "23-24", "Meeting de Coimbra", "Coimbra", ""],
+  ["2027-05", "23-24", "Campeonato Nacional de Águas Abertas", "Porto Santo", ""],
+  ["2027-05", "23", "CMVNF - Fase Final", "Oliveira Sº Mateus", "Fazer Observação"],
+  ["2027-06", "06-07", "Meeting Internacional do Porto", "Campanhã", ""],
+  ["2027-06", "13-14", "TORREGRI 3 – Cadetes A/B1", "Folgosa", ""],
+  ["2027-06", "19-20", "Campeonato Territorial de Infantis", "Póvoa de Varzim", ""],
+  ["2027-07", "2-25", "Camp. Nacional Infantis", "Reguengos", ""],
+  ["2027-07", "06-08", "Camp. Territoriais Juv, Jun e Sen", "Famalicão", ""],
+  ["2027-07", "07-12", "Campeonato da Europa Júnior", "A definir", ""],
+  ["2027-07", "11-12", "Torneio Nadador Completo A/B1", "Lousada", ""],
+  ["2027-07", "12", "Encontro Técnicas Combinadas B2/C", "Lousada", ""],
+  ["2027-07", "28", "Reunião Final Equipa Técnica", "Famalicão", "Balanço final da época"],
+  ["2027-07", "29-01", "Camp. Nacional Juv, Jun e Sen", "Coimbra", ""]
+];
+const paaMeses = ["jan.", "fev.", "mar.", "abr.", "maio", "jun.", "jul.", "ago.", "set.", "out.", "nov.", "dez."];
+const paaMesNome = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+// último dia do evento: "30-31-01" e "27-01" acabam no mês seguinte
+function paaFim([am, d]) {
+  const [a, m] = am.split("-").map(Number), p = d.split("-").map(Number), u = p[p.length - 1];
+  const vira = p.length > 1 && u < p[0];
+  return new Date(a, m - 1 + (vira ? 1 : 0), u);
+}
+const paaItem = e => {
+  const m = +e[0].slice(5) - 1;
+  return `<div class="paa-item${e[4].startsWith("Lúdico") ? " lud" : ""}"><span class="dt">${escH(e[1])}<small>${paaMeses[m]}</small></span><span><b>${escH(e[2])}</b><small class="l">${escH(e[3])}${e[4] ? " · " + escH(e[4]) : ""}</small></span></div>`;
+};
+{
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  const prox = paa.filter(e => paaFim(e) >= hoje).slice(0, 5);
+  document.getElementById("paa-prox").innerHTML = prox.map(paaItem).join("") || '<p class="note-line">A época terminou.</p>';
+  let html = "", mes = "";
+  paa.forEach(e => {
+    if (e[0] !== mes) { mes = e[0]; html += `<h3>${paaMesNome[+mes.slice(5) - 1]} ${mes.slice(0, 4)}</h3>`; }
+    html += paaItem(e);
+  });
+  document.getElementById("paa-lista").innerHTML = html;
+}
 // App no telemóvel: uma secção de cada vez, barra em baixo com as 4 secções principais e "Mais" com as restantes
 // (para trocar as secções da barra, muda os href/data-tab do nav.tabbar)
 const appSec = [
+  ["inicio", "GD", "GDNF", "Página inicial e plano anual de atividades"],
   ["epoca", "EP", "Época", "Resumo, escalões e mapa de provas"],
   ["minimos", "MF", "Mínimos FPN", "Tempos de acesso aos nacionais"],
   ["internacionais", "IN", "Internacionais", "Mínimos para as provas FPN 2027"],
@@ -3742,6 +3873,8 @@ const appSec = [
   ["recordes", "RE", "Recordes", "Recordes absolutos do clube"]
 ];
 const appTabs = [...document.querySelectorAll("#tabbar a")].map(a => a.dataset.tab);
+document.getElementById("atalhos").innerHTML = ["ranking", "minimos", "internacionais", "series", "atletas", "calendario", "horarios", "plano", "treinadores"]
+  .map(id => appSec.find(x => x[0] === id)).map(([id, sg, t]) => `<a href="#${id}"><span class="sigla">${sg}</span>${t}</a>`).join("");
 document.getElementById("mais-list").innerHTML = appSec.filter(([id]) => !appTabs.includes(id))
   .map(([id, sg, t, sub]) => `<a class="mais-item" href="#${id}"><span class="sigla">${sg}</span><span><b>${t}</b><small>${sub}</small></span><span class="seta">›</span></a>`).join("");
 const appMQ = matchMedia("(max-width: 760px)");
@@ -3749,15 +3882,15 @@ function appMostrar() {
   const ativo = appMQ.matches;
   document.body.classList.toggle("app", ativo);
   if (!ativo) return;
-  // sem endereço, abre o primeiro separador da barra
-  const inicio = document.getElementById(appTabs[0]);
+  // sem endereço, abre a página inicial
+  const inicio = document.getElementById("inicio");
   const alvo = document.getElementById(decodeURIComponent(location.hash.slice(1))) || inicio;
   const sec = alvo.closest("main > section") || inicio;
   document.querySelectorAll("main > section.ativa").forEach(x => x.classList.remove("ativa"));
   sec.classList.add("ativa");
   const info = appSec.find(x => x[0] === sec.id);
   document.getElementById("app-titulo").textContent = info ? info[2] : "Mais";
-  const tab = appTabs.includes(sec.id) ? sec.id : "mais";
+  const tab = appTabs.includes(sec.id) ? sec.id : sec.id === "inicio" ? "" : "mais";
   document.querySelectorAll("#tabbar a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
   if (alvo === sec) window.scrollTo({ top: 0, behavior: "instant" }); else alvo.scrollIntoView({ behavior: "instant" });
 }
