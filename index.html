@@ -267,6 +267,7 @@
   /* página inicial (app): capa do Plano Anual de Atividades */
   body:not(.app) main > :is(#inicio, #menu) { display: none; }
   #menu .atalhos { margin-top: 16px; }
+  #menu .ligacoes { margin-top: 0; } #menu .ligacoes .sigla { background: var(--paa); color: var(--navy); }
   .capa { text-align: center; background: var(--surface); border: 1px solid var(--line); border-top: 8px solid var(--navy); border-bottom: 8px solid var(--navy); border-radius: 14px; padding: 22px 16px 18px; margin-bottom: 18px; }
   .capa img { width: 92px; height: 92px; object-fit: contain; border-radius: 50%; background: #fff; }
   .capa .clube { margin: 10px 0 2px; font-weight: 800; color: var(--accent); letter-spacing: .02em; }
@@ -385,6 +386,14 @@
   <!-- ATALHOS (só na app do telemóvel): abre a seguir à capa -->
   <section id="menu">
     <div class="atalhos" id="atalhos"></div>
+    <h3>Ligações</h3>
+    <div class="atalhos ligacoes">
+      <a href="https://www.swimrankings.net/" target="_blank" rel="noopener"><span class="sigla">SR</span>swimrankings</a>
+      <a href="https://fpnatacao.pt/" target="_blank" rel="noopener"><span class="sigla">FPN</span>FPN</a>
+      <a href="https://fpnsystem.fpnatacao.pt/" target="_blank" rel="noopener"><span class="sigla">FS</span>FPNSystem</a>
+      <a href="https://www.annp.pt/" target="_blank" rel="noopener"><span class="sigla">AN</span>ANNP</a>
+      <a href="https://provas.annp.pt/provas2526/gestao/" target="_blank" rel="noopener"><span class="sigla">BE</span>ANNP baixas e estafetas</a>
+    </div>
   </section>
 
   <!-- ÉPOCA -->
