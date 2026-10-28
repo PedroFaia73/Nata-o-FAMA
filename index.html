@@ -265,7 +265,8 @@
   #capa .lema small { display: block; font-weight: 400; opacity: .8; font-size: .85rem; margin-top: 4px; }
   #capa .entrar { margin-top: 30px; padding: 12px 34px; border-radius: 999px; background: var(--paa); color: var(--navy); font-weight: 800; text-decoration: none; }
   /* página inicial (app): capa do Plano Anual de Atividades */
-  body:not(.app) main > #inicio { display: none; }
+  body:not(.app) main > :is(#inicio, #menu) { display: none; }
+  #menu .atalhos { margin-top: 16px; }
   .capa { text-align: center; background: var(--surface); border: 1px solid var(--line); border-top: 8px solid var(--navy); border-bottom: 8px solid var(--navy); border-radius: 14px; padding: 22px 16px 18px; margin-bottom: 18px; }
   .capa img { width: 92px; height: 92px; object-fit: contain; border-radius: 50%; background: #fff; }
   .capa .clube { margin: 10px 0 2px; font-weight: 800; color: var(--accent); letter-spacing: .02em; }
@@ -362,7 +363,7 @@
     <div class="anos">2026 | 2027</div>
     <div class="linha"></div>
     <div class="lema">"O SONHO... O FUTURO"<small>Convidamos-te a fazer parte desta família</small></div>
-    <a class="entrar" href="#inicio">Entrar</a>
+    <a class="entrar" href="#menu">Entrar</a>
   </section>
 
   <!-- INÍCIO (só na app do telemóvel) -->
@@ -379,7 +380,10 @@
     <h3>Próximas atividades</h3>
     <div id="paa-prox"></div>
     <details id="paa-todos"><summary>Ver o plano anual completo</summary><div id="paa-lista"></div></details>
-    <h3>Atalhos</h3>
+  </section>
+
+  <!-- ATALHOS (só na app do telemóvel): abre a seguir à capa -->
+  <section id="menu">
     <div class="atalhos" id="atalhos"></div>
   </section>
 
@@ -3882,7 +3886,8 @@ const paaItem = e => {
 // App no telemóvel: uma secção de cada vez, barra em baixo com as 4 secções principais e "Mais" com as restantes
 // (para trocar as secções da barra, muda os href/data-tab do nav.tabbar)
 const appSec = [
-  ["inicio", "GD", "GDNF", "Página inicial e plano anual de atividades"],
+  ["menu", "GD", "GDNF", "Atalhos para todas as secções"],
+  ["inicio", "PA", "Plano Anual", "Plano Anual de Atividades 2026/27"],
   ["epoca", "EP", "Época", "Resumo, escalões e mapa de provas"],
   ["minimos", "MF", "Mínimos FPN", "Tempos de acesso aos nacionais"],
   ["internacionais", "IN", "Internacionais", "Mínimos para as provas FPN 2027"],
@@ -3901,8 +3906,7 @@ const appSec = [
   ["recordes", "RE", "Recordes", "Recordes absolutos do clube"]
 ];
 const appTabs = [...document.querySelectorAll("#tabbar a")].map(a => a.dataset.tab);
-document.getElementById("atalhos").innerHTML = ["ranking", "minimos", "internacionais", "series", "atletas", "calendario", "horarios", "plano", "treinadores"]
-  .map(id => appSec.find(x => x[0] === id)).map(([id, sg, t]) => `<a href="#${id}"><span class="sigla">${sg}</span>${t}</a>`).join("");
+document.getElementById("atalhos").innerHTML = appSec.filter(([id]) => id !== "menu").map(([id, sg, t]) => `<a href="#${id}"><span class="sigla">${sg}</span>${t}</a>`).join("");
 document.getElementById("mais-list").innerHTML = appSec.filter(([id]) => !appTabs.includes(id))
   .map(([id, sg, t, sub]) => `<a class="mais-item" href="#${id}"><span class="sigla">${sg}</span><span><b>${t}</b><small>${sub}</small></span><span class="seta">›</span></a>`).join("");
 const appMQ = matchMedia("(max-width: 760px)");
@@ -3919,7 +3923,7 @@ function appMostrar() {
   const info = appSec.find(x => x[0] === sec.id);
   document.getElementById("app-titulo").textContent = info ? info[2] : "Mais";
   document.body.classList.toggle("na-capa", sec.id === "capa");
-  const tab = appTabs.includes(sec.id) ? sec.id : ["inicio", "capa"].includes(sec.id) ? "" : "mais";
+  const tab = appTabs.includes(sec.id) ? sec.id : ["menu", "capa"].includes(sec.id) ? "" : "mais";
   document.querySelectorAll("#tabbar a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
   if (alvo === sec) window.scrollTo({ top: 0, behavior: "instant" }); else alvo.scrollIntoView({ behavior: "instant" });
 }
