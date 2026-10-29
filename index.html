@@ -154,6 +154,7 @@
 
   .pickers { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
   .pickers label { min-width: 0; display: flex; flex-direction: column; gap: 4px; font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); flex: 1 1 240px; }
+  .pickers input { width: 100%; min-width: 0; font: inherit; font-size: 1rem; font-weight: 600; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; text-transform: none; letter-spacing: 0; }
   .pickers select { width: 100%; min-width: 0; text-overflow: ellipsis; font: inherit; font-size: 1rem; text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
   .tac td.num { font-size: .98rem; font-weight: 600; }
   .tac tr.grp td { background: var(--soft); font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
@@ -344,6 +345,7 @@
     <a href="#calendario">Calendário</a>
     <a href="#macrociclo">Macrociclo 1</a>
     <a href="#zonas">Zonas</a>
+    <a href="#tempos">Tempos de treino</a>
     <a href="#horarios">Horários</a>
     <a href="#fama-a-nadar">FAMA a Nadar</a>
     <a href="#plano">Plano diário</a>
@@ -1148,6 +1150,36 @@
       </table>
     </div>
     <p class="docs"><a href="docs/zonas-intensidade-2026-27.pdf">Zonas de intensidade (PDF)</a></p>
+  </section>
+
+  <!-- TEMPOS DE TREINO -->
+  <section id="tempos">
+    <h2>Tempos de treino por zona</h2>
+    <p class="lead">Escolhe o atleta e o estilo. O recorde pessoal (RP) de 50 e de 100 m vem do Ranking do clube e podes alterá-lo à mão. Os tempos-alvo somam ao RP os segundos da tabela GPS FAMA (T50 e T100).</p>
+    <div class="pickers">
+      <label>Atleta
+        <select id="tt-atl"></select>
+      </label>
+      <label>Estilo
+        <select id="tt-est"><option value="0">Livres</option><option value="6">Costas</option><option value="9">Bruços</option><option value="12">Mariposa</option></select>
+      </label>
+    </div>
+    <div class="pickers tt-rp">
+      <label>RP 50 m
+        <input id="tt-rp50" inputmode="decimal" placeholder="ex.: 27.14">
+      </label>
+      <label>RP 100 m
+        <input id="tt-rp100" inputmode="decimal" placeholder="ex.: 59.56 ou 1:00.35">
+      </label>
+    </div>
+    <p class="note-line" id="tt-fonte"></p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Zona</th><th class="num">Séries de 50</th><th class="num">Séries de 100</th><th>Variação</th></tr></thead>
+        <tbody id="tt-rows"></tbody>
+      </table>
+    </div>
+    <p class="note-line">Exemplo: RP 100 L de 59.56 em A4 dá 100 a 1:06.56 (59.56 + 7"). Os RP escritos à mão servem só para o cálculo: não são guardados nem publicados. Sem RP de 50 m, a calculadora usa metade do RP de 100 m e avisa.</p>
   </section>
 
   <!-- HORÁRIOS -->
@@ -3905,6 +3937,42 @@ const paaItem = e => {
   });
   document.getElementById("paa-lista").innerHTML = html;
 }
+
+// Tempos de treino: RP + segundos da tabela GPS FAMA (T50, T100) por zona
+const ttZonas = [
+  ["A1", "CAer", 12, 20, "1,0–2,0\""], ["A2", "LAer", 9, 15, "1,0–2,0\""], ["A3", "CAna", 6, 10, "1,0–1,5\""],
+  ["A4", "VO2 Máx", 4, 7, "0,5–1,0\""], ["TL", "Tolerância", 2, 4, "0,2–0,8\""], ["PL", "Potência", null, null, "0,0\""]
+];
+const ttA = document.getElementById("tt-atl"), ttE = document.getElementById("tt-est"), tt50 = document.getElementById("tt-rp50"), tt100 = document.getElementById("tt-rp100");
+const ttSeg = t => { t = String(t).trim().replace(",", ".").replace(/["”]/g, ""); if (!t) return NaN; return t.split(":").reduce((a, x) => a * 60 + parseFloat(x), 0); };
+const ttFmt = v => { const m = Math.floor(v / 60), r = (v - m * 60).toFixed(2).padStart(5, "0"); return m ? `${m}:${r}` : (+r).toFixed(2); };
+ttA.innerHTML = '<option value="">Outro atleta (escreve o RP)</option>' +
+  [...new Set(ranking.map(r => r[3]))].sort((a, b) => a.localeCompare(b, "pt")).map(n => `<option>${escH(n)}</option>`).join("");
+// melhor tempo do atleta na prova (qualquer piscina), a partir do Ranking
+const ttMelhor = (n, p) => ranking.filter(r => r[3] === n && r[1] === p).sort((a, b) => ttSeg(a[5]) - ttSeg(b[5]))[0];
+function ttPreencher() {
+  const n = ttA.value, e = +ttE.value, f = [];
+  [[tt50, e], [tt100, e + 1]].forEach(([el, p]) => {
+    const r = n && ttMelhor(n, p);
+    el.value = r ? r[5] : "";
+    if (r) f.push(`${rkProvas[p]}: ${r[5]} (${r[6]}, ${r[7]})`);
+  });
+  document.getElementById("tt-fonte").textContent = n ? (f.length ? "RP do Ranking: " + f.join(" · ") : "Sem tempos deste atleta no Ranking neste estilo: escreve o RP.") : "";
+  ttCalc();
+}
+function ttCalc() {
+  const r100 = ttSeg(tt100.value);
+  let r50 = ttSeg(tt50.value), aviso = "";
+  if (isNaN(r50) && !isNaN(r100)) { r50 = r100 / 2; aviso = " *"; }
+  const c = (rp, t) => isNaN(rp) ? "–" : t === null ? "máx" : ttFmt(rp + t);
+  const z = ttZonas.map(([k, nome, t50, t100, v]) => `<tr><td><b>${k}</b> <small>${nome}</small></td><td class="num">${c(r50, t50)}${t50 !== null && !isNaN(r50) ? aviso : ""}</td><td class="num">${c(r100, t100)}</td><td>${v}</td></tr>`);
+  z.push(`<tr><td><b>Vel</b> <small>Velocidade</small></td><td class="num" colspan="2">${isNaN(r100) ? "–" : "25 m a " + ttFmt((r100 - 5) / 4)}</td><td>0,0"</td></tr>`);
+  document.getElementById("tt-rows").innerHTML = z.join("") + (aviso ? '<tr><td colspan="4"><small>* sem RP de 50 m: calculado com metade do RP de 100 m</small></td></tr>' : "");
+}
+ttA.addEventListener("change", ttPreencher);
+ttE.addEventListener("change", ttPreencher);
+[tt50, tt100].forEach(el => el.addEventListener("input", ttCalc));
+ttPreencher();
 // App no telemóvel: uma secção de cada vez, barra em baixo com as 4 secções principais e "Mais" com as restantes
 // (para trocar as secções da barra, muda os href/data-tab do nav.tabbar)
 const appSec = [
@@ -3922,6 +3990,7 @@ const appSec = [
   ["calendario", "CA", "Calendário", "Quadro competitivo FPN"],
   ["macrociclo", "M1", "Macrociclo 1", "Setembro a dezembro de 2026"],
   ["zonas", "ZI", "Zonas", "Zonas de intensidade"],
+  ["tempos", "TT", "Tempos de treino", "Tempos-alvo por zona a partir do RP"],
   ["horarios", "HO", "Horários", "Treinos e treinadores por grupo"],
   ["fama-a-nadar", "FN", "FAMA a Nadar", "Torneio de escolas, 17 abr. 2027"],
   ["plano", "PD", "Plano diário", "Plano de treino guardado no telemóvel"],
