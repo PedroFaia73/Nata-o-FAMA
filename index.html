@@ -154,6 +154,12 @@
 
   .pickers { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
   .pickers label { min-width: 0; display: flex; flex-direction: column; gap: 4px; font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); flex: 1 1 240px; }
+  .pickers input { width: 100%; min-width: 0; font: inherit; font-size: 1rem; font-weight: 600; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; text-transform: none; letter-spacing: 0; }
+  .tt-treino textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 1rem; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  #tr-saida .card { margin: 10px 0; padding: 10px 12px; }
+  #tr-saida .card code { white-space: pre-wrap; font-size: .85rem; color: var(--muted); }
+  #tr-saida .alvo { margin-top: 6px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .btn-wa { display: inline-block; margin-top: 6px; padding: 12px 22px; border-radius: 999px; background: #25d366; color: #fff; font-weight: 800; text-decoration: none; }
   .pickers select { width: 100%; min-width: 0; text-overflow: ellipsis; font: inherit; font-size: 1rem; text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
   .tac td.num { font-size: .98rem; font-weight: 600; }
   .tac tr.grp td { background: var(--soft); font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
@@ -344,6 +350,7 @@
     <a href="#calendario">Calendário</a>
     <a href="#macrociclo">Macrociclo 1</a>
     <a href="#zonas">Zonas</a>
+    <a href="#tempos">Tempos de treino</a>
     <a href="#horarios">Horários</a>
     <a href="#fama-a-nadar">FAMA a Nadar</a>
     <a href="#plano">Plano diário</a>
@@ -1148,6 +1155,55 @@
       </table>
     </div>
     <p class="docs"><a href="docs/zonas-intensidade-2026-27.pdf">Zonas de intensidade (PDF)</a></p>
+  </section>
+
+  <!-- TEMPOS DE TREINO -->
+  <section id="tempos">
+    <h2>Tempos de treino por zona</h2>
+    <p class="lead">Escolhe o atleta e o estilo. O recorde pessoal (RP) de 50 e de 100 m vem do Ranking do clube e podes alterá-lo à mão. Os tempos-alvo somam ao RP os segundos da tabela GPS FAMA (T50 e T100).</p>
+    <div class="pickers">
+      <label>Atleta
+        <select id="tt-atl"></select>
+      </label>
+      <label>Estilo
+        <select id="tt-est"><option value="0">Livres</option><option value="6">Costas</option><option value="9">Bruços</option><option value="12">Mariposa</option></select>
+      </label>
+    </div>
+    <div class="pickers tt-rp">
+      <label>RP 50 m
+        <input id="tt-rp50" inputmode="decimal" placeholder="ex.: 27.14">
+      </label>
+      <label>RP 100 m
+        <input id="tt-rp100" inputmode="decimal" placeholder="ex.: 59.56 ou 1:00.35">
+      </label>
+    </div>
+    <p class="note-line" id="tt-fonte"></p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Zona</th><th class="num">Séries de 50</th><th class="num">Séries de 100</th><th>Variação</th></tr></thead>
+        <tbody id="tt-rows"></tbody>
+      </table>
+    </div>
+    <h3>Ritmo de prova</h3>
+    <div class="pickers">
+      <label>Prova
+        <select id="rp-prova"></select>
+      </label>
+      <label>Tempo da prova
+        <input id="rp-tempo" inputmode="decimal" placeholder="ex.: 59.56">
+      </label>
+    </div>
+    <p class="note-line" id="rp-fonte"></p>
+    <div class="table-scroll"><table><thead><tr><th class="num">Metros</th><th class="num">Parcial 50</th><th class="num">Parcial 100</th><th class="num">Passagem</th></tr></thead><tbody id="rp-rows"></tbody></table></div>
+
+    <h3>Treino da atleta</h3>
+    <p class="lead">Cola o treino (ou só as séries principais). Nas linhas com zona (A1 a TL) ou ritmo de prova (RP100, RP200…) a app escreve o tempo-alvo de cada distância. As linhas sem zona usam a zona da linha de cima. E1 é o estilo escolhido acima.</p>
+    <label class="tt-treino">
+      <textarea id="tr-texto" rows="7" placeholder='RP100 6x[1x100E1 c/20"]c/3&apos;30"&#10;1x [2x50c/45"/55"] 2&apos;00&apos; INT&#10;3x(4x100L + 4x50L) A4'></textarea>
+    </label>
+    <div id="tr-saida"></div>
+    <p><a class="btn-wa" id="tr-wa" href="#" target="_blank" rel="noopener" hidden>Enviar por WhatsApp</a></p>
+    <p class="note-line">Exemplo: RP 100 L de 59.56 em A4 dá 100 a 1:06.56 (59.56 + 7"). Os RP escritos à mão servem só para o cálculo: não são guardados nem publicados. Sem RP de 50 m, a calculadora usa metade do RP de 100 m e avisa.</p>
   </section>
 
   <!-- HORÁRIOS -->
@@ -3905,6 +3961,141 @@ const paaItem = e => {
   });
   document.getElementById("paa-lista").innerHTML = html;
 }
+
+// Tempos de treino: RP + segundos da tabela GPS FAMA (T50, T100) por zona
+const ttZonas = [
+  ["A1", "CAer", 12, 20, "1,0–2,0\""], ["A2", "LAer", 9, 15, "1,0–2,0\""], ["A3", "CAna", 6, 10, "1,0–1,5\""],
+  ["A4", "VO2 Máx", 4, 7, "0,5–1,0\""], ["TL", "Tolerância", 2, 4, "0,2–0,8\""], ["PL", "Potência", null, null, "0,0\""]
+];
+const ttA = document.getElementById("tt-atl"), ttE = document.getElementById("tt-est"), tt50 = document.getElementById("tt-rp50"), tt100 = document.getElementById("tt-rp100");
+const ttSeg = t => { t = String(t).trim().replace(",", ".").replace(/["”]/g, ""); if (!t) return NaN; return t.split(":").reduce((a, x) => a * 60 + parseFloat(x), 0); };
+const ttFmt = v => { const m = Math.floor(v / 60), r = (v - m * 60).toFixed(2).padStart(5, "0"); return m ? `${m}:${r}` : (+r).toFixed(2); };
+ttA.innerHTML = '<option value="">Outro atleta (escreve o RP)</option>' +
+  [...new Set(ranking.map(r => r[3]))].sort((a, b) => a.localeCompare(b, "pt")).map(n => `<option>${escH(n)}</option>`).join("");
+// melhor tempo do atleta na prova (qualquer piscina), a partir do Ranking
+const ttMelhor = (n, p) => ranking.filter(r => r[3] === n && r[1] === p).sort((a, b) => ttSeg(a[5]) - ttSeg(b[5]))[0];
+function ttPreencher() {
+  const n = ttA.value, e = +ttE.value, f = [];
+  [[tt50, e], [tt100, e + 1]].forEach(([el, p]) => {
+    const r = n && ttMelhor(n, p);
+    el.value = r ? r[5] : "";
+    if (r) f.push(`${rkProvas[p]}: ${r[5]} (${r[6]}, ${r[7]})`);
+  });
+  document.getElementById("tt-fonte").textContent = n ? (f.length ? "RP do Ranking: " + f.join(" · ") : "Sem tempos deste atleta no Ranking neste estilo: escreve o RP.") : "";
+  ttCalc();
+}
+function ttCalc() {
+  const r100 = ttSeg(tt100.value);
+  let r50 = ttSeg(tt50.value), aviso = "";
+  if (isNaN(r50) && !isNaN(r100)) { r50 = r100 / 2; aviso = " *"; }
+  const c = (rp, t) => isNaN(rp) ? "–" : t === null ? "máx" : ttFmt(rp + t);
+  const z = ttZonas.map(([k, nome, t50, t100, v]) => `<tr><td><b>${k}</b> <small>${nome}</small></td><td class="num">${c(r50, t50)}${t50 !== null && !isNaN(r50) ? aviso : ""}</td><td class="num">${c(r100, t100)}</td><td>${v}</td></tr>`);
+  z.push(`<tr><td><b>Vel</b> <small>Velocidade</small></td><td class="num" colspan="2">${isNaN(r100) ? "–" : "25 m a " + ttFmt((r100 - 5) / 4)}</td><td>0,0"</td></tr>`);
+  document.getElementById("tt-rows").innerHTML = z.join("") + (aviso ? '<tr><td colspan="4"><small>* sem RP de 50 m: calculado com metade do RP de 100 m</small></td></tr>' : "");
+}
+ttA.addEventListener("change", ttPreencher);
+ttE.addEventListener("change", ttPreencher);
+[tt50, tt100].forEach(el => el.addEventListener("input", ttCalc));
+ttPreencher();
+
+// Ritmo de prova: parciais por 50 m com as percentagens da folha "Cálculo do ritmo de prova" (masc./fem.)
+const rpCoef = [{"1": [0.485, 0.515], "2": [0.2335, 0.2543, 0.2562, 0.256], "3": [0.1141, 0.1239, 0.1268, 0.128, 0.1275, 0.1278, 0.1278, 0.1241], "4": [0.0585, 0.0633, 0.0626, 0.0632, 0.0626, 0.0632, 0.0628, 0.0632, 0.0629, 0.0631, 0.063, 0.0632, 0.063, 0.0626, 0.063, 0.0598], "5": [0.0328, 0.0328, 0.0336, 0.0336, 0.0337, 0.0337, 0.0336, 0.0336, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0333, 0.0333, 0.0333, 0.0333, 0.0322, 0.0322], "7": [0.4897, 0.5103], "8": [0.2355, 0.2535, 0.2566, 0.2544], "10": [0.4685, 0.5315], "11": [0.2355, 0.2535, 0.2566, 0.2544], "13": [0.4897, 0.5103], "14": [0.2234, 0.2508, 0.2593, 0.2665], "16": [0.216, 0.253, 0.2914, 0.2396], "17": [0.2282, 0.2561, 0.287, 0.2286]}, {"1": [0.4861, 0.5139], "2": [0.2367, 0.256, 0.256, 0.2513], "3": [0.1141, 0.1239, 0.1268, 0.128, 0.1275, 0.1278, 0.1278, 0.1241], "4": [0.0585, 0.0633, 0.0626, 0.0632, 0.0626, 0.0632, 0.0628, 0.0632, 0.0629, 0.0631, 0.063, 0.0632, 0.063, 0.0626, 0.063, 0.0598], "5": [0.0328, 0.0328, 0.0336, 0.0336, 0.0337, 0.0337, 0.0336, 0.0336, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0333, 0.0333, 0.0333, 0.0333, 0.0322, 0.0322], "7": [0.4795, 0.5205], "8": [0.2345, 0.2523, 0.2562, 0.257], "10": [0.4715, 0.5285], "11": [0.232, 0.2546, 0.2555, 0.2579], "13": [0.4589, 0.5411], "14": [0.2295, 0.2558, 0.2571, 0.2575], "16": [0.2189, 0.2621, 0.2868, 0.2322], "17": [0.2314, 0.2583, 0.2828, 0.2275]}];
+const rpProvas = [1, 2, 3, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 0, 6, 9, 12, 15];
+const rpP = document.getElementById("rp-prova"), rpT = document.getElementById("rp-tempo");
+rpP.innerHTML = rpProvas.map(p => `<option value="${p}">${rkProvas[p]}</option>`).join("");
+const rpDist = p => parseInt(rkProvas[p]);
+// género do atleta pelo Ranking (0 masc., 1 fem.)
+const ttGenero = n => { const r = ranking.find(x => x[3] === n); return r ? r[0] % 2 : 0; };
+// parciais de 50 m de uma prova: percentagens da folha, ou iguais quando a prova não as tem
+function rpParciais(p, t, g) {
+  const n = Math.max(1, rpDist(p) / 50), c = rpCoef[g][p] || Array(n).fill(1 / n);
+  return c.map(x => x * t);
+}
+// tempo-alvo de um troço [de, até] dentro da prova, a partir das passagens
+function rpTroco(par, de, ate) {
+  const cum = d => { let s = 0, i = 0; for (; i < par.length && (i + 1) * 50 <= d; i++) s += par[i]; return i < par.length ? s + par[i] * (d - i * 50) / 50 : s; };
+  return cum(ate) - cum(de);
+}
+function rpPreencher() {
+  const n = ttA.value, p = +rpP.value, r = n && ttMelhor(n, p);
+  rpT.value = r ? r[5] : "";
+  document.getElementById("rp-fonte").textContent = n ? (r ? `RP do Ranking: ${r[5]} (${r[6]}, ${r[7]})` : "Sem tempo desta prova no Ranking: escreve o tempo.") : "";
+  rpCalc();
+}
+function rpCalc() {
+  const p = +rpP.value, t = ttSeg(rpT.value), g = ttGenero(ttA.value), b = document.getElementById("rp-rows");
+  if (isNaN(t)) { b.innerHTML = '<tr><td colspan="4">Escreve o tempo da prova.</td></tr>'; return; }
+  const par = rpParciais(p, t, g);
+  let s = 0;
+  b.innerHTML = par.map((x, i) => { s += x; return `<tr><td class="num">${(i + 1) * 50}</td><td class="num">${ttFmt(x)}</td><td class="num">${i % 2 ? ttFmt(x + par[i - 1]) : ""}</td><td class="num">${ttFmt(s)}</td></tr>`; }).join("");
+  trCalc();
+}
+rpP.addEventListener("change", rpPreencher);
+rpT.addEventListener("input", rpCalc);
+
+// Treino: lê as linhas, encontra a zona e as distâncias e escreve os tempos-alvo
+const trEstilo = { L: 0, C: 6, B: 9, M: 12, E: null };
+function trAlvos(linha, zona, est, g) {
+  // distâncias pela ordem, com repetições: "2x50" = 50, 50; "1x25" = 25
+  const ds = [], re = /(?:(\d+)\s*x\s*)?(25|50|75|100|150|200|300|400|800|1500)\s*(L|C|B|M|E\d?)?(?![\d'"])/gi;
+  for (const m of linha.replace(/c\/[\d'"\/:,.]+/gi, " ").matchAll(re)) {
+    const k = m[3] ? m[3][0].toUpperCase() : "", e = k && trEstilo[k] !== null && trEstilo[k] !== undefined ? trEstilo[k] : est;
+    for (let i = 0; i < (+m[1] || 1); i++) ds.push([+m[2], e]);
+  }
+  if (!ds.length) return "";
+  if (zona.startsWith("RP")) {
+    const D = +zona.slice(2), out = [];
+    // as distâncias da linha dividem a prova pela ordem (ex.: 50 + 25 + 25 de um 100)
+    const tot = ds.reduce((a, [d]) => a + d, 0), quebrada = tot === D;
+    let pos = 0;
+    for (const [d, e] of ds) {
+      const p = rkProvas.indexOf(`${D} ${rkProvas[e].split(" ")[1]}`), t = p >= 0 ? ttSeg(trRP(p)) : NaN;
+      if (isNaN(t)) { out.push(`${d}: sem RP ${D}`); continue; }
+      const par = rpParciais(p, t, g);
+      out.push(`${d}: ${ttFmt(quebrada ? rpTroco(par, pos, pos + d) : d === D ? t : t * d / D)}`);
+      pos += d;
+    }
+    return out.join(" + ");
+  }
+  const z = ttZonas.find(x => x[0] === zona);
+  if (!z) return "";
+  if (z[2] === null) return "máx";
+  const out = ds.map(([d, e]) => {
+    const r50 = ttSeg(trRP(e)), r100 = ttSeg(trRP(e + 1)), b50 = isNaN(r50) ? r100 / 2 : r50;
+    const v = d === 100 ? r100 + z[3] : d === 50 ? b50 + z[2] : d === 25 ? (b50 + z[2]) / 2 : NaN;
+    return isNaN(v) ? `${d}: –` : `${d}: ${ttFmt(v)}`;
+  });
+  return [...new Set(out)].join(" · ");
+}
+// RP para o treino: os tempos escritos acima quando são da mesma prova (primeiro o do ritmo de prova), senão o Ranking
+function trRP(p) {
+  if (p === +rpP.value && rpT.value) return rpT.value;
+  if (p === +ttE.value && tt50.value) return tt50.value;
+  if (p === +ttE.value + 1 && tt100.value) return tt100.value;
+  const r = ttA.value && ttMelhor(ttA.value, p);
+  return r ? r[5] : "";
+}
+function trCalc() {
+  const linhas = document.getElementById("tr-texto").value.split("\n").map(l => l.trim()).filter(Boolean);
+  const g = ttGenero(ttA.value), est = +ttE.value, cartoes = [], msg = [];
+  let zona = "";
+  for (const l of linhas) {
+    const m = l.match(/\b(A[1-4]|TL|PL|RP\s?\d{2,4})\b/i);
+    if (m) zona = m[1].toUpperCase().replace(/\s/g, "");
+    const a = zona ? trAlvos(l.replace(m ? m[0] : "", " "), zona, est, g) : "";
+    cartoes.push(`<div class="card"><code>${escH(l)}</code>${a ? `<div class="alvo">${escH(zona)} → ${escH(a)}</div>` : ""}</div>`);
+    msg.push(a ? `${l}\n   → ${a}` : l);
+  }
+  document.getElementById("tr-saida").innerHTML = cartoes.join("");
+  const wa = document.getElementById("tr-wa"), nome = ttA.value || "atleta";
+  wa.hidden = !linhas.length;
+  wa.href = "https://wa.me/?text=" + encodeURIComponent(`Treino de ${nome} · tempos-alvo\n\n${msg.join("\n")}`);
+}
+document.getElementById("tr-texto").addEventListener("input", trCalc);
+ttA.addEventListener("change", rpPreencher);
+[tt50, tt100, ttE].forEach(el => el.addEventListener("input", trCalc));
+ttE.addEventListener("change", trCalc);
+rpPreencher();
 // App no telemóvel: uma secção de cada vez, barra em baixo com as 4 secções principais e "Mais" com as restantes
 // (para trocar as secções da barra, muda os href/data-tab do nav.tabbar)
 const appSec = [
@@ -3922,6 +4113,7 @@ const appSec = [
   ["calendario", "CA", "Calendário", "Quadro competitivo FPN"],
   ["macrociclo", "M1", "Macrociclo 1", "Setembro a dezembro de 2026"],
   ["zonas", "ZI", "Zonas", "Zonas de intensidade"],
+  ["tempos", "TT", "Tempos de treino", "Tempos-alvo por zona a partir do RP"],
   ["horarios", "HO", "Horários", "Treinos e treinadores por grupo"],
   ["fama-a-nadar", "FN", "FAMA a Nadar", "Torneio de escolas, 17 abr. 2027"],
   ["plano", "PD", "Plano diário", "Plano de treino guardado no telemóvel"],
