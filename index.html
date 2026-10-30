@@ -521,6 +521,7 @@
       <span style="--c: var(--warn-line)">A confirmar</span>
     </div>
     <p class="note-line"><strong>Em todas as reservas:</strong> pedir saída do hotel às 14h30 no último dia.</p>
+    <p class="partilhar" data-sec="deslocacoes"><button type="button" class="btn-sug" data-acao="imprimir">Imprimir</button> <a class="btn-wa" data-acao="wa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a></p>
   </section>
 
   <!-- SÉRIES-TIPO -->
@@ -965,6 +966,7 @@
     <h2>Treinadores</h2>
     <p class="lead">Equipa técnica com cédula de Treinador de Desporto (IPDJ). Os grupos vêm dos horários 2026/27.</p>
     <div class="grid" id="trein-grid"></div>
+    <p class="partilhar" data-sec="treinadores"><button type="button" class="btn-sug" data-acao="imprimir">Imprimir</button> <a class="btn-wa" data-acao="wa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a></p>
   </section>
 
   <!-- GUIA DO ATLETA -->
@@ -1305,6 +1307,7 @@
     <h2>Horários e treinadores</h2>
     <p class="lead">Distribuição de treinadores 2026/27 · cerca de 500 atletas por semana.</p>
     <div class="grid" id="horarios-grid" style="align-items:start"></div>
+    <p class="partilhar" data-sec="horarios"><button type="button" class="btn-sug" data-acao="imprimir">Imprimir</button> <a class="btn-wa" data-acao="wa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a></p>
   </section>
 
   <!-- FAMA A NADAR -->
@@ -4539,6 +4542,31 @@ trListaGuardados();
 rpPreencher();
 trPreencher();
 ttPreencher();
+// Partilhar uma secção: Imprimir (janela só com a secção) ou WhatsApp (o texto que está no ecrã)
+function secLimpa(id) {
+  const c = document.getElementById(id).cloneNode(true);
+  c.querySelectorAll(".partilhar, button, select, input").forEach(x => x.remove());
+  return c;
+}
+document.querySelectorAll(".partilhar").forEach(p => {
+  const id = p.dataset.sec;
+  p.querySelector('[data-acao="imprimir"]').addEventListener("click", () => {
+    const w = window.open("", "_blank");
+    if (!w) return;
+    w.document.write(`<!doctype html><meta charset="utf-8"><title>GDNF</title><style>body{font:12px system-ui,sans-serif;color:#000}table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:4px;text-align:left;vertical-align:top}.grid{display:block}.card{border:1px solid #999;border-radius:6px;padding:8px;margin:0 0 8px;break-inside:avoid}.stats{display:flex;gap:16px}a{color:#000}</style>${secLimpa(id).innerHTML}`);
+    w.document.close(); w.focus(); w.print();
+  });
+  p.querySelector('[data-acao="wa"]').addEventListener("click", ev => {
+    const c = secLimpa(id);
+    c.querySelectorAll("td *, th *").forEach(x => x.append(" "));
+    c.querySelectorAll("tr").forEach(tr => { tr.innerHTML = [...tr.children].map(td => td.textContent.replace(/\s+/g, " ").trim()).filter(Boolean).join(" · ") + "\n"; });
+    c.querySelectorAll("h2, h3, .card, p, li, tr").forEach(x => x.append("\n"));
+    document.body.append(c); c.style.position = "absolute"; c.style.left = "-9999px"; c.style.display = "block";
+    const txt = "GDNF · " + c.innerText.replace(/\t/g, " · ").replace(/[ \u00a0]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+    c.remove();
+    ev.currentTarget.href = "https://wa.me/?text=" + encodeURIComponent(txt.slice(0, 6000));
+  });
+});
 // App no telemóvel: uma secção de cada vez, barra em baixo com as 4 secções principais e "Mais" com as restantes
 // (para trocar as secções da barra, muda os href/data-tab do nav.tabbar)
 const appSec = [
