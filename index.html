@@ -159,6 +159,7 @@
   #tr-saida .card { margin: 10px 0; padding: 10px 12px; }
   #tr-saida .card code { white-space: pre-wrap; font-size: .85rem; color: var(--muted); }
   #tr-saida .alvo { margin-top: 6px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .btn-sug { padding: 10px 18px; border-radius: 999px; border: 0; background: var(--accent); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
   .btn-wa { display: inline-block; margin-top: 6px; padding: 12px 22px; border-radius: 999px; background: #25d366; color: #fff; font-weight: 800; text-decoration: none; }
   .pickers select { width: 100%; min-width: 0; text-overflow: ellipsis; font: inherit; font-size: 1rem; text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
   .tac td.num { font-size: .98rem; font-weight: 600; }
@@ -1197,12 +1198,13 @@
     <div class="table-scroll"><table><thead><tr><th class="num">Metros</th><th class="num">Parcial 50</th><th class="num">Parcial 100</th><th class="num">Passagem</th></tr></thead><tbody id="rp-rows"></tbody></table></div>
 
     <h3>Treino da atleta</h3>
-    <p class="lead">Escreve ou cola a série (ou o treino). Nas linhas com zona (A1 a TL) ou ritmo de prova (RP100, RP200…) a app escreve o tempo-alvo de cada distância. As linhas sem zona usam a zona da linha de cima ou a zona escolhida na lista. L, C, B, M e E (Estilos) escolhem o estilo; sem letra, ou com E1, usa o estilo escolhido acima.</p>
+    <p class="lead">Escreve ou cola a série (ou o treino). Nas linhas com zona (A1 a TL) ou ritmo de prova (RP100, RP200…) a app escreve o tempo-alvo de cada distância. As linhas sem zona usam a zona da linha de cima ou a zona escolhida na lista. O botão Sugerir séries propõe séries-tipo GDNF dessa zona, já com os tempos do atleta. L, C, B, M e E (Estilos) escolhem o estilo; sem letra, ou com E1, usa o estilo escolhido acima.</p>
     <div class="pickers">
       <label>Zona (se não estiver escrita na série)
         <select id="tr-zona"><option value="">Escolhe a zona</option><option>A1</option><option>A2</option><option>A3</option><option>A4</option><option>TL</option><option>PL</option><option>RP50</option><option>RP100</option><option>RP200</option><option>RP400</option><option>RP800</option><option>RP1500</option></select>
       </label>
     </div>
+    <p><button type="button" class="btn-sug" id="tr-sug">Sugerir séries desta zona</button></p>
     <label class="tt-treino">
       <textarea id="tr-texto" rows="7" placeholder='Escreve ou cola aqui a série. Exemplos:&#10;A3 10x200L c/2&apos;30"&#10;A4 4x(4x100+1x200+4x50)&#10;RP100 6x[1x100E1 c/20"]c/3&apos;30"'></textarea>
     </label>
@@ -4063,7 +4065,9 @@ function trAlvos(linha, zona, est, g) {
       out.push(`${d}: ${ttFmt(quebrada ? rpTroco(par, pos, pos + d) : d === D ? t : t * d / D)}`);
       pos += d;
     }
-    return out.join(" + ");
+    // repetições seguidas iguais ficam juntas: "2x100: 1:00.35"
+    return out.reduce((acc, x) => { const u = acc[acc.length - 1]; if (u && u[1] === x) u[0]++; else acc.push([1, x]); return acc; }, [])
+      .map(([n, x]) => n > 1 ? `${n}x${x}` : x).join(" + ");
   }
   const z = ttZonas.find(x => x[0] === zona);
   if (!z) return "";
@@ -4098,7 +4102,9 @@ function trCalc() {
     if (m) zona = m[1].toUpperCase().replace(/\s/g, "");
     // o nome do estilo escrito na linha (Livres, Costas, Bruços, Mariposa, Estilos) vale para as distâncias sem letra
     const w = l.match(/\b(livres?|crol|costas|bru[çc]os|mariposa|estilos)\b/i), est = w ? { l: 0, c: 0, o: 6, r: 9, m: 12, e: 15 }[w[1][0].toLowerCase() === "c" && /^cos/i.test(w[1]) ? "o" : w[1][0].toLowerCase() === "b" ? "r" : w[1][0].toLowerCase()] : +ttE.value;
-    const a = zona ? trAlvos(l.replace(m ? m[0] : "", " "), zona, est, g) : "";
+    // cada bloco [ ... ] é calculado à parte (ex.: [2x50] [1x50 2x25] de um RP100)
+    const t = l.replace(m ? m[0] : "", " "), partes = t.includes("[") ? [t.split("[")[0], ...[...t.matchAll(/\[[^\]]*\]?/g)].map(x => x[0])] : [t];
+    const a = zona ? partes.map(x => trAlvos(x, zona, est, g)).filter(Boolean).join(" | ") : "";
     const falta = !zona && /\d/.test(l) ? '<div class="alvo">Falta a zona: escreve-a na série (ex.: A4) ou escolhe-a na lista acima.</div>' : "";
     cartoes.push(`<div class="card"><code>${escH(l)}</code>${a ? `<div class="alvo">${escH(zona)} → ${escH(a)}</div>` : falta}</div>`);
     msg.push(a ? `${l}\n   → ${a}` : l);
@@ -4112,7 +4118,20 @@ document.getElementById("tr-texto").addEventListener("input", trCalc);
 ttA.addEventListener("change", rpPreencher);
 [tt50, tt100, ttE].forEach(el => el.addEventListener("input", trCalc));
 ttE.addEventListener("change", trCalc);
-document.getElementById("tr-zona").addEventListener("change", trCalc);
+document.getElementById("tr-zona").addEventListener("change", () => { trSugN = 0; trCalc(); });
+// Sugerir séries: as séries-tipo GDNF da zona escolhida (as mais usadas primeiro), 3 de cada vez
+let trSugN = 0;
+document.getElementById("tr-sug").addEventListener("click", () => {
+  const z = document.getElementById("tr-zona").value, tx = document.getElementById("tr-texto");
+  if (!z) { tx.value = ""; document.getElementById("tr-saida").innerHTML = '<div class="card"><div class="alvo">Escolhe primeiro a zona na lista.</div></div>'; return; }
+  const l = gzSeries.filter(r => z.startsWith("RP") ? r[1] === z : r[0] === z).sort((a, b) => b[5] - a[5]);
+  if (!l.length) { tx.value = ""; document.getElementById("tr-saida").innerHTML = `<div class="card"><div class="alvo">Não há séries-tipo de ${escH(z)} na base GDNF.</div></div>`; return; }
+  const esc = [0, 1, 2].map(i => l[(trSugN + i) % l.length]).filter((r, i, a) => a.indexOf(r) === i);
+  trSugN = (trSugN + 3) % l.length;
+  tx.value = esc.map(r => new RegExp(`\\b${z}\\b`, "i").test(r[2]) ? r[2] : `${z} ${r[2]}`).join("\n");
+  document.getElementById("tr-sug").textContent = "Sugerir outras";
+  trCalc();
+});
 rpPreencher();
 // App no telemóvel: uma secção de cada vez, barra em baixo com as 4 secções principais e "Mais" com as restantes
 // (para trocar as secções da barra, muda os href/data-tab do nav.tabbar)
