@@ -994,24 +994,22 @@
     <p class="note-line">Fonte: rankings top 10 do clube (27/10/2026): top 10 de sempre absoluto e de infantis, top 10 absoluto da época 2025/26 e top 10 de cada escalão de outubro de 2025 a outubro de 2026 (falta Juniores B femininos). Pts = pontos FINA. A época 2025/26 está completa até ao 10.º lugar. Nas outras épocas só aparecem os tempos que entraram no top 10 de sempre, por isso podem faltar atletas.</p>
 
     <h3 id="estafetas">Melhores estafetas</h3>
-    <p class="lead">As estafetas mais rápidas possíveis com o melhor tempo de cada atleta nas épocas escolhidas acima (sem épocas escolhidas, usa todos os tempos). Usa o escalão escolhido acima. Nas estafetas de estilos é escolhida a melhor combinação, com um atleta por estilo e sem repetir. Tira da lista os atletas que não estão disponíveis (doentes, ausentes…) e as estafetas são recalculadas sem eles.</p>
+    <p class="lead">As estafetas mais rápidas possíveis com o melhor tempo de cada atleta nas épocas escolhidas acima (sem épocas escolhidas, usa todos os tempos). Usa o escalão escolhido acima. Nas estafetas de estilos é escolhida a melhor combinação, com um atleta por estilo e sem repetir. Sem atletas escolhidos, entram todos os das épocas escolhidas. Se escolheres atletas na lista (das épocas escolhidas ou de outras épocas), as estafetas são feitas só com eles.</p>
     <div class="pickers">
       <label>Piscina
         <select id="es-pisc"><option value="25m">25 m</option><option value="50m">50 m</option><option value="">Juntar 25 m e 50 m</option></select>
       </label>
     </div>
-    <details class="es-disp"><summary id="es-atls-n">Atletas disponíveis</summary>
-      <p><button type="button" class="btn-sug" id="es-todos">Todos</button> <button type="button" class="btn-sug" id="es-nenhum">Nenhum</button></p>
-      <div id="es-atls"></div>
+    <div class="es-disp">
+      <p class="sub" id="es-atls-n"></p>
       <div class="pickers">
-        <label>Juntar atleta de outra época
-          <input id="es-extra" list="es-extra-nomes" placeholder="escreve o nome">
-          <datalist id="es-extra-nomes"></datalist>
+        <label>Escolher atletas para a estafeta
+          <select id="es-add"></select>
         </label>
       </div>
-      <p><button type="button" class="btn-sug" id="es-extra-btn">Juntar à estafeta</button> <span class="sub" id="es-extra-msg"></span></p>
-      <p class="note-line">O atleta junto entra com o melhor tempo de sempre que está no ranking (em qualquer época e escalão). Para o tirar, toca no nome dele na lista.</p>
-    </details>
+      <div id="es-atls"></div>
+      <p><button type="button" class="btn-sug" id="es-limpar" hidden>Limpar escolha</button></p>
+    </div>
     <div class="grid" id="es-grid"></div>
     <p class="note-line">Atenção: só há dados dos 10 melhores de sempre em cada prova, por isso pode faltar quem não está no ranking (por exemplo, atletas atuais que ainda não entraram no top 10). O tempo é a soma dos tempos individuais, sem contar as partidas lançadas.</p>
   </section>
@@ -4144,10 +4142,17 @@ const esNadoNome = ["Costas", "Bruços", "Mariposa", "Livres"];
 // melhor tempo de cada atleta do género g (0 masc., 1 fem.) no escalão escolhido
 function esMelhores(g, prova) {
   const eps = rkEpocas(), pisc = esPisc.value, best = new Map();
-  rkTempos(g, eps).map(x => x.r).concat(ranking.filter(r => r[0] % 2 === g && esExtra.has(g + "|" + r[3])))
-    .filter(r => r[1] === prova && (!pisc || r[6] === pisc))
-    .filter(r => !esFora.has(g + "|" + r[3]))
-    .forEach(r => { const t = esSeg(r[5]); if (!best.has(r[3]) || t < best.get(r[3]).t) best.set(r[3], { n: r[3], t, tt: r[5], esc: g }); });
+  const ok = r => r[1] === prova && (!pisc || r[6] === pisc);
+  if (!esSel.size) {
+    rkTempos(g, eps).map(x => x.r).filter(ok)
+      .forEach(r => { const t = esSeg(r[5]); if (!best.has(r[3]) || t < best.get(r[3]).t) best.set(r[3], { n: r[3], t, tt: r[5], esc: g }); });
+  } else {
+    // atletas escolhidos: melhor tempo nas épocas escolhidas; se não tiverem, o melhor de sempre (com a época)
+    ranking.filter(r => r[0] % 2 === g && esSel.has(g + "|" + r[3]) && ok(r)).forEach(r => {
+      const t = esSeg(r[5]), dentro = !eps.length || eps.includes(rkEpoca(r[7])), b = best.get(r[3]);
+      if (!b || (dentro && !b.dentro) || (dentro === b.dentro && t < b.t)) best.set(r[3], { n: r[3], t, tt: dentro ? r[5] : `${r[5]} (${rkEpoca(r[7])})`, esc: g, dentro });
+    });
+  }
   return [...best.values()].sort((a, b) => a.t - b.t);
 }
 function esLivres(provas, escs) {
@@ -4173,32 +4178,26 @@ function esEstilos(provas, escs) {
   rec(0, new Set(), {}, 0, []);
   return melhor && melhor.sel;
 }
-// atletas disponíveis: os que têm tempos nas provas das estafetas para a escolha feita; tirar um recalcula as estafetas
-const esFora = new Set(), esExtra = new Set(), esProvas = [0, 1, 2, 6, 7, 9, 10, 12, 13];
+// escolher atletas: sem escolha entram todos os das épocas escolhidas; com escolha, só os escolhidos (de qualquer época)
+const esSel = new Set(), esProvas = [0, 1, 2, 6, 7, 9, 10, 12, 13];
 function esAtletas() {
-  const eps = rkEpocas(), pisc = esPisc.value;
-  const lista = [0, 1].flatMap(g => [...new Set(rkTempos(g, eps).map(x => x.r).filter(r => esProvas.includes(r[1]) && (!pisc || r[6] === pisc)).map(r => r[3]))].filter(n => !esExtra.has(g + "|" + n)).sort((a, b) => a.localeCompare(b)).map(n => [g, n]));
-  const extra = [...esExtra].map(v => [+v[0], v.slice(2)]);
-  document.getElementById("es-atls").innerHTML = extra.map(([g, n]) => `<label><input type="checkbox" data-extra value="${g}|${escH(n)}" checked><span>+ ${escH(n)} ${g ? "(F)" : "(M)"}</span></label>`).join("") + (lista.map(([g, n]) => `<label><input type="checkbox" value="${g}|${escH(n)}"${esFora.has(g + "|" + n) ? "" : " checked"}><span>${escH(n)} ${g ? "(F)" : "(M)"}</span></label>`).join("") || '<p class="sub">Sem atletas para esta escolha.</p>');
-  if (!document.getElementById("es-extra-nomes").options.length)
-    document.getElementById("es-extra-nomes").innerHTML = [...new Set(ranking.filter(r => esProvas.includes(r[1])).map(r => `${r[3]} (${r[0] % 2 ? "F" : "M"})`))].sort((a, b) => a.localeCompare(b, "pt")).map(n => `<option value="${escH(n)}">`).join("");
-  const fora = lista.filter(([g, n]) => esFora.has(g + "|" + n)).length;
-  document.getElementById("es-atls-n").textContent = `Atletas disponíveis: ${lista.length - fora} de ${lista.length}${fora ? ` (${fora} fora)` : ""}${extra.length ? ` + ${extra.length} de outra época` : ""} · tocar para escolher`;
+  const eps = rkEpocas(), pisc = esPisc.value, ok = r => esProvas.includes(r[1]) && (!pisc || r[6] === pisc);
+  const nomes = l => [...new Set(l.filter(ok).map(r => r[3]))].sort((a, b) => a.localeCompare(b, "pt"));
+  const grupos = [0, 1].flatMap(g => {
+    const nas = nomes(rkTempos(g, eps).map(x => x.r)), outras = nomes(ranking.filter(r => r[0] % 2 === g)).filter(n => !nas.includes(n));
+    const op = l => l.filter(n => !esSel.has(g + "|" + n)).map(n => `<option value="${g}|${escH(n)}">${escH(n)}</option>`).join("");
+    const gn = g ? "Femininos" : "Masculinos";
+    return [`<optgroup label="${gn} · ${eps.length ? "épocas escolhidas" : "todas as épocas"}">${op(nas)}</optgroup>`, outras.length ? `<optgroup label="${gn} · outras épocas">${op(outras)}</optgroup>` : ""];
+  });
+  document.getElementById("es-add").innerHTML = `<option value="">Escolhe um atleta…</option>` + grupos.join("");
+  const sel = [...esSel].map(v => [+v[0], v.slice(2)]).sort((a, b) => a[0] - b[0] || a[1].localeCompare(b[1], "pt"));
+  document.getElementById("es-atls").innerHTML = sel.map(([g, n]) => `<label><input type="checkbox" value="${g}|${escH(n)}" checked><span>${escH(n)} ${g ? "(F)" : "(M)"} ✕</span></label>`).join("");
+  document.getElementById("es-limpar").hidden = !sel.length;
+  document.getElementById("es-atls-n").textContent = sel.length ? `${sel.length} atleta${sel.length === 1 ? "" : "s"} escolhido${sel.length === 1 ? "" : "s"}: as estafetas usam só estes. Toca num nome para o tirar.` : `Nenhum atleta escolhido: as estafetas usam todos os atletas ${eps.length ? "das épocas escolhidas" : "do ranking"}.`;
 }
-document.getElementById("es-atls").addEventListener("change", ev => {
-  const v = ev.target.value;
-  if (ev.target.hasAttribute("data-extra")) esExtra.delete(v); else ev.target.checked ? esFora.delete(v) : esFora.add(v);
-  showEstafetas();
-});
-document.getElementById("es-todos").addEventListener("click", () => { esFora.clear(); showEstafetas(); });
-document.getElementById("es-nenhum").addEventListener("click", () => { document.querySelectorAll("#es-atls input:not([data-extra])").forEach(x => esFora.add(x.value)); showEstafetas(); });
-document.getElementById("es-extra-btn").addEventListener("click", () => {
-  const inp = document.getElementById("es-extra"), m = inp.value.trim().match(/^(.+) \((M|F)\)$/), msg = document.getElementById("es-extra-msg");
-  const g = m ? (m[2] === "F" ? 1 : 0) : -1;
-  if (!m || !ranking.some(r => r[3] === m[1] && r[0] % 2 === g)) { msg.textContent = "Escolhe um nome da lista."; return; }
-  esExtra.add(g + "|" + m[1]); esFora.delete(g + "|" + m[1]); inp.value = ""; msg.textContent = `${m[1]} junto.`;
-  showEstafetas();
-});
+document.getElementById("es-add").addEventListener("change", ev => { if (ev.target.value) { esSel.add(ev.target.value); showEstafetas(); } });
+document.getElementById("es-atls").addEventListener("change", ev => { esSel.delete(ev.target.value); showEstafetas(); });
+document.getElementById("es-limpar").addEventListener("click", () => { esSel.clear(); showEstafetas(); });
 function showEstafetas() {
   esAtletas();
   const base = 0, grupo = rkEscAtual()[1];
@@ -4207,7 +4206,7 @@ function showEstafetas() {
     const estilos = provas[0] !== provas[1];
     const linhas = generos.map(([g, escs]) => {
       const sel = estilos ? esEstilos(provas, escs) : esLivres(provas, escs);
-      if (!sel) return `<li><b>${g}:</b> <span class="sub">sem atletas suficientes</span></li>`;
+      if (!sel) return `<li><b>${g}:</b> <span class="sub">${esSel.size ? "faltam atletas escolhidos com tempo nesta prova" : "sem atletas suficientes"}</span></li>`;
       const tot = sel.reduce((a, c) => a + c.t, 0);
       return `<li><b>${g}: ${esFmt(tot)}</b><br><span class="sub">${sel.map((c, i) => `${estilos ? esNadoNome[i] + " – " : ""}${escH(c.n)}${escs.length > 1 ? (c.esc === base ? " (M)" : " (F)") : ""} ${c.tt}`).join(" · ")}</span></li>`;
     }).join("");
