@@ -1166,7 +1166,7 @@
         <select id="tt-atl"></select>
       </label>
       <label>Estilo
-        <select id="tt-est"><option value="0">Livres</option><option value="6">Costas</option><option value="9">Bruços</option><option value="12">Mariposa</option></select>
+        <select id="tt-est"><option value="0">Livres</option><option value="6">Costas</option><option value="9">Bruços</option><option value="12">Mariposa</option><option value="15">Estilos</option></select>
       </label>
     </div>
     <div class="pickers tt-rp">
@@ -1197,9 +1197,9 @@
     <div class="table-scroll"><table><thead><tr><th class="num">Metros</th><th class="num">Parcial 50</th><th class="num">Parcial 100</th><th class="num">Passagem</th></tr></thead><tbody id="rp-rows"></tbody></table></div>
 
     <h3>Treino da atleta</h3>
-    <p class="lead">Cola o treino (ou só as séries principais). Nas linhas com zona (A1 a TL) ou ritmo de prova (RP100, RP200…) a app escreve o tempo-alvo de cada distância. As linhas sem zona usam a zona da linha de cima. E1 é o estilo escolhido acima.</p>
+    <p class="lead">Escreve ou cola a série (ou o treino). Nas linhas com zona (A1 a TL) ou ritmo de prova (RP100, RP200…) a app escreve o tempo-alvo de cada distância. As linhas sem zona usam a zona da linha de cima. L, C, B, M e E (Estilos) escolhem o estilo; sem letra, ou com E1, usa o estilo escolhido acima.</p>
     <label class="tt-treino">
-      <textarea id="tr-texto" rows="7" placeholder='RP100 6x[1x100E1 c/20"]c/3&apos;30"&#10;1x [2x50c/45"/55"] 2&apos;00&apos; INT&#10;3x(4x100L + 4x50L) A4'></textarea>
+      <textarea id="tr-texto" rows="7" placeholder='Escreve ou cola aqui a série. Exemplos:&#10;A3 10x200L c/2&apos;30"&#10;A4 4x(4x100+1x200+4x50)&#10;RP100 6x[1x100E1 c/20"]c/3&apos;30"'></textarea>
     </label>
     <div id="tr-saida"></div>
     <p><a class="btn-wa" id="tr-wa" href="#" target="_blank" rel="noopener" hidden>Enviar por WhatsApp</a></p>
@@ -3973,10 +3973,12 @@ const ttFmt = v => { const m = Math.floor(v / 60), r = (v - m * 60).toFixed(2).p
 ttA.innerHTML = '<option value="">Outro atleta (escreve o RP)</option>' +
   [...new Set(ranking.map(r => r[3]))].sort((a, b) => a.localeCompare(b, "pt")).map(n => `<option>${escH(n)}</option>`).join("");
 // melhor tempo do atleta na prova (qualquer piscina), a partir do Ranking
+// estilo = índice do 50 m em rkProvas; Estilos (15) não tem 50 m e o 100 é o próprio 15
+const ttP50 = e => e === 15 ? -1 : e, ttP100 = e => e === 15 ? 15 : e + 1;
 const ttMelhor = (n, p) => ranking.filter(r => r[3] === n && r[1] === p).sort((a, b) => ttSeg(a[5]) - ttSeg(b[5]))[0];
 function ttPreencher() {
   const n = ttA.value, e = +ttE.value, f = [];
-  [[tt50, e], [tt100, e + 1]].forEach(([el, p]) => {
+  [[tt50, ttP50(e)], [tt100, ttP100(e)]].forEach(([el, p]) => {
     const r = n && ttMelhor(n, p);
     el.value = r ? r[5] : "";
     if (r) f.push(`${rkProvas[p]}: ${r[5]} (${r[6]}, ${r[7]})`);
@@ -4034,12 +4036,13 @@ rpP.addEventListener("change", rpPreencher);
 rpT.addEventListener("input", rpCalc);
 
 // Treino: lê as linhas, encontra a zona e as distâncias e escreve os tempos-alvo
-const trEstilo = { L: 0, C: 6, B: 9, M: 12, E: null };
+// E sozinho = Estilos; E1 (E com número) = estilo escolhido acima
+const trEstilo = { L: 0, C: 6, B: 9, M: 12, E: 15 };
 function trAlvos(linha, zona, est, g) {
   // distâncias pela ordem, com repetições: "2x50" = 50, 50; "1x25" = 25
   const ds = [], re = /(?:(\d+)\s*x\s*)?(25|50|75|100|150|200|300|400|800|1500)\s*(L|C|B|M|E\d?)?(?![\d'"])/gi;
   for (const m of linha.replace(/c\/[\d'"\/:,.]+/gi, " ").matchAll(re)) {
-    const k = m[3] ? m[3][0].toUpperCase() : "", e = k && trEstilo[k] !== null && trEstilo[k] !== undefined ? trEstilo[k] : est;
+    const k = m[3] && !/^E\d/i.test(m[3]) ? m[3][0].toUpperCase() : "", e = k ? trEstilo[k] : est;
     for (let i = 0; i < (+m[1] || 1); i++) ds.push([+m[2], e]);
   }
   if (!ds.length) return "";
@@ -4061,17 +4064,21 @@ function trAlvos(linha, zona, est, g) {
   if (!z) return "";
   if (z[2] === null) return "máx";
   const out = ds.map(([d, e]) => {
-    const r50 = ttSeg(trRP(e)), r100 = ttSeg(trRP(e + 1)), b50 = isNaN(r50) ? r100 / 2 : r50;
-    const v = d === 100 ? r100 + z[3] : d === 50 ? b50 + z[2] : d === 25 ? (b50 + z[2]) / 2 : NaN;
-    return isNaN(v) ? `${d}: –` : `${d}: ${ttFmt(v)}`;
+    const r50 = ttSeg(trRP(ttP50(e))), r100 = ttSeg(trRP(ttP100(e))), b50 = isNaN(r50) ? r100 / 2 : r50;
+    if (d <= 50) { const v = (b50 + z[2]) * d / 50; return isNaN(v) ? `${d}: –` : `${d}: ${ttFmt(v)}`; }
+    // 100 m ou mais: RP da distância + T100 por cada 100 m; sem RP dessa distância, ritmo do RP de 100 m
+    const p = d === 100 ? ttP100(e) : rkProvas.indexOf(`${d} ${rkProvas[e].split(" ")[1]}`), rp = p >= 0 ? ttSeg(trRP(p)) : NaN;
+    const v = (isNaN(rp) ? r100 * d / 100 : rp) + z[3] * d / 100;
+    if (isNaN(v)) return `${d}: –`;
+    return d > 100 ? `${d}: ${ttFmt(v)} (cada 100: ${ttFmt(v * 100 / d)})` : `${d}: ${ttFmt(v)}`;
   });
   return [...new Set(out)].join(" · ");
 }
 // RP para o treino: os tempos escritos acima quando são da mesma prova (primeiro o do ritmo de prova), senão o Ranking
 function trRP(p) {
   if (p === +rpP.value && rpT.value) return rpT.value;
-  if (p === +ttE.value && tt50.value) return tt50.value;
-  if (p === +ttE.value + 1 && tt100.value) return tt100.value;
+  if (p === ttP50(+ttE.value) && tt50.value) return tt50.value;
+  if (p === ttP100(+ttE.value) && tt100.value) return tt100.value;
   const r = ttA.value && ttMelhor(ttA.value, p);
   return r ? r[5] : "";
 }
