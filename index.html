@@ -483,11 +483,19 @@
       <p class="note-line" id="min-atl-info"></p>
       <div class="table-scroll">
         <table class="tac">
-          <thead><tr><th>Atleta</th><th>Prova</th><th class="num">Tempo</th><th class="num">Mínimo</th><th>Data · local</th></tr></thead>
+          <thead><tr><th>Atleta</th><th>Prova</th><th class="num">Tempo</th><th class="num">Mínimo</th><th class="num">Margem</th><th>Data · local</th></tr></thead>
           <tbody id="min-atl-rows"></tbody>
         </table>
       </div>
-      <p class="note-line">Com base nos melhores tempos do Ranking do Clube, de 2025/26 e 2026/27, nadados na piscina escolhida. O ranking guarda os 10 melhores de cada prova, por isso pode faltar algum atleta: confirma sempre na FPN.</p>
+      <p class="note-line">Com base nos melhores tempos do Ranking do Clube, de 2025/26 e 2026/27, nadados na piscina escolhida. Margem: quanto está abaixo do mínimo. <b>Quase lá</b>: atletas a menos de 2% do mínimo, com o que falta. O ranking guarda os 10 melhores de cada prova, por isso pode faltar algum atleta: confirma sempre na FPN.</p>
+      <h3>Estafetas (estimativa)</h3>
+      <div class="table-scroll">
+        <table class="tac">
+          <thead><tr><th>Estafeta</th><th>Atletas</th><th class="num">Soma</th><th class="num">Mínimo</th><th class="num">Margem</th></tr></thead>
+          <tbody id="min-est-rows"></tbody>
+        </table>
+      </div>
+      <p class="note-line">A melhor equipa possível com os 4 melhores tempos individuais de cada atleta (nas Estafetas de estilos: costas, bruços, mariposa e livres, sem repetir atletas). É uma estimativa: na estafeta, os parciais com partida lançada costumam ser mais rápidos.</p>
       <p class="partilhar" data-sec="min-atl"><button type="button" class="btn-sug" data-acao="imprimir">Imprimir</button> <a class="btn-wa" data-acao="wa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a></p>
     </div>
     <p class="docs"><a href="docs/regulamento-natacao-pura-2026-27.pdf">Regulamento das Competições Nacionais (PDF)</a></p>
@@ -3976,34 +3984,84 @@ function rkMinOk(r) {
 const minAnos = [[1900, 2008], [2006, 2008], [2009, 2010], [2010, 2010], [2011, 2011], [2012, 2012], [2011, 2011], [2012, 2012], [2013, 2013], [2014, 2014], [2011, 2011], [2012, 2012], [2013, 2013], [2014, 2014]];
 const minNomes = ["Sénior", "Sub21", "Júnior", "1.º ano Júnior", "Juv A · CN jul", "Juv B · CN jul", "Juv A · CN mar/abr", "Juv B · CN mar/abr", "Inf A · CN jul", "Inf B · CN jul", "Juv A · Zonais", "Juv B · Zonais", "Inf A · Zonais", "Inf B · Zonais"];
 document.getElementById("min-cats").innerHTML = minNomes.map((n, c) => `<label><input type="checkbox" value="${c}"${c === +document.getElementById("tac-cat").value ? " checked" : ""}><span>${n}</span></label>`).join("");
+// campeonato de cada categoria (datas da secção Deslocações)
+const minProvas = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5].map(i => [["10–13 dez. 2026", "08–11 abr. 2027", "29 jul.–01 ago. 2027"], ["29 jul.–01 ago. 2027"], ["02–04 abr. 2027"], ["23–25 jul. 2027"], ["04–06 dez. 2026"], ["26–28 fev. 2027"]][i]);
+const minEst = [["4×50 L", [0, 0, 0, 0]], ["4×100 L", [1, 1, 1, 1]], ["4×200 L", [2, 2, 2, 2]], ["4×50 E", [6, 9, 12, 0]], ["4×100 E", [7, 10, 13, 1]]];
+const minDif = d => (d < 0 ? "−" : "") + Math.abs(d).toFixed(2) + '"';
 function minAtletas() {
-  const pool = document.getElementById("tac-pool").value, rows = [];
+  const pool = document.getElementById("tac-pool").value, rows = [], est = [];
   const cats = [...document.querySelectorAll("#min-cats input:checked")].map(x => +x.value);
+  try { localStorage.setItem("gdnf-minimos", JSON.stringify({ cats, pool })); } catch (e) {}
   cats.forEach(c => {
     const [a0, a1] = minAnos[c], melhor = {};
+    // melhor tempo de cada atleta em cada prova, na piscina e nos anos da categoria
     ranking.forEach(r => {
       if ("p" + parseInt(r[6]) !== pool || !["2025/26", "2026/27"].includes(rkEpoca(r[7]))) return;
       const n = rkNasc(r); if (n < a0 || n > a1) return;
-      const g = r[0] % 2 ? "F" : "M", [d, est] = rkProvas[r[1]].split(" "), k = `${d} ${est === "Bruços" ? "B" : est[0]}`;
-      const row = tac[pool][g].find(x => x[0] === k), t = row && row[c + 1];
-      if (!t || rkSeg(r[5]) > rkSeg(t)) return;
-      const id = `${g}|${r[3]}|${r[1]}`;
-      if (!melhor[id] || rkSeg(r[5]) < rkSeg(melhor[id].r[5])) melhor[id] = { g, r, t };
+      const id = `${r[0] % 2 ? "F" : "M"}|${r[3]}|${r[1]}`;
+      if (!melhor[id] || rkSeg(r[5]) < rkSeg(melhor[id][5])) melhor[id] = r;
     });
-    const lst = Object.values(melhor);
-    rows.push(`<tr class="grp"><td colspan="5"><b>${minNomes[c]} · ${a0 === 1900 ? `${a1} e anteriores` : a0 === a1 ? a0 : `${a0}–${a1}`}</b></td></tr>`);
-    [["M", "Masculinos"], ["F", "Femininos"]].forEach(([g, nome]) => {
+    const lst = Object.values(melhor).map(r => {
+      const g = r[0] % 2 ? "F" : "M", [d, e] = rkProvas[r[1]].split(" "), k = `${d} ${e === "Bruços" ? "B" : e[0]}`;
+      const row = tac[pool][g].find(x => x[0] === k), t = row && row[c + 1];
+      return { g, r, t, d: t ? rkSeg(r[5]) - rkSeg(t) : NaN };
+    }).filter(x => x.t);
+    const quando = minProvas[c].map(d => desl.find(x => x[0] === d)).filter(Boolean).map(x => `${x[0]} · ${x[4]}`).join("; ");
+    rows.push(`<tr class="grp"><td colspan="6"><b>${minNomes[c]} · ${a0 === 1900 ? `${a1} e anteriores` : a0 === a1 ? a0 : `${a0}–${a1}`}</b>${quando ? `<br><a href="#deslocacoes">${quando}</a>` : ""}</td></tr>`);
+    const linhas = (l, marg) => {
       const por = {};
-      lst.filter(x => x.g === g).forEach(x => (por[x.r[3]] = por[x.r[3]] || []).push(x));
+      l.forEach(x => (por[x.r[3]] = por[x.r[3]] || []).push(x));
       const nomes = Object.keys(por).sort((a, b) => por[b].length - por[a].length || a.localeCompare(b));
-      rows.push(`<tr><td colspan="5"><i>${nome} · ${nomes.length} atleta${nomes.length === 1 ? "" : "s"}</i></td></tr>`);
-      nomes.forEach(n => por[n].sort((a, b) => a.r[1] - b.r[1]).forEach((x, i) => rows.push(`<tr><td>${i ? "" : `<b>${escH(n)}</b> (${rkNasc(x.r)}) · ${por[n].length} prova${por[n].length === 1 ? "" : "s"}`}</td><td>${rkProvas[x.r[1]]}</td><td class="num"><b>${x.r[5]}</b></td><td class="num">${x.t}</td><td>${x.r[7]} · ${escH(x.r[8])}</td></tr>`)));
+      nomes.forEach(n => por[n].sort((a, b) => a.r[1] - b.r[1]).forEach((x, i) => rows.push(`<tr><td>${i ? "" : `<b>${escH(n)}</b> (${rkNasc(x.r)}) · ${por[n].length} prova${por[n].length === 1 ? "" : "s"}`}</td><td>${rkProvas[x.r[1]]}</td><td class="num"><b>${x.r[5]}</b></td><td class="num">${x.t}</td><td class="num" style="white-space:nowrap">${marg(x)}</td><td>${x.r[7]} · ${escH(x.r[8])}</td></tr>`)));
+      return nomes.length;
+    };
+    [["M", "Masculinos"], ["F", "Femininos"]].forEach(([g, nome]) => {
+      const i = rows.push("") - 1;
+      const n = linhas(lst.filter(x => x.g === g && x.d <= 0), x => minDif(x.d));
+      rows[i] = `<tr><td colspan="6"><i>${nome} com mínimo · ${n} atleta${n === 1 ? "" : "s"}</i></td></tr>`;
+      const j = rows.push("") - 1;
+      const q = linhas(lst.filter(x => x.g === g && x.d > 0 && x.d <= rkSeg(x.t) * 0.02), x => "faltam " + minDif(x.d));
+      if (q) rows[j] = `<tr><td colspan="6"><i>${nome} quase lá (até 2%) · ${q} atleta${q === 1 ? "" : "s"}</i></td></tr>`;
+      // estafetas: melhor equipa com os tempos individuais
+      const tg = (p, nm) => { const x = melhor[`${g}|${nm}|${p}`]; return x ? rkSeg(x[5]) : Infinity; };
+      const atl = [...new Set(Object.values(melhor).filter(r => (r[0] % 2 ? "F" : "M") === g).map(r => r[3]))];
+      est.push(`<tr class="grp"><td colspan="5"><b>${minNomes[c]}</b> · ${nome}</td></tr>`);
+      minEst.forEach(([k, ps]) => {
+        const row = tac[pool][g].find(x => x[0] === k), t = row && row[c + 1];
+        if (!t) return;
+        let best = null;
+        if (ps[0] === ps[1]) {
+          const l = atl.map(n => [n, tg(ps[0], n)]).filter(x => x[1] < Infinity).sort((a, b) => a[1] - b[1]).slice(0, 4);
+          if (l.length === 4) best = [l.map(x => x[0]), l.reduce((a, x) => a + x[1], 0)];
+        } else {
+          // estilos: experimentar os 6 melhores de cada técnica, sem repetir atletas
+          const top = ps.map(p => atl.map(n => [n, tg(p, n)]).filter(x => x[1] < Infinity).sort((a, b) => a[1] - b[1]).slice(0, 6));
+          top[0].forEach(a => top[1].forEach(b => top[2].forEach(m => top[3].forEach(l => {
+            if (new Set([a[0], b[0], m[0], l[0]]).size < 4) return;
+            const s = a[1] + b[1] + m[1] + l[1];
+            if (!best || s < best[1]) best = [[a[0], b[0], m[0], l[0]], s];
+          }))));
+        }
+        const nm = provaNome(k);
+        if (!best) { est.push(`<tr><td>${nm}</td><td colspan="4">Faltam tempos para 4 atletas.</td></tr>`); return; }
+        const d = best[1] - rkSeg(t);
+        est.push(`<tr><td>${nm}</td><td style="min-width:200px">${best[0].map(escH).join(", ")}</td><td class="num"><b>${ttFmtR(best[1])}</b></td><td class="num">${t}</td><td class="num" style="white-space:nowrap">${d <= 0 ? "✓ " + minDif(d) : "faltam " + minDif(d)}</td></tr>`);
+      });
     });
   });
-  if (!cats.length) rows.push('<tr><td colspan="5">Escolhe pelo menos uma categoria.</td></tr>');
+  if (!cats.length) rows.push('<tr><td colspan="6">Escolhe pelo menos uma categoria.</td></tr>');
   document.getElementById("min-atl-info").textContent = `${cats.map(c => minNomes[c]).join(" + ") || "Nenhuma categoria"} · piscina de ${pool === "p50" ? "50" : "25"} m`;
-  document.getElementById("min-atl-rows").innerHTML = rows.join("");
+  document.getElementById("min-atl-rows").innerHTML = rows.filter(Boolean).join("");
+  document.getElementById("min-est-rows").innerHTML = est.join("");
 }
+// lembrar a última escolha neste telemóvel
+try {
+  const m = JSON.parse(localStorage.getItem("gdnf-minimos") || "null");
+  if (m && Array.isArray(m.cats)) {
+    document.querySelectorAll("#min-cats input").forEach(x => { x.checked = m.cats.includes(+x.value); });
+    if (["p50", "p25"].includes(m.pool)) { document.getElementById("tac-pool").value = m.pool; showTac(); }
+  }
+} catch (e) {}
 document.getElementById("min-cats").addEventListener("change", minAtletas);
 document.getElementById("tac-pool").addEventListener("change", minAtletas);
 minAtletas();
