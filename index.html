@@ -1198,7 +1198,19 @@
     <div class="table-scroll"><table><thead><tr><th class="num">Metros</th><th class="num">Parcial 50</th><th class="num">Parcial 100</th><th class="num">Passagem</th></tr></thead><tbody id="rp-rows"></tbody></table></div>
 
     <h3>Treino da atleta</h3>
-    <p class="lead">Escreve ou cola a série (ou o treino). Nas linhas com zona (A1 a TL) ou ritmo de prova (RP100, RP200…) a app escreve o tempo-alvo de cada distância. As linhas sem zona usam a zona da linha de cima ou a zona escolhida na lista. O botão Sugerir séries propõe séries-tipo GDNF dessa zona, já com os tempos do atleta. L, C, B, M e E (Estilos) escolhem o estilo; sem letra, ou com E1, usa o estilo escolhido acima.</p>
+    <p class="lead">Escreve ou cola a série (ou o treino). Nas linhas com zona (A1 a TL) ou ritmo de prova (RP100, RP200…) a app escreve o tempo-alvo de cada distância. As linhas sem zona usam a zona da linha de cima ou a zona escolhida na lista. O botão Sugerir séries propõe séries-tipo GDNF dessa zona, já com os tempos do atleta. Escolhe a prova de base (distância e estilo) para calcular todas as distâncias a partir desse tempo; em "Automática", L, C, B, M e E (Estilos) escolhem o estilo e cada distância usa o RP dela.</p>
+    <div class="pickers">
+      <label>Atleta
+        <select id="tr-atl"></select>
+      </label>
+      <label>Prova de base
+        <select id="tr-prova"></select>
+      </label>
+      <label>Tempo da prova (RP ou à mão)
+        <input id="tr-tempo" inputmode="decimal" placeholder="ex.: 59.56 ou 2:10.40">
+      </label>
+    </div>
+    <p class="note-line" id="tr-fonte"></p>
     <div class="pickers">
       <label>Zona (se não estiver escrita na série)
         <select id="tr-zona"><option value="">Escolhe a zona</option><option>A1</option><option>A2</option><option>A3</option><option>A4</option><option>TL</option><option>PL</option><option>RP50</option><option>RP100</option><option>RP200</option><option>RP400</option><option>RP800</option><option>RP1500</option></select>
@@ -4047,6 +4059,11 @@ rpT.addEventListener("input", rpCalc);
 // Treino: lê as linhas, encontra a zona e as distâncias e escreve os tempos-alvo
 // E sozinho = Estilos; E1 (E com número) = estilo escolhido acima
 const trEstilo = { L: 0, C: 6, B: 9, M: 12, E: 15 };
+// prova de base escolhida no bloco do treino: [prova, tempo em s] ou null
+function trBase() {
+  const p = document.getElementById("tr-prova").value, t = ttSeg(document.getElementById("tr-tempo").value);
+  return p === "" || isNaN(t) ? null : [+p, t];
+}
 function trAlvos(linha, zona, est, g) {
   // distâncias pela ordem, com repetições: "2x50" = 50, 50; "1x25" = 25
   const ds = [], re = /(?:(\d+)\s*x\s*)?(25|50|75|100|150|200|300|400|800|1500)\s*(?:(L|C|B|M|E\d?)(?![a-zà-ú]))?(?![\d'"])/gi;
@@ -4055,13 +4072,26 @@ function trAlvos(linha, zona, est, g) {
     for (let i = 0; i < (+m[1] || 1); i++) ds.push([+m[2], e]);
   }
   if (!ds.length) return "";
+  // com prova de base: todas as distâncias saem do ritmo dessa prova
+  const b = trBase();
+  if (b && !zona.startsWith("RP")) {
+    const [bp, bt] = b, bD = rpDist(bp), z = ttZonas.find(x => x[0] === zona);
+    if (!z) return "";
+    if (z[2] === null) return "máx";
+    const out = ds.map(([d]) => {
+      const v = bt * d / bD + (d <= 50 ? z[2] * d / 50 : z[3] * d / 100);
+      return d > 100 ? `${d}: ${ttFmt(v)} (cada 100: ${ttFmt(v * 100 / d)})` : `${d}: ${ttFmt(v)}`;
+    });
+    return [...new Set(out)].join(" · ");
+  }
   if (zona.startsWith("RP")) {
     const D = +zona.slice(2), out = [];
     // as distâncias da linha dividem a prova pela ordem (ex.: 50 + 25 + 25 de um 100)
     const tot = ds.reduce((a, [d]) => a + d, 0), quebrada = tot === D;
     let pos = 0;
     for (const [d, e] of ds) {
-      const p = rkProvas.indexOf(`${D} ${rkProvas[e].split(" ")[1]}`), t = p >= 0 ? ttSeg(trRP(p)) : NaN;
+      // prova de base da mesma distância: usa-a (e o estilo dela) em vez das letras da linha
+      const p = b && rpDist(b[0]) === D ? b[0] : rkProvas.indexOf(`${D} ${rkProvas[e].split(" ")[1]}`), t = p >= 0 ? ttSeg(trRP(p)) : NaN;
       if (isNaN(t)) { out.push(`${d}: sem RP ${D}`); continue; }
       const par = rpParciais(p, t, g);
       out.push(`${d}: ${ttFmt(quebrada ? rpTroco(par, pos, pos + d) : d === D ? t : t * d / D)}`);
@@ -4088,6 +4118,8 @@ function trAlvos(linha, zona, est, g) {
 }
 // RP para o treino: os tempos escritos acima quando são da mesma prova (primeiro o do ritmo de prova), senão o Ranking
 function trRP(p) {
+  const b = trBase();
+  if (b && b[0] === p) return document.getElementById("tr-tempo").value;
   if (p === +rpP.value && rpT.value) return rpT.value;
   if (p === ttP50(+ttE.value) && tt50.value) return tt50.value;
   if (p === ttP100(+ttE.value) && tt100.value) return tt100.value;
@@ -4117,6 +4149,21 @@ function trCalc() {
   wa.href = "https://wa.me/?text=" + encodeURIComponent(`Treino de ${nome} · tempos-alvo\n\n${msg.join("\n")}`);
 }
 document.getElementById("tr-texto").addEventListener("input", trCalc);
+// Atleta e prova de base do treino: o atleta é o mesmo de cima; o tempo vem do Ranking e pode ser escrito à mão
+const trA = document.getElementById("tr-atl"), trPv = document.getElementById("tr-prova"), trTp = document.getElementById("tr-tempo");
+trA.innerHTML = ttA.innerHTML;
+trPv.innerHTML = '<option value="">Automática (RP de cada distância)</option>' + rpProvas.map(p => `<option value="${p}">${rkProvas[p]}</option>`).join("");
+function trPreencher() {
+  const n = ttA.value, p = trPv.value, r = n && p !== "" && ttMelhor(n, +p);
+  trTp.value = r ? r[5] : "";
+  trTp.disabled = p === "";
+  document.getElementById("tr-fonte").textContent = p === "" ? "" : r ? `RP do Ranking: ${r[5]} (${r[6]}, ${r[7]}). Podes alterar à mão.` : "Sem este tempo no Ranking: escreve o tempo.";
+  trCalc();
+}
+trA.addEventListener("change", () => { ttA.value = trA.value; ttA.dispatchEvent(new Event("change")); });
+ttA.addEventListener("change", () => { trA.value = ttA.value; trPreencher(); });
+trPv.addEventListener("change", trPreencher);
+trTp.addEventListener("input", trCalc);
 ttA.addEventListener("change", rpPreencher);
 [tt50, tt100, ttE].forEach(el => el.addEventListener("input", trCalc));
 ttE.addEventListener("change", trCalc);
@@ -4135,6 +4182,7 @@ document.getElementById("tr-sug").addEventListener("click", () => {
   trCalc();
 });
 rpPreencher();
+trPreencher();
 // App no telemóvel: uma secção de cada vez, barra em baixo com as 4 secções principais e "Mais" com as restantes
 // (para trocar as secções da barra, muda os href/data-tab do nav.tabbar)
 const appSec = [
