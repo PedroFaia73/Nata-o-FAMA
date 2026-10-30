@@ -1169,6 +1169,9 @@
       <label>Prova
         <select id="tt-prova"></select>
       </label>
+      <label>Piscina do treino
+        <select id="tt-pisc"><option value="">Como no Ranking</option><option value="25">25 m</option><option value="50">50 m</option></select>
+      </label>
       <label>RP da prova
         <input id="tt-rp" inputmode="decimal" placeholder="ex.: 59.56 ou 2:10.40">
       </label>
@@ -1204,7 +1207,7 @@
     <div class="table-scroll"><table><thead><tr><th class="num">Metros</th><th class="num">Parcial 50</th><th class="num">Parcial 100</th><th class="num">Passagem</th></tr></thead><tbody id="rp-rows"></tbody></table></div>
 
     <h3>Treino da atleta</h3>
-    <p class="lead">Escreve ou cola a série (ou o treino). Nas linhas com zona (A1 a TL) ou ritmo de prova (RP100, RP200…) a app escreve o tempo-alvo de cada distância. As linhas sem zona usam a zona da linha de cima ou a zona escolhida na lista. O botão Sugerir séries propõe séries-tipo GDNF dessa zona, já com os tempos do atleta. Escolhe a prova de base (distância e estilo) para calcular todas as distâncias a partir desse tempo; em "Automática", L, C, B, M e E (Estilos) escolhem o estilo e cada distância usa o RP dela.</p>
+    <p class="lead">Escreve ou cola a série (ou o treino). Nas linhas com zona (A1 a TL) ou ritmo de prova (RP100, RP200…) a app escreve o tempo-alvo de cada distância. As linhas sem zona usam a zona da linha de cima ou a zona escolhida na lista. O botão Sugerir séries propõe séries-tipo GDNF dessa zona, já com os tempos do atleta. Nas zonas A1 a TL, o c/ ao lado de cada tempo é o ciclo de partida sugerido: tempo-alvo + pausa (A1 10", A2 15", A3 20", A4 30", TL 60" por 100 m), arredondado aos 5". No fim aparece o volume por zona. Escolhe a prova de base (distância e estilo) para calcular todas as distâncias a partir desse tempo; em "Automática", L, C, B, M e E (Estilos) escolhem o estilo e cada distância usa o RP dela.</p>
     <div class="pickers">
       <label>Atleta
         <select id="tr-atl"></select>
@@ -1228,6 +1231,18 @@
     </label>
     <div id="tr-saida"></div>
     <p><a class="btn-wa" id="tr-wa" href="#" target="_blank" rel="noopener" hidden>Enviar por WhatsApp</a></p>
+    <h3>Tempos do grupo</h3>
+    <p class="lead">Os tempos-alvo da série acima para todos os atletas de um escalão, cada um com os seus RP do Ranking. Dá para imprimir e afixar no cais.</p>
+    <div class="pickers">
+      <label>Escalão
+        <select id="tr-grupo"></select>
+      </label>
+      <label>Género
+        <select id="tr-gen"><option value="">Todos</option><option value="0">Masculino</option><option value="1">Feminino</option></select>
+      </label>
+    </div>
+    <p><button type="button" class="btn-sug" id="tr-grupo-btn">Ver tempos do grupo</button> <button type="button" class="btn-sug" id="tr-print" hidden>Imprimir</button></p>
+    <div class="table-scroll" id="tr-grupo-saida"></div>
     <p class="note-line">Exemplo: RP 100 L de 59.56 em A4 dá 100 a 1:06.56 (59.56 + 7"). Os RP escritos à mão servem só para o cálculo: não são guardados nem publicados. Sem RP de 50 m, a calculadora usa metade do RP de 100 m e avisa.</p>
   </section>
 
@@ -4000,7 +4015,18 @@ ttA.innerHTML = '<option value="">Outro atleta (escreve o RP)</option>' +
 // melhor tempo do atleta na prova (qualquer piscina), a partir do Ranking
 // estilo = índice do 50 m em rkProvas; Estilos (15) não tem 50 m e o 100 é o próprio 15
 const ttP50 = e => e === 15 ? -1 : e, ttP100 = e => e === 15 ? 15 : e + 1;
-const ttMelhor = (n, p) => ranking.filter(r => r[3] === n && r[1] === p).sort((a, b) => ttSeg(a[5]) - ttSeg(b[5]))[0];
+// piscina do treino: o RP da outra piscina é convertido (aprox.) pelas viragens a mais ou a menos:
+// por cada 50 m, piscina longa = curta + Livres 0,7" · Costas 0,8" · Bruços 1,0" · Mariposa 0,7" · Estilos 0,8"
+const ttPisc = document.getElementById("tt-pisc");
+const ttViragem = { Livres: 0.7, Costas: 0.8, "Bruços": 1.0, Mariposa: 0.7, Estilos: 0.8 };
+function ttConv(r) {
+  const alvo = ttPisc.value, de = parseInt(r[6]);
+  if (!alvo || !de || de === +alvo) return r;
+  const [d, est] = rkProvas[r[1]].split(" "), dif = ttViragem[est] * d / 50 * (alvo === "50" ? 1 : -1);
+  const c = r.slice(); c[5] = ttFmt(ttSeg(r[5]) + dif); c[6] = `${r[6]} → ${alvo}m`;
+  return c;
+}
+const ttMelhor = (n, p) => ranking.filter(r => r[3] === n && r[1] === p).map(ttConv).sort((a, b) => ttSeg(a[5]) - ttSeg(b[5]))[0];
 // a prova escolhida define o estilo (os RP de 50 e 100 desse estilo ficam escondidos e servem o treino mais abaixo)
 const ttPv = document.getElementById("tt-prova"), ttRP = document.getElementById("tt-rp");
 const ttEstDe = p => ({ Livres: 0, Costas: 6, "Bruços": 9, Mariposa: 12, Estilos: 15 })[rkProvas[p].split(" ")[1]];
@@ -4015,6 +4041,7 @@ function ttPreencher() {
 }
 ttPv.addEventListener("change", () => { ttE.value = ttEstDe(+ttPv.value); ttE.dispatchEvent(new Event("change")); });
 ttRP.addEventListener("input", ttCalc);
+ttPisc.addEventListener("change", () => ttA.dispatchEvent(new Event("change")));
 // T de uma distância de treino: 25 = metade do T50, 50 = T50, 100 ou mais = T100 por cada 100 m
 const ttT = (z, d) => d <= 50 ? z[2] * d / 50 : z[3] * d / 100;
 function ttCalc() {
@@ -4080,9 +4107,15 @@ rpT.addEventListener("input", rpCalc);
 // Treino: lê as linhas, encontra a zona e as distâncias e escreve os tempos-alvo
 // E sozinho = Estilos; E1 (E com número) = estilo escolhido acima
 const trEstilo = { L: 0, C: 6, B: 9, M: 12, E: 15 };
+// ciclo de partida sugerido: tempo-alvo + pausa da zona (por 100 m; 25 e 50 m com a pausa de 50), arredondado aos 5"
+const trPausa = { A1: 10, A2: 15, A3: 20, A4: 30, TL: 60 };
+const trCiclo = (zona, d, v) => { const c = Math.ceil((v + trPausa[zona] * Math.max(d, 50) / 100) / 5) * 5, m = Math.floor(c / 60), r = c % 60; return m ? `${m}'${String(r).padStart(2, "0")}"` : `${r}"`; };
 // prova de base escolhida no bloco do treino: [prova, tempo em s] ou null
+// nos tempos do grupo, cada atleta usa só os seus tempos do Ranking (os campos escritos à mão não contam)
+let trGrupoNome = null;
+const trRank = p => { const r = ttMelhor(trGrupoNome, p); return r ? r[5] : ""; };
 function trBase() {
-  const p = document.getElementById("tr-prova").value, t = ttSeg(document.getElementById("tr-tempo").value);
+  const p = document.getElementById("tr-prova").value, t = ttSeg(trGrupoNome ? (p === "" ? "" : trRank(+p)) : document.getElementById("tr-tempo").value);
   return p === "" || isNaN(t) ? null : [+p, t];
 }
 function trAlvos(linha, zona, est, g) {
@@ -4101,7 +4134,7 @@ function trAlvos(linha, zona, est, g) {
     if (z[2] === null) return "máx";
     const out = ds.map(([d]) => {
       const v = bt * d / bD + (d <= 50 ? z[2] * d / 50 : z[3] * d / 100);
-      return d > 100 ? `${d}: ${ttFmt(v)} (cada 100: ${ttFmt(v * 100 / d)})` : `${d}: ${ttFmt(v)}`;
+      return d > 100 ? `${d}: ${ttFmt(v)} (cada 100: ${ttFmt(v * 100 / d)}; c/${trCiclo(zona, d, v)})` : `${d}: ${ttFmt(v)} (c/${trCiclo(zona, d, v)})`;
     });
     return [...new Set(out)].join(" · ");
   }
@@ -4129,16 +4162,17 @@ function trAlvos(linha, zona, est, g) {
     // RP de uma distância do estilo; sem ele, ritmo da distância mais próxima que exista (100, 200, 50, 400)
     const rpD = D => { const p = D === 50 ? ttP50(e) : D === 100 ? ttP100(e) : rkProvas.indexOf(`${D} ${rkProvas[e].split(" ")[1]}`); return p >= 0 ? ttSeg(trRP(p)) : NaN; };
     const base = D => { const v = rpD(D); if (!isNaN(v)) return v; for (const o of [100, 200, 50, 400]) { const w = rpD(o); if (!isNaN(w)) return w * D / o; } return NaN; };
-    if (d <= 50) { const v = (base(50) + z[2]) * d / 50; return isNaN(v) ? `${d}: sem RP` : `${d}: ${ttFmt(v)}`; }
+    if (d <= 50) { const v = (base(50) + z[2]) * d / 50; return isNaN(v) ? `${d}: sem RP` : `${d}: ${ttFmt(v)} (c/${trCiclo(zona, d, v)})`; }
     // 100 m ou mais: RP da distância + T100 por cada 100 m
     const v = base(d) + z[3] * d / 100;
     if (isNaN(v)) return `${d}: sem RP`;
-    return d > 100 ? `${d}: ${ttFmt(v)} (cada 100: ${ttFmt(v * 100 / d)})` : `${d}: ${ttFmt(v)}`;
+    return d > 100 ? `${d}: ${ttFmt(v)} (cada 100: ${ttFmt(v * 100 / d)}; c/${trCiclo(zona, d, v)})` : `${d}: ${ttFmt(v)} (c/${trCiclo(zona, d, v)})`;
   });
   return [...new Set(out)].join(" · ");
 }
 // RP para o treino: os tempos escritos acima quando são da mesma prova (primeiro o do ritmo de prova), senão o Ranking
 function trRP(p) {
+  if (trGrupoNome) return trRank(p);
   const b = trBase();
   if (b && b[0] === p) return document.getElementById("tr-tempo").value;
   if (p === +rpP.value && rpT.value) return rpT.value;
@@ -4147,9 +4181,23 @@ function trRP(p) {
   const r = ttA.value && ttMelhor(ttA.value, p);
   return r ? r[5] : "";
 }
-function trCalc() {
-  const linhas = document.getElementById("tr-texto").value.split("\n").map(l => l.trim()).filter(Boolean);
-  const g = ttGenero(ttA.value), cartoes = [], msg = [];
+// volume da linha em metros: "3x(4x100 + 4x50)" = 1800; "4x100(75L25E1L)" conta 400 (o parêntese logo a seguir à distância só a divide)
+const trDist = "25|50|75|100|150|200|300|400|500|600|800|1000|1500";
+function trSoma(t) {
+  let v = 0;
+  for (const m of t.matchAll(new RegExp(`(?:(\\d+)\\s*x\\s*)?(?<!\\d)(${trDist}|§\\d+§)(?![\\d'"])`, "gi"))) v += (+m[1] || 1) * +m[2].replace(/§/g, "");
+  return v;
+}
+function trVolume(l) {
+  let t = l.replace(/\b(A[1-4]|TL|PL|RP\s?\d{2,4}|P\d{2})\b/gi, " ").replace(/c\/[\d'"\/:,.~\-–>\s]+/gi, " ").replace(/\d+\s*['’][\d"”]*/g, " ").replace(/\d+\s*["”]/g, " ");
+  t = t.replace(new RegExp(`(${trDist})([A-Za-z]{0,2}\\d?)\\s*\\([^()\\[\\]]*\\)`, "g"), "$1$2");
+  const re = /(?:(\d+)\s*x\s*)?[(\[]([^()\[\]]*)[)\]]/;
+  for (let k = 0; k < 20 && re.test(t); k++) t = t.replace(re, (_, n, d) => ` §${(+n || 1) * trSoma(d)}§ `);
+  return trSoma(t);
+}
+// tempos-alvo de cada linha, para o atleta escolhido (ou para um atleta do grupo)
+function trLinhas(g) {
+  const linhas = document.getElementById("tr-texto").value.split("\n").map(l => l.trim()).filter(Boolean), out = [];
   // sem zona escrita, usa a zona escolhida na lista
   let zona = document.getElementById("tr-zona").value;
   for (const l of linhas) {
@@ -4160,14 +4208,24 @@ function trCalc() {
     // cada bloco [ ... ] é calculado à parte (ex.: [2x50] [1x50 2x25] de um RP100)
     const t = l.replace(m ? m[0] : "", " "), partes = t.includes("[") ? [t.split("[")[0], ...[...t.matchAll(/\[[^\]]*\]?/g)].map(x => x[0])] : [t];
     const a = zona ? partes.map(x => trAlvos(x, zona, est, g)).filter(Boolean).join(" | ") : "";
+    out.push({ l, zona, a, vol: trVolume(l) });
+  }
+  return out;
+}
+function trCalc() {
+  const ls = trLinhas(ttGenero(ttA.value)), cartoes = [], msg = [], vz = {};
+  for (const { l, zona, a, vol } of ls) {
     const falta = !zona && /\d/.test(l) ? '<div class="alvo">Falta a zona: escreve-a na série (ex.: A4) ou escolhe-a na lista acima.</div>' : "";
-    cartoes.push(`<div class="card"><code>${escH(l)}</code>${a ? `<div class="alvo">${escH(zona)} → ${escH(a)}</div>` : falta}</div>`);
+    if (vol) vz[zona || "sem zona"] = (vz[zona || "sem zona"] || 0) + vol;
+    cartoes.push(`<div class="card"><code>${escH(l)}</code>${vol ? ` <small>· ${vol} m</small>` : ""}${a ? `<div class="alvo">${escH(zona)} → ${escH(a)}</div>` : falta}</div>`);
     msg.push(a ? `${l}\n   → ${a}` : l);
   }
+  const tot = Object.values(vz).reduce((x, y) => x + y, 0);
+  if (tot) cartoes.push(`<div class="card"><b>Volume: ${tot} m</b><div class="alvo">${Object.entries(vz).map(([z, v]) => `${escH(z)} ${v} m (${Math.round(v / tot * 100)}%)`).join(" · ")}</div></div>`);
   document.getElementById("tr-saida").innerHTML = cartoes.join("");
   const wa = document.getElementById("tr-wa"), nome = ttA.value || "atleta";
-  wa.hidden = !linhas.length;
-  wa.href = "https://wa.me/?text=" + encodeURIComponent(`Treino de ${nome} · tempos-alvo\n\n${msg.join("\n")}`);
+  wa.hidden = !ls.length;
+  wa.href = "https://wa.me/?text=" + encodeURIComponent(`Treino de ${nome} · tempos-alvo\n\n${msg.join("\n")}${tot ? `\n\nVolume: ${tot} m` : ""}`);
 }
 document.getElementById("tr-texto").addEventListener("input", trCalc);
 // Atleta e prova de base do treino: o atleta é o mesmo de cima; o tempo vem do Ranking e pode ser escrito à mão
@@ -4190,17 +4248,43 @@ ttA.addEventListener("change", rpPreencher);
 ttE.addEventListener("change", trCalc);
 document.getElementById("tr-zona").addEventListener("change", () => { trSugN = 0; trCalc(); });
 // Sugerir séries: as séries-tipo GDNF da zona escolhida (as mais usadas primeiro), 3 de cada vez
+// A1 e A2 não estão na base GDNF: séries propostas, sem ciclo (a app sugere o c/)
+const trSeriesA12 = {
+  A1: ["A1 3x400L", "A1 8x200L", "A1 4x(300L 100C)", "A1 16x100L", "A1 1x800L Palas", "A1 2x(4x100L 4x50E1)"],
+  A2: ["A2 10x200L", "A2 3x(4x100L)", "A2 6x300L", "A2 20x100L", "A2 2x800L", "A2 4x(200L 2x100E1)"]
+};
 let trSugN = 0;
 document.getElementById("tr-sug").addEventListener("click", () => {
   const z = document.getElementById("tr-zona").value, tx = document.getElementById("tr-texto");
   if (!z) { tx.value = ""; document.getElementById("tr-saida").innerHTML = '<div class="card"><div class="alvo">Escolhe primeiro a zona na lista.</div></div>'; return; }
-  const l = gzSeries.filter(r => z.startsWith("RP") ? r[1] === z : r[0] === z).sort((a, b) => b[5] - a[5]);
+  const l = (trSeriesA12[z] ? trSeriesA12[z].map(x => [z, z, x, 0, 0, 0]) : gzSeries.filter(r => z.startsWith("RP") ? r[1] === z : r[0] === z).sort((a, b) => b[5] - a[5]));
   if (!l.length) { tx.value = ""; document.getElementById("tr-saida").innerHTML = `<div class="card"><div class="alvo">Não há séries-tipo de ${escH(z)} na base GDNF.</div></div>`; return; }
   const esc = [0, 1, 2].map(i => l[(trSugN + i) % l.length]).filter((r, i, a) => a.indexOf(r) === i);
   trSugN = (trSugN + 3) % l.length;
   tx.value = esc.map(r => new RegExp(`\\b${z}\\b`, "i").test(r[2]) ? r[2] : `${z} ${r[2]}`).join("\n");
   document.getElementById("tr-sug").textContent = "Sugerir outras";
   trCalc();
+});
+// Tempos do grupo: a série para cada atleta do escalão (idade em 2027)
+const trGr = document.getElementById("tr-grupo");
+trGr.innerHTML = rkEscs.map(([k, n]) => `<option value="${k}">${n}</option>`).join("");
+let trGrupoHtml = "";
+document.getElementById("tr-grupo-btn").addEventListener("click", () => {
+  const e = rkEscs.find(x => x[0] === trGr.value), gen = document.getElementById("tr-gen").value, sai = document.getElementById("tr-grupo-saida");
+  const nomes = [...new Set(ranking.filter(r => e[2](rkIdade(r)) && (gen === "" || r[0] % 2 === +gen)).map(r => r[3]))].sort((a, b) => a.localeCompare(b, "pt"));
+  const nl = trLinhas(0).length;
+  if (!nl) { sai.innerHTML = '<p class="note-line">Escreve primeiro a série no Treino da atleta.</p>'; return; }
+  const linhas = nomes.map(n => { trGrupoNome = n; const ls = trLinhas(ttGenero(n)); trGrupoNome = null; return [n, ls]; });
+  const cab = trLinhas(0);
+  trGrupoHtml = `<table><thead><tr><th>Atleta</th>${cab.map(x => `<th>${escH(x.l)}</th>`).join("")}</tr></thead><tbody>${linhas.map(([n, ls]) => `<tr><td><b>${escH(n)}</b></td>${ls.map(x => `<td>${escH(x.a || "–")}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  sai.innerHTML = nomes.length ? trGrupoHtml : '<p class="note-line">Sem atletas deste escalão no Ranking.</p>';
+  document.getElementById("tr-print").hidden = !nomes.length;
+});
+document.getElementById("tr-print").addEventListener("click", () => {
+  const w = window.open("", "_blank");
+  if (!w) return;
+  w.document.write(`<!doctype html><meta charset="utf-8"><title>Tempos do grupo</title><style>body{font:12px system-ui,sans-serif}table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:4px;vertical-align:top;text-align:left}</style><h2>GDNF · Tempos do grupo · ${escH(trGr.selectedOptions[0].text)}</h2>${trGrupoHtml}`);
+  w.document.close(); w.focus(); w.print();
 });
 rpPreencher();
 trPreencher();
