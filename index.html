@@ -4018,7 +4018,9 @@ const ttGenero = n => { const r = ranking.find(x => x[3] === n); return r ? r[0]
 // parciais de 50 m de uma prova: percentagens da folha, ou iguais quando a prova não as tem
 function rpParciais(p, t, g) {
   const n = Math.max(1, rpDist(p) / 50), c = rpCoef[g][p] || Array(n).fill(1 / n);
-  return c.map(x => x * t);
+  // a folha dá o 400 Estilos por 100 m: cada parcial de 100 fica em dois de 50 iguais
+  const k = n / c.length;
+  return c.flatMap(x => Array(k).fill(x * t / k));
 }
 // tempo-alvo de um troço [de, até] dentro da prova, a partir das passagens
 function rpTroco(par, de, ate) {
@@ -4066,7 +4068,7 @@ function trAlvos(linha, zona, est, g) {
       pos += d;
     }
     // repetições seguidas iguais ficam juntas: "2x100: 1:00.35"
-    return out.reduce((acc, x) => { const u = acc[acc.length - 1]; if (u && u[1] === x) u[0]++; else acc.push([1, x]); return acc; }, [])
+    return (quebrada ? `prova partida, passagens: ` : `ritmo médio da prova: `) + out.reduce((acc, x) => { const u = acc[acc.length - 1]; if (u && u[1] === x) u[0]++; else acc.push([1, x]); return acc; }, [])
       .map(([n, x]) => n > 1 ? `${n}x${x}` : x).join(" + ");
   }
   const z = ttZonas.find(x => x[0] === zona);
