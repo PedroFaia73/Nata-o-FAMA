@@ -135,9 +135,9 @@
   .esc .gym { color: var(--z-tl); font-weight: 700; font-size: .75rem; text-transform: uppercase; margin-right: 4px; }
 
   /* Recordes */
-  .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-  .tabs button { font: inherit; font-weight: 700; padding: 7px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; }
-  .tabs button[aria-selected="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .tabs, .tt-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  :is(.tabs, .tt-tabs) button { font: inherit; font-weight: 700; padding: 7px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; }
+  :is(.tabs, .tt-tabs) button[aria-selected="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
   .rec td.prova { font-weight: 700; text-align: center; white-space: nowrap; background: var(--soft); }
   .rec td.tempo { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .rec td.f, .rec th.f { text-align: right; }
@@ -305,6 +305,21 @@
   #paa-todos h3 { margin: 14px 0 8px; font-size: .9rem; text-transform: uppercase; color: var(--muted); }
   /* app no telemóvel: uma secção de cada vez, barra fixa em baixo e ecrã "Mais" */
   .app-bar, .tabbar, body:not(.app) main > #mais { display: none; }
+  .pasta { margin-bottom: 10px; }
+  .pasta summary { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); cursor: pointer; list-style: none; }
+  .pasta summary::-webkit-details-marker { display: none; }
+  .pasta summary small { margin-left: auto; color: var(--muted); font-size: .82rem; }
+  .pasta summary::after { content: "›"; color: var(--muted); font-size: 1.3rem; transition: transform .2s; }
+  .pasta[open] summary::after { transform: rotate(90deg); }
+  .pasta-ic { flex: none; width: 38px; height: 30px; border-radius: 4px 8px 8px 8px; background: var(--accent); position: relative; margin-top: 6px; }
+  .pasta-ic::before { content: ""; position: absolute; left: 0; top: -6px; width: 16px; height: 8px; border-radius: 4px 4px 0 0; background: var(--accent); }
+  .pasta[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+  .pasta > a { margin: 0 0 0 18px; border-radius: 0; border-top: 0; }
+  .pasta > a:last-child { border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; }
+  .pasta-sub { display: flex; align-items: center; padding: 10px 14px 10px 64px; border: 1px solid var(--line); background: var(--surface); color: var(--text); text-decoration: none; font-size: .9rem; font-weight: 600; }
+  .pasta-sub::before { content: "↳"; color: var(--muted); margin-right: 8px; }
+  .pasta-sub .seta { margin-left: auto; color: var(--muted); font-size: 1.2rem; }
+  #menu .indice { margin-top: 16px; }
   .mais-item { display: flex; align-items: center; gap: 12px; padding: 14px; margin-bottom: 10px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--text); text-decoration: none; }
   .mais-item .sigla { flex: none; width: 38px; height: 38px; border-radius: 10px; background: var(--accent); color: #fff; display: grid; place-items: center; font-size: .74rem; font-weight: 800; letter-spacing: .02em; }
   .mais-item b { display: block; }
@@ -399,7 +414,7 @@
 
   <!-- ATALHOS (só na app do telemóvel): abre a seguir à capa -->
   <section id="menu">
-    <div class="atalhos" id="atalhos"></div>
+    <div class="indice" id="atalhos"></div>
     <h3>Ligações</h3>
     <div class="atalhos ligacoes">
       <a href="https://www.swimrankings.net/" target="_blank" rel="noopener"><span class="sigla">SR</span>swimrankings</a>
@@ -1201,7 +1216,13 @@
 
   <!-- TEMPOS DE TREINO -->
   <section id="tempos">
-    <h2>Tempos de treino por zona</h2>
+    <h2>Tempos de treino</h2>
+    <div class="tt-tabs" role="tablist">
+      <button type="button" role="tab" data-tt="zona" aria-selected="true">Por zona</button>
+      <button type="button" role="tab" data-tt="ritmo" aria-selected="false">Ritmo de prova</button>
+      <button type="button" role="tab" data-tt="treino" aria-selected="false">Treino da atleta</button>
+    </div>
+    <div class="tt-pane" data-tt="zona">
     <p class="lead">Escolhe o atleta e a prova (distância e estilo). O recorde pessoal (RP) vem do Ranking do clube e podes alterá-lo à mão. Para cada zona, o tempo-alvo é o ritmo da prova nessa distância mais os segundos da tabela GPS FAMA (T50 por 50 m, T100 por 100 m). Nas provas de Estilos a tabela mostra cada estilo à parte, a partir das passagens da prova.</p>
     <div class="pickers">
       <label>Atleta
@@ -1251,6 +1272,8 @@
       </label>
     </div>
     <div id="ev-graf"></div>
+    </div>
+    <div class="tt-pane" data-tt="ritmo" style="display:none">
     <h3>Ritmo de prova</h3>
     <div class="pickers">
       <label>Prova
@@ -1263,6 +1286,8 @@
     <p class="note-line" id="rp-fonte"></p>
     <div class="table-scroll"><table><thead><tr><th class="num">Metros</th><th class="num">Parcial 50</th><th class="num">Parcial 100</th><th class="num">Passagem</th></tr></thead><tbody id="rp-rows"></tbody></table></div>
 
+    </div>
+    <div class="tt-pane" data-tt="treino" style="display:none">
     <h3>Treino da atleta</h3>
     <p class="lead">Escreve ou cola a série (ou o treino). Nas linhas com zona (A1 a TL) ou ritmo de prova (RP100, RP200…) a app escreve o tempo-alvo de cada distância. As linhas sem zona usam a zona da linha de cima ou a zona escolhida na lista. O botão Sugerir séries propõe séries-tipo GDNF dessa zona, já com os tempos do atleta. Nas zonas A1 a TL, o c/ ao lado de cada tempo é o ciclo de partida sugerido: tempo-alvo + pausa (A1 10", A2 15", A3 20" por 100 m; A4 pausa igual ao esforço, 1:1; TL pausa o dobro do esforço, 1:2), arredondado aos 5". No fim aparece o volume por zona. Escolhe a prova de base (distância e estilo) para calcular todas as distâncias a partir desse tempo; em "Automática", L, C, B, M e E (Estilos) escolhem o estilo e cada distância usa o RP dela.</p>
     <div class="pickers">
@@ -1325,6 +1350,7 @@
     <p><button type="button" class="btn-sug" id="tr-grupo-btn">Ver tempos do grupo</button> <button type="button" class="btn-sug" id="tr-print" hidden>Imprimir</button> <a class="btn-wa" id="tr-grupo-wa" href="#" target="_blank" rel="noopener" hidden>Enviar por WhatsApp</a></p>
     <div class="table-scroll" id="tr-grupo-saida"></div>
     <p class="note-line">Exemplo: RP 100 L de 59.56 em A4 dá 100 a 1:06.56 (59.56 + 7"). Os RP escritos à mão servem só para o cálculo: não são guardados nem publicados.</p>
+    </div>
   </section>
 
   <!-- HORÁRIOS -->
@@ -4652,6 +4678,14 @@ trListaGuardados();
 rpPreencher();
 trPreencher();
 ttPreencher();
+// Tempos de treino: separadores (Por zona, Ritmo de prova, Treino da atleta); lembra o último neste telemóvel
+function ttAba(k) {
+  document.querySelectorAll(".tt-tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tt === k));
+  document.querySelectorAll(".tt-pane").forEach(p => { p.style.display = p.dataset.tt === k ? "" : "none"; });
+  try { localStorage.setItem("gdnf-tempos-aba", k); } catch (e) {}
+}
+document.querySelectorAll(".tt-tabs button").forEach(b => b.addEventListener("click", () => { ttAba(b.dataset.tt); document.getElementById("tempos").scrollIntoView({ behavior: "instant" }); }));
+try { const k = localStorage.getItem("gdnf-tempos-aba"); if (["zona", "ritmo", "treino"].includes(k)) ttAba(k); } catch (e) {}
 // Partilhar uma secção: Imprimir (janela só com a secção) ou WhatsApp (o texto que está no ecrã)
 function secLimpa(id) {
   const c = document.getElementById(id).cloneNode(true);
@@ -4701,9 +4735,30 @@ const appSec = [
   ["recordes", "RE", "Recordes", "Recordes absolutos do clube"]
 ];
 const appTabs = [...document.querySelectorAll("#tabbar a")].map(a => a.dataset.tab);
-document.getElementById("atalhos").innerHTML = appSec.filter(([id]) => id !== "menu").map(([id, sg, t]) => `<a href="#${id}"><span class="sigla">${sg}</span>${t}</a>`).join("");
-document.getElementById("mais-list").innerHTML = appSec.filter(([id]) => !appTabs.includes(id))
-  .map(([id, sg, t, sub]) => `<a class="mais-item" href="#${id}"><span class="sigla">${sg}</span><span><b>${t}</b><small>${sub}</small></span><span class="seta">›</span></a>`).join("");
+// Índice em pastas (temas) e subpastas (secções); algumas secções têm separadores próprios
+const appPastas = [
+  ["Planificação", ["inicio", "epoca", "calendario", "macrociclo", "plano"]],
+  ["Treino", ["zonas", "series", "tempos"]],
+  ["Competição", ["minimos", "internacionais", "ranking", "recordes"]],
+  ["Equipa", ["atletas", "treinadores", "horarios", "guia"]],
+  ["Eventos e viagens", ["deslocacoes", "fama-a-nadar"]]
+];
+const appSubs = { tempos: [["zona", "Por zona"], ["ritmo", "Ritmo de prova"], ["treino", "Treino da atleta"]] };
+let appAbertas = [];
+try { appAbertas = JSON.parse(localStorage.getItem("gdnf-pastas") || "[]"); } catch (e) {}
+const appIndice = appPastas.map(([nome, ids], i) => `
+  <details class="pasta" data-p="${i}"${appAbertas.includes(i) ? " open" : ""}><summary><span class="pasta-ic" aria-hidden="true"></span><b>${nome}</b><small>${ids.length} secções</small></summary>
+  ${ids.map(id => appSec.find(x => x[0] === id)).filter(Boolean).map(([id, sg, t, sub]) => `<a class="mais-item" href="#${id}"><span class="sigla">${sg}</span><span><b>${t}</b><small>${sub}</small></span><span class="seta">›</span></a>${(appSubs[id] || []).map(([k, n]) => `<a class="pasta-sub" href="#${id}" data-aba="${k}">${n}<span class="seta">›</span></a>`).join("")}`).join("")}
+  </details>`).join("");
+document.getElementById("atalhos").innerHTML = appIndice;
+document.getElementById("mais-list").innerHTML = appIndice;
+document.querySelectorAll(".pasta").forEach(d => d.addEventListener("toggle", () => {
+  const i = +d.dataset.p;
+  document.querySelectorAll(`.pasta[data-p="${i}"]`).forEach(x => { if (x !== d) x.open = d.open; });
+  appAbertas = appAbertas.filter(x => x !== i).concat(d.open ? [i] : []);
+  try { localStorage.setItem("gdnf-pastas", JSON.stringify(appAbertas)); } catch (e) {}
+}));
+document.querySelectorAll(".pasta-sub").forEach(a => a.addEventListener("click", () => ttAba(a.dataset.aba)));
 const appMQ = matchMedia("(max-width: 760px)");
 function appMostrar() {
   const ativo = appMQ.matches;
