@@ -249,20 +249,39 @@
   tr.atl-aniv td { background: color-mix(in srgb, var(--z-a3) 22%, transparent); font-weight: 600; }
   .rk-eps { border: 0; padding: 0; margin: 0 0 14px; min-width: 0; }
   .rk-eps legend { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; padding: 0; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls) { display: flex; flex-wrap: wrap; gap: 6px; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls) label { cursor: pointer; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls) { display: flex; flex-wrap: wrap; gap: 6px; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls) label { cursor: pointer; }
   #min-cats { margin: 8px 0 12px; }
   .es-disp { margin: 8px 0 14px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
   .es-disp summary { cursor: pointer; font-weight: 700; }
   #min-atl .so-print { position: absolute; left: -9999px; }
+  .cv-colar textarea, .cv-ses textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 1rem; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .cv-ses { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 10px 14px; margin-bottom: 10px; }
+  .cv-ses h4 { margin: 0 0 8px; display: flex; gap: 8px; align-items: center; }
+  .cv-ses h4 button { margin-left: auto; }
+  .cv-ses .pickers { margin-bottom: 8px; }
+  .cv-ses .pickers label { flex: 1 1 110px; }
+  .cv-ses summary { cursor: pointer; font-size: .9rem; color: var(--muted); }
+  .cv-scroll { max-height: 75vh; }
+  .cv-grelha { border-collapse: separate; border-spacing: 0; font-size: .82rem; }
+  .cv-grelha th, .cv-grelha td { padding: 3px; text-align: center; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .cv-grelha th:first-child, .cv-grelha td:first-child { position: sticky; left: 0; z-index: 1; background: var(--surface); text-align: left; padding-right: 8px; }
+  .cv-grelha thead th { position: sticky; top: 0; background: var(--surface); }
+  .cv-grelha .cv-s { border-left: 2px solid var(--accent); }
+  .cv-grelha td.cv-g { text-align: left; font-weight: 800; color: var(--muted); }
+  .cv-grelha button { width: 34px; height: 30px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--text); font: inherit; font-weight: 800; cursor: pointer; padding: 0; }
+  .cv-grelha button.on { background: var(--accent); color: var(--surface); border-color: transparent; }
+  .cv-grelha .cv-ind { color: var(--muted); font-size: .75rem; font-weight: 600; }
+  .cv-so { font-size: .9rem; }
+  #cv-lido:empty { display: none; }
   .rk-novo, .rk-min { display: inline-block; padding: 1px 6px; border-radius: 999px; font-size: .7rem; font-weight: 800; vertical-align: middle; }
   .rk-comp { display: flex; gap: 8px; align-items: center; margin: 8px 0; font-weight: 600; cursor: pointer; }
   .rk-novo { background: var(--accent); color: var(--surface); }
   .rk-min { border: 1px solid var(--accent); color: var(--accent); }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls) input { position: absolute; opacity: 0; pointer-events: none; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls) span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls) input { position: absolute; opacity: 0; pointer-events: none; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls) span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
   .es-list { padding-left: 16px; } .es-list li { margin-bottom: 8px; } .es-list b { color: var(--text); }
   /* capa de rosto (app): abre aqui, ecrã inteiro sem barra de cima */
   body:not(.app) main > #capa { display: none; }
@@ -369,6 +388,7 @@
     <a href="#series">Séries-tipo</a>
     <a href="#atletas">Atletas</a>
     <a href="#ranking">Ranking</a>
+    <a href="#convocatorias">Convocatórias</a>
     <a href="#treinadores">Treinadores</a>
     <a href="#guia">Guia do Atleta</a>
     <a href="#calendario">Calendário</a>
@@ -952,6 +972,61 @@
   </section>
 
   <!-- TREINADORES -->
+  <!-- CONVOCATÓRIAS -->
+  <section id="convocatorias">
+    <h2>Convocatórias</h2>
+    <p class="lead">Modelo de convocatória para qualquer prova: carrega o regulamento (PDF) ou cola o programa, junta os atletas e marca as provas de cada sessão, jornada e dia. No fim imprimes ou envias por WhatsApp. As convocatórias ficam guardadas neste telemóvel para voltar a abrir.</p>
+    <div class="pickers">
+      <label>Convocatórias guardadas
+        <select id="cv-lista"></select>
+      </label>
+    </div>
+    <p><button type="button" class="btn-sug" id="cv-guardar">Guardar</button> <button type="button" class="btn-sug" id="cv-nova">Nova convocatória</button> <button type="button" class="btn-sug" id="cv-apagar">Apagar</button> <span class="sub" id="cv-msg"></span></p>
+
+    <h3>1. Regulamento</h3>
+    <div class="pickers">
+      <label>Regulamento da prova (PDF)
+        <input type="file" id="cv-pdf" accept="application/pdf,.pdf">
+      </label>
+    </div>
+    <details class="cv-colar"><summary>Ou colar o texto do programa</summary>
+      <textarea id="cv-texto" rows="7" placeholder="Cola aqui o programa do regulamento, por exemplo:&#10;1ª JORNADA (1ª SESSÃO) – 13 NOV&#10;1ª Prova 4x100 EST MISTO&#10;2ª Prova 1500 LIV FEM."></textarea>
+      <p><button type="button" class="btn-sug" id="cv-ler">Ler o programa</button></p>
+    </details>
+    <p class="note-line" id="cv-lido"></p>
+
+    <h3>2. Dados da prova</h3>
+    <div class="pickers">
+      <label>Prova<input id="cv-prova" data-cv="prova"></label>
+      <label>Data<input id="cv-data" data-cv="data"></label>
+      <label>Local<input id="cv-local" data-cv="local"></label>
+      <label>Piscina<input id="cv-piscina" data-cv="piscina"></label>
+      <label>Técnicos<input id="cv-tecnicos" data-cv="tecnicos"></label>
+      <label>Nota (almoço, transporte…)<input id="cv-nota" data-cv="nota"></label>
+    </div>
+    <div id="cv-sessoes"></div>
+    <p><button type="button" class="btn-sug" id="cv-mais-sessao">Juntar sessão</button></p>
+
+    <h3>3. Atletas</h3>
+    <div class="pickers">
+      <label>Escalão
+        <select id="cv-esc"></select>
+      </label>
+      <label>Juntar atleta
+        <select id="cv-atl"></select>
+      </label>
+    </div>
+    <p><button type="button" class="btn-sug" id="cv-todos-esc">Juntar todos do escalão</button></p>
+    <p class="note-line" id="cv-atls-n"></p>
+    <div id="cv-atls"></div>
+
+    <h3>4. Provas de cada atleta</h3>
+    <p class="note-line">Toca nas quadrículas. Provas individuais: X. Estafetas: cada toque muda o número da equipa (1 a 5, como no regulamento: 1 Seniores, 2 Juniores, 3 Juvenis A, 4 Juvenis B, 5 Absolutos). Ind. = número de provas individuais do atleta.</p>
+    <div class="table-scroll cv-scroll"><table class="cv-grelha" id="cv-grelha"></table></div>
+    <p><label class="cv-so"><input type="checkbox" id="cv-so" checked> Imprimir e enviar só as provas com atletas</label></p>
+    <p><button type="button" class="btn-sug" id="cv-print">Imprimir</button> <a class="btn-wa" id="cv-wa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a></p>
+  </section>
+
   <section id="ranking">
     <h2>Ranking do Clube</h2>
     <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova. Escolhe o género, a prova, o atleta, a piscina, os escalões e as épocas; os filtros funcionam juntos.</p>
@@ -4733,6 +4808,284 @@ function ttAba(k) {
 }
 document.querySelectorAll(".tt-tabs button").forEach(b => b.addEventListener("click", () => { ttAba(b.dataset.tt); document.getElementById("tempos").scrollIntoView({ behavior: "instant" }); }));
 try { const k = localStorage.getItem("gdnf-tempos-aba"); if (["zona", "ritmo", "treino"].includes(k)) ttAba(k); } catch (e) {}
+const cvSesEx = [[1,1,"13 nov","09h00","07h30",[[1,"4x100","E","X"],[2,"1500","L","F"],[3,"800","L","M"],[4,"100","B","F"],[5,"100","B","M"],[6,"100","L","F"],[7,"100","L","M"],[8,"4x50","L","F"],[9,"4x50","L","M"]]],[1,2,"13 nov","15h00","13h30",[[10,"4x50","L","X"],[11,"50","C","F"],[12,"50","C","M"],[13,"200","M","F"],[14,"200","M","M"],[15,"100","E","F"],[16,"100","E","M"],[17,"4x200","L","F"],[18,"4x200","L","M"]]],[2,1,"14 nov","09h00","07h30",[[19,"400","L","F"],[20,"400","L","M"],[21,"100","M","F"],[22,"100","M","M"],[23,"200","B","F"],[24,"200","B","M"],[25,"4x50","E","F"],[26,"4x50","E","M"]]],[2,2,"14 nov","15h00","13h30",[[27,"400","E","F"],[28,"400","E","M"],[29,"50","L","F"],[30,"50","L","M"],[31,"200","C","F"],[32,"200","C","M"],[33,"4x100","E","F"],[34,"4x100","E","M"]]],[3,1,"15 nov","09h00","07h30",[[35,"1500","L","M"],[36,"800","L","F"],[37,"50","B","M"],[38,"50","B","F"],[39,"100","C","M"],[40,"100","C","F"],[41,"4x100","L","X"]]],[3,2,"15 nov","15h00","13h30",[[42,"4x50","E","X"],[43,"200","L","M"],[44,"200","L","F"],[45,"50","M","M"],[46,"50","M","F"],[47,"200","E","M"],[48,"200","E","F"],[49,"4x100","L","M"],[50,"4x100","L","F"]]]];
+// Convocatórias: modelo a partir do regulamento (programa por jornada/sessão), atletas e provas; guardadas no telemóvel
+// lê o texto do regulamento (programa por jornada/sessão) e devolve {titulo, data, local, sessoes}
+function cvLer(txt) {
+  const linhas = txt.replace(/\r/g, "").split("\n"), sess = [], porChave = {};
+  const estilo = s => ({ LIV: "L", COS: "C", BRU: "B", MAR: "M", EST: "E" })[s.slice(0, 3).toUpperCase()] || s[0].toUpperCase();
+  const genero = s => !s ? "" : /^MIS|^MIX/i.test(s) ? "X" : /^F/i.test(s) ? "F" : "M";
+  const reSes = /(\d)\s*ª\s*JORNADA\s*\(\s*(\d)\s*ª\s*SESS[ÃA]O\s*\)\s*[–-]?\s*(\d{1,2}\s*[A-Za-zç]{3,})?/gi;
+  const reProva = /(\d{1,3})\s*ª\s*(?:Prova\s+)?(\d\s*[xX×]\s*\d{2,3}|\d{2,4})\s*(LIV\w*|COS\w*|BRU\w*|MAR\w*|EST\w*|L|C|B|M|E)\b\.?\s*(FEM\w*|MASC\w*|MIST\w*|MIX\w*|F|M)?/gi;
+  let cols = [];
+  const coluna = pos => { let c = cols[0]; cols.forEach(x => { if (x.x <= pos + 12) c = x; }); return c && c.s; };
+  linhas.forEach(l => {
+    const hs = [...l.matchAll(reSes)];
+    if (hs.length) {
+      cols = hs.map(m => {
+        const k = m[1] + "-" + m[2];
+        if (!porChave[k]) { porChave[k] = { jornada: +m[1], sessao: +m[2], dia: "", hora: "", abertura: "", provas: [] }; sess.push(porChave[k]); }
+        if (m[3] && !porChave[k].dia) porChave[k].dia = m[3].replace(/\s+/, " ").toLowerCase();
+        return { s: porChave[k], x: m.index };
+      });
+      return;
+    }
+    const horas = [...l.matchAll(/(\d{1,2})\s*h\s*(\d{2})/g)];
+    if (horas.length && cols.length) {
+      const campo = /in[íi]cio da competi/i.test(l) ? "hora" : /abertura/i.test(l) ? "abertura" : "";
+      if (campo) horas.forEach(h => { const s = coluna(h.index); if (s && !s[campo]) s[campo] = `${h[1].padStart(2, "0")}h${h[2]}`; });
+    }
+    [...l.matchAll(reProva)].forEach(m => {
+      const s = coluna(m.index) || (sess.length ? sess[sess.length - 1] : (sess.push(porChave["1-1"] = { jornada: 1, sessao: 1, dia: "", hora: "", abertura: "", provas: [] }), sess[0]));
+      const n = +m[1];
+      if (!s.provas.some(p => p.n === n)) s.provas.push({ n, d: m[2].replace(/\s+/g, "").replace(/[X×]/, "x"), e: estilo(m[3]), g: genero(m[4]) });
+    });
+  });
+  // texto sem colunas (cada palavra numa linha, como ao copiar do telemóvel): lê tudo seguido
+  if (!sess.some(s => s.provas.length)) {
+    sess.length = 0; Object.keys(porChave).forEach(k => delete porChave[k]);
+    const plano = txt.replace(/\s+/g, " ");
+    let atual = null;
+    const reTudo = new RegExp(`${reSes.source}|${reProva.source}|(in[íi]cio da competi\\S*|abertura da piscina)\\s*:?\\s*(\\d{1,2})\\s*h\\s*(\\d{2})`, "gi");
+    [...plano.matchAll(reTudo)].forEach(m => {
+      if (m[1]) {
+        const k = m[1] + "-" + m[2];
+        if (!porChave[k]) { porChave[k] = { jornada: +m[1], sessao: +m[2], dia: "", hora: "", abertura: "", provas: [] }; sess.push(porChave[k]); }
+        if (m[3] && !porChave[k].dia) porChave[k].dia = m[3].replace(/\s+/, " ").toLowerCase();
+        atual = porChave[k];
+      } else if (m[4]) {
+        if (!atual) { atual = porChave["1-1"] = { jornada: 1, sessao: 1, dia: "", hora: "", abertura: "", provas: [] }; sess.push(atual); }
+        const n = +m[4];
+        if (!atual.provas.some(p => p.n === n)) atual.provas.push({ n, d: m[5].replace(/\s+/g, "").replace(/[X×]/, "x"), e: estilo(m[6]), g: genero(m[7]) });
+      } else if (m[8] && atual) {
+        const campo = /abertura/i.test(m[8]) ? "abertura" : "hora";
+        if (!atual[campo]) atual[campo] = `${m[9].padStart(2, "0")}h${m[10]}`;
+      }
+    });
+  }
+  sess.forEach(s => s.provas.sort((a, b) => a.n - b.n));
+  const campo = re => { const m = txt.match(re); return m ? m[1].trim() : ""; };
+  const titulo = linhas.map(l => l.trim()).filter(Boolean).slice(0, 3).filter(l => /CAMPEONAT|TORNEIO|TROF|MEETING|FESTIVAL|ENCONTRO|GRANDE PR|TAÇA|INTERCLUBE/i.test(l)).join(" ");
+  return { titulo, data: campo(/DATA\s*:\s*([^\n]+)/i), local: campo(/LOCAL\s*:\s*([^\n]+)/i), sessoes: sess.filter(s => s.provas.length) };
+}
+// PDF do regulamento: lê o texto com o pdf.js e refaz as linhas pela posição (para as colunas do programa)
+async function cvPdfTexto(file) {
+  if (!window.pdfjsLib) await new Promise((ok, erro) => { const sc = document.createElement("script"); sc.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"; sc.onload = ok; sc.onerror = erro; document.head.append(sc); });
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise, out = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const c = await (await pdf.getPage(i)).getTextContent(), linhas = [];
+    // juntar em linhas pela altura (com tolerância: o "ª" vem um pouco acima)
+    c.items.filter(it => it.str.trim()).sort((a, b) => b.transform[5] - a.transform[5]).forEach(it => {
+      const y = it.transform[5], tam = Math.abs(it.transform[3]) || 10, l = linhas[linhas.length - 1];
+      if (l && l.y - y < tam * 0.6) l.itens.push(it); else linhas.push({ y, itens: [it] });
+    });
+    // cada linha com espaços pela posição, para separar as duas colunas do programa
+    linhas.forEach(({ itens }) => {
+      let l = "", fim = null;
+      itens.sort((a, b) => a.transform[4] - b.transform[4]).forEach(it => {
+        const x = it.transform[4];
+        if (fim === null) l = " ".repeat(Math.round(x / 4));
+        else { const gap = x - fim; if (gap > 8) l = l.padEnd(Math.max(Math.round(x / 4), l.length + 2)); else if (gap > 1.5) l += " "; }
+        l += it.str; fim = x + it.width;
+      });
+      out.push(l);
+    });
+  }
+  return out.join("\n");
+}
+const cvEstNome = { L: "Livres", C: "Costas", B: "Bruços", M: "Mariposa", E: "Estilos" };
+const cvGenNome = { F: "Fem.", M: "Masc.", X: "Mista", "": "" };
+const cvExemplo = () => ({
+  prova: "C. Territoriais Juv/Jun/Sen", data: "13 a 15 de novembro de 2026", local: "Felgueiras", piscina: "Piscina Municipal",
+  tecnicos: "Pedro Faia/João Melo/Valdemar Magalhães", nota: "Quem precisar de almoço avisa a secretaria do clube até 2 de novembro; o pagamento é feito no restaurante.",
+  regulamento: "docs/regulamento-territoriais-juv-jun-sen-2026.pdf",
+  sessoes: cvSesEx.map(([j, s, dia, hora, ab, pr]) => ({ jornada: j, sessao: s, dia, hora, comparencia: s === 1 ? "07h35" : "13h45", provas: pr.map(([n, d, e, g]) => ({ n, d, e, g })) })),
+  atletas: [], sel: {}
+});
+const cvVazia = () => ({ prova: "", data: "", local: "", piscina: "", tecnicos: "", nota: "", regulamento: "", sessoes: [], atletas: [], sel: {} });
+let cvGuardadas = [], cv;
+try { cvGuardadas = JSON.parse(localStorage.getItem("gdnf-convocatorias") || "[]"); } catch (e) {}
+try { cv = JSON.parse(localStorage.getItem("gdnf-conv-atual") || "null"); } catch (e) {}
+if (!cv || !Array.isArray(cv.sessoes)) cv = cvExemplo();
+const cvGuardaAtual = () => { try { localStorage.setItem("gdnf-conv-atual", JSON.stringify(cv)); } catch (e) {} };
+const cvCurto = n => { const p = n.split(" ").filter(x => !/^(d[aeo]s?|e)$/i.test(x)); return p.length > 2 ? `${p[0]} ${p[p.length - 1]}` : p.join(" "); };
+const cvComp = h => { const m = /(\d{1,2})h(\d{2})/.exec(h || ""); if (!m) return ""; const t = +m[1] * 60 + +m[2] + 5; return `${String(Math.floor(t / 60)).padStart(2, "0")}h${String(t % 60).padStart(2, "0")}`; };
+const cvSesNome = (s, i) => `${i + 1}ª sessão${s.jornada ? ` (${s.jornada}ª jornada)` : ""}${s.dia ? " · " + s.dia : ""}${s.hora ? " · " + s.hora : ""}`;
+// colunas de uma sessão: a mesma prova feminina e masculina fica numa só coluna; as mistas à parte
+function cvColunas(s) {
+  const m = new Map();
+  s.provas.forEach(p => {
+    const k = p.d + p.e + (p.g === "X" ? "m" : "");
+    if (!m.has(k)) m.set(k, { d: p.d, e: p.e, misto: p.g === "X", n: {} });
+    const c = m.get(k);
+    if (p.g === "X") c.n.X = p.n; else if (p.g) c.n[p.g] = p.n; else { c.n.F = c.n.F || p.n; c.n.M = c.n.M || p.n; }
+  });
+  return [...m.values()].map(c => ({ ...c, rotulo: c.e + (c.misto ? "(m)" : c.n.F && !c.n.M ? "(F)" : c.n.M && !c.n.F ? "(M)" : "") }));
+}
+const cvProvaDe = (c, g) => c.misto ? c.n.X : c.n[g];
+const cvAtlOrdem = () => cv.atletas.slice().sort((a, b) => (a.g === b.g ? 0 : a.g === "M" ? -1 : 1) || escaloes.indexOf(b.esc) - escaloes.indexOf(a.esc) || a.n.localeCompare(b.n, "pt"));
+function cvRender() {
+  ["prova", "data", "local", "piscina", "tecnicos", "nota"].forEach(k => { document.getElementById("cv-" + k).value = cv[k] || ""; });
+  document.getElementById("cv-lista").innerHTML = `<option value="">${cvGuardadas.length ? "Escolhe para abrir…" : "Ainda não há convocatórias guardadas"}</option>` + cvGuardadas.map((x, i) => `<option value="${i}">${escH(x.nome)}</option>`).join("");
+  // sessões
+  document.getElementById("cv-sessoes").innerHTML = cv.sessoes.map((s, i) => `<div class="cv-ses" data-i="${i}">
+    <h4>${i + 1}ª sessão · ${s.jornada}ª jornada <button type="button" class="btn-sug" data-del="${i}">Tirar</button></h4>
+    <div class="pickers"><label>Dia<input data-k="dia" value="${escH(s.dia || "")}"></label><label>Início<input data-k="hora" value="${escH(s.hora || "")}"></label><label>Comparência<input data-k="comparencia" value="${escH(s.comparencia || "")}"></label></div>
+    <details><summary>${s.provas.length} provas: ${s.provas.map(p => `${p.d} ${p.e}${p.g ? " " + (p.g === "X" ? "Mista" : p.g) : ""}`).join(" · ")}</summary>
+    <textarea data-k="provas" rows="5">${s.provas.map(p => `${p.n}ª ${p.d} ${cvEstNome[p.e] || p.e} ${{ F: "Femininos", M: "Masculinos", X: "Misto", "": "" }[p.g]}`.trim()).join("\n")}</textarea></details>
+  </div>`).join("") || '<p class="sub">Sem sessões: carrega o regulamento ou cola o programa.</p>';
+  // atletas
+  const esc = document.getElementById("cv-esc"), e = esc.value;
+  esc.innerHTML = `<option value="">Todos os escalões</option>` + escaloes.slice().reverse().map(x => `<option${x === e ? " selected" : ""}>${x}</option>`).join("");
+  const ja = new Set(cv.atletas.map(a => a.n));
+  document.getElementById("cv-atl").innerHTML = `<option value="">Escolhe um atleta…</option>` + atletas.filter(a => (!esc.value || a[2] === esc.value) && !ja.has(a[0])).sort((a, b) => a[0].localeCompare(b[0], "pt")).map(a => `<option value="${escH(a[0])}">${escH(a[0])} (${a[5]}, ${a[2]})</option>`).join("");
+  const ord = cvAtlOrdem();
+  document.getElementById("cv-atls").innerHTML = ord.map(a => `<label><input type="checkbox" value="${escH(a.n)}" checked><span>${escH(cvCurto(a.n))} (${a.g}) ✕</span></label>`).join("");
+  document.getElementById("cv-atls-n").textContent = ord.length ? `${ord.length} atleta${ord.length === 1 ? "" : "s"} (${ord.filter(a => a.g === "M").length} M, ${ord.filter(a => a.g === "F").length} F). Toca num nome para o tirar.` : "Ainda sem atletas.";
+  // grelha
+  const cols = cv.sessoes.map(cvColunas);
+  let h = `<thead><tr><th>Atleta</th>${cv.sessoes.map((s, i) => `<th class="cv-s" colspan="${cols[i].length}">${i + 1}ª sessão${s.dia ? " · " + escH(s.dia) : ""}${s.hora ? " · " + escH(s.hora) : ""}</th>`).join("")}</tr>
+    <tr><th></th>${cols.map(cs => cs.map((c, j) => `<th class="${j ? "" : "cv-s"}">${c.rotulo}<br>${c.d}</th>`).join("")).join("")}</tr></thead><tbody>`;
+  [["M", "Masculinos"], ["F", "Femininos"]].forEach(([g, nome]) => {
+    const l = ord.filter(a => a.g === g);
+    if (!l.length) return;
+    h += `<tr><td class="cv-g">${nome}</td>${cols.flat().map(() => "<td></td>").join("")}</tr>`;
+    l.forEach(a => {
+      const ind = Object.entries(cv.sel).filter(([k, v]) => k.startsWith(a.n + "|") && v === "X").length;
+      h += `<tr><td>${escH(cvCurto(a.n))} <span class="cv-ind">${ind} ind.</span></td>${cols.map(cs => cs.map((c, j) => {
+        const n = cvProvaDe(c, g), v = n ? cv.sel[a.n + "|" + n] || "" : "";
+        return `<td class="${j ? "" : "cv-s"}">${n ? `<button type="button" data-a="${escH(a.n)}" data-n="${n}" data-r="${/x/.test(c.d) ? 1 : ""}" class="${v ? "on" : ""}" aria-label="${escH(a.n)} ${c.d} ${cvEstNome[c.e]}">${v}</button>` : ""}</td>`;
+      }).join("")).join("")}</tr>`;
+    });
+  });
+  document.getElementById("cv-grelha").innerHTML = h + "</tbody>";
+  cvPartilha();
+  cvGuardaAtual();
+}
+// o que vai para a impressão e para o WhatsApp
+function cvPartilha() {
+  const so = document.getElementById("cv-so").checked, ord = cvAtlOrdem();
+  const tem = n => Object.entries(cv.sel).some(([k, v]) => v && k.endsWith("|" + n) && cv.atletas.some(a => k === a.n + "|" + n));
+  const cols = cv.sessoes.map(s => cvColunas(s).filter(c => !so || Object.values(c.n).some(tem)));
+  const nomeProva = (c, g) => `${c.d} ${cvEstNome[c.e] || c.e}${c.misto ? " Mista" : ""}`;
+  let txt = `*GDNF · Convocatória*\n${cv.prova}\n${[cv.data, cv.local, cv.piscina].filter(Boolean).join(" · ")}\n`;
+  cv.sessoes.forEach((s, i) => {
+    const linhas = ord.map(a => {
+      const p = cols[i].map(c => { const n = cvProvaDe(c, a.g), v = n && cv.sel[a.n + "|" + n]; return v ? nomeProva(c) + (v === "X" ? "" : ` (est. ${v})`) : ""; }).filter(Boolean);
+      return p.length ? `${cvCurto(a.n)}: ${p.join(", ")}` : "";
+    }).filter(Boolean);
+    if (linhas.length) txt += `\n*${cvSesNome(s, i)}*${s.comparencia ? `\nComparência: ${s.comparencia}` : ""}\n${linhas.join("\n")}\n`;
+  });
+  if (cv.nota) txt += `\nNota: ${cv.nota}\n`;
+  if (cv.tecnicos) txt += `\nO Técnico: ${cv.tecnicos}`;
+  document.getElementById("cv-wa").href = "https://wa.me/?text=" + encodeURIComponent(txt.slice(0, 6000));
+  // impressão: tabela como a convocatória em papel, masculinos e femininos
+  const cab = `<tr><th rowspan="2">Nome</th>${cv.sessoes.map((s, i) => cols[i].length ? `<th colspan="${cols[i].length}">${i + 1}ª sessão – ${escH(s.hora || "")}<br><small>${escH(s.dia || "")}</small></th>` : "").join("")}</tr><tr>${cols.map(cs => cs.map(c => `<th>${c.rotulo}<br>${c.d}</th>`).join("")).join("")}</tr>`;
+  const corpo = g => ord.filter(a => a.g === g).map(a => `<tr><td class="n">${escH(cvCurto(a.n))}</td>${cols.map(cs => cs.map(c => { const n = cvProvaDe(c, a.g); return `<td>${n ? cv.sel[a.n + "|" + n] || "" : ""}</td>`; }).join("")).join("")}</tr>`).join("");
+  const comp = cv.sessoes.map((s, i) => s.comparencia ? `<li>${escH(cvSesNome(s, i))}: comparecer às <b>${escH(s.comparencia)}</b>${cv.local ? " na piscina de " + escH(cv.local) : ""}.</li>` : "").join("");
+  cvHtml = `<div class="topo"><img src="${new URL("img/logo-gdnf.png", location.href).href}" alt=""><div><h2>Convocatória</h2><p><b>Prova:</b> ${escH(cv.prova)} · <b>Data:</b> ${escH(cv.data)} · <b>Local:</b> ${escH(cv.local)}${cv.piscina ? " · <b>Piscina:</b> " + escH(cv.piscina) : ""}</p></div></div>
+    <table><thead>${cab}</thead><tbody>${["M", "F"].map(g => ord.some(a => a.g === g) ? `<tr class="g"><td colspan="${1 + cols.flat().length}">${g === "M" ? "Masculinos" : "Femininos"}</td></tr>` + corpo(g) : "").join("")}</tbody></table>
+    <p class="leg">X = prova individual · número = equipa de estafeta</p>
+    ${comp ? `<ul>${comp}</ul>` : ""}${cv.nota ? `<p><b>Nota:</b> ${escH(cv.nota)}</p>` : ""}${cv.regulamento ? `<p>Regulamento: ${escH(new URL(cv.regulamento, location.href).href)}</p>` : ""}
+    ${cv.tecnicos ? `<p class="tec">O Técnico<br>(${escH(cv.tecnicos)})</p>` : ""}`;
+}
+let cvHtml = "";
+function cvAplicaLeitura(r) {
+  const s = r.sessoes;
+  if (!s.length) { document.getElementById("cv-lido").textContent = "Não encontrei o programa (linhas como “1ª Prova 4x100 EST MISTO”). Experimenta colar o texto do programa."; return; }
+  cv.sessoes = s.map(x => ({ jornada: x.jornada, sessao: x.sessao, dia: x.dia, hora: x.hora, comparencia: cvComp(x.abertura), provas: x.provas }));
+  cv.sel = {};
+  if (r.titulo) cv.prova = r.titulo.replace(/\s+/g, " ").toLowerCase().replace(/(^|\s)\S/g, t => t.toUpperCase()).replace(/\b(De|E|Da|Do|Dos|Das)\b/g, t => t.toLowerCase());
+  if (r.data) cv.data = r.data;
+  if (r.local) cv.local = r.local;
+  cv.regulamento = "";
+  document.getElementById("cv-lido").textContent = `Programa lido: ${s.length} sessões e ${s.reduce((a, x) => a + x.provas.length, 0)} provas. Confirma os dias, as horas e a comparência (sugestão: 5 minutos depois da abertura da piscina).`;
+  cvRender();
+}
+document.getElementById("cv-pdf").addEventListener("change", async ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  document.getElementById("cv-lido").textContent = "A ler o regulamento…";
+  try { cvAplicaLeitura(cvLer(await cvPdfTexto(f))); }
+  catch (e) { document.getElementById("cv-lido").textContent = "Não consegui ler este PDF. Copia o programa do regulamento e cola-o no campo abaixo."; }
+  ev.target.value = "";
+});
+document.getElementById("cv-ler").addEventListener("click", () => cvAplicaLeitura(cvLer(document.getElementById("cv-texto").value)));
+document.querySelectorAll("[data-cv]").forEach(i => i.addEventListener("input", () => { cv[i.dataset.cv] = i.value; cvPartilha(); cvGuardaAtual(); }));
+document.getElementById("cv-sessoes").addEventListener("change", ev => {
+  const box = ev.target.closest(".cv-ses"), k = ev.target.dataset.k; if (!box || !k) return;
+  const s = cv.sessoes[+box.dataset.i];
+  if (k === "provas") {
+    const r = cvLer(ev.target.value), novas = r.sessoes.flatMap(x => x.provas);
+    s.provas = novas.sort((a, b) => a.n - b.n);
+  } else s[k] = ev.target.value;
+  cvRender();
+});
+document.getElementById("cv-sessoes").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-del]"); if (!b) return;
+  cv.sessoes.splice(+b.dataset.del, 1); cvRender();
+});
+document.getElementById("cv-mais-sessao").addEventListener("click", () => {
+  const u = cv.sessoes[cv.sessoes.length - 1];
+  cv.sessoes.push({ jornada: u ? u.jornada + (u.sessao === 2 ? 1 : 0) : 1, sessao: u ? (u.sessao === 2 ? 1 : 2) : 1, dia: "", hora: "", comparencia: "", provas: [] });
+  cvRender();
+});
+document.getElementById("cv-esc").addEventListener("change", cvRender);
+document.getElementById("cv-atl").addEventListener("change", ev => {
+  const a = atletas.find(x => x[0] === ev.target.value); if (!a) return;
+  cv.atletas.push({ n: a[0], g: a[5], esc: a[2] }); cvRender();
+});
+document.getElementById("cv-todos-esc").addEventListener("click", () => {
+  const e = document.getElementById("cv-esc").value, ja = new Set(cv.atletas.map(a => a.n));
+  if (!e) { document.getElementById("cv-atls-n").textContent = "Escolhe primeiro o escalão."; return; }
+  atletas.filter(a => a[2] === e && !ja.has(a[0])).forEach(a => cv.atletas.push({ n: a[0], g: a[5], esc: a[2] }));
+  cvRender();
+});
+document.getElementById("cv-atls").addEventListener("change", ev => {
+  const n = ev.target.value;
+  cv.atletas = cv.atletas.filter(a => a.n !== n);
+  Object.keys(cv.sel).forEach(k => { if (k.startsWith(n + "|")) delete cv.sel[k]; });
+  cvRender();
+});
+document.getElementById("cv-grelha").addEventListener("click", ev => {
+  const b = ev.target.closest("button[data-n]"); if (!b) return;
+  const k = b.dataset.a + "|" + b.dataset.n, v = cv.sel[k] || "";
+  const prox = b.dataset.r ? { "": "1", 1: "2", 2: "3", 3: "4", 4: "5", 5: "" }[v] : v ? "" : "X";
+  if (prox) cv.sel[k] = prox; else delete cv.sel[k];
+  b.textContent = prox; b.classList.toggle("on", !!prox);
+  const linha = b.closest("tr"), ind = Object.entries(cv.sel).filter(([x, y]) => x.startsWith(b.dataset.a + "|") && y === "X").length;
+  linha.querySelector(".cv-ind").textContent = ind + " ind.";
+  cvPartilha(); cvGuardaAtual();
+});
+document.getElementById("cv-so").addEventListener("change", cvPartilha);
+document.getElementById("cv-print").addEventListener("click", () => {
+  const w = window.open("", "_blank"); if (!w) return;
+  w.document.write(`<!doctype html><meta charset="utf-8"><title>Convocatória GDNF</title><style>@page{size:A4 landscape;margin:10mm}body{font:11px system-ui,sans-serif;color:#000}.topo{display:flex;gap:12px;align-items:center}.topo img{width:54px;height:54px}h2{margin:0 0 4px}table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border:1px solid #888;padding:3px 2px;text-align:center;font-size:10px}td.n{text-align:left;white-space:nowrap;padding-right:6px}tr.g td{text-align:left;font-weight:700;background:#eee}.leg{font-size:10px;color:#444}.tec{text-align:right;margin-top:14px}ul{padding-left:18px}</style>${cvHtml}`);
+  w.document.close(); w.focus(); w.print();
+});
+document.getElementById("cv-wa").addEventListener("click", cvPartilha);
+// guardar e abrir
+const cvGuardaLista = () => { try { localStorage.setItem("gdnf-convocatorias", JSON.stringify(cvGuardadas)); } catch (e) {} };
+document.getElementById("cv-guardar").addEventListener("click", () => {
+  const nome = `${cv.prova || "Convocatória"}${cv.data ? " · " + cv.data : ""}`, i = cvGuardadas.findIndex(x => x.nome === nome);
+  const item = { nome, conv: JSON.parse(JSON.stringify(cv)) };
+  if (i >= 0) cvGuardadas[i] = item; else cvGuardadas.unshift(item);
+  cvGuardaLista(); cvRender();
+  document.getElementById("cv-msg").textContent = "Guardada neste telemóvel.";
+});
+document.getElementById("cv-lista").addEventListener("change", ev => {
+  const x = cvGuardadas[+ev.target.value]; if (ev.target.value === "" || !x) return;
+  cv = JSON.parse(JSON.stringify(x.conv)); cvRender();
+  document.getElementById("cv-msg").textContent = `Aberta: ${x.nome}`;
+});
+document.getElementById("cv-nova").addEventListener("click", () => { cv = cvVazia(); document.getElementById("cv-lido").textContent = ""; cvRender(); document.getElementById("cv-msg").textContent = "Nova convocatória: carrega o regulamento."; });
+document.getElementById("cv-apagar").addEventListener("click", () => {
+  const nome = `${cv.prova || "Convocatória"}${cv.data ? " · " + cv.data : ""}`, i = cvGuardadas.findIndex(x => x.nome === nome);
+  if (i < 0) { document.getElementById("cv-msg").textContent = "Esta convocatória não está guardada."; return; }
+  cvGuardadas.splice(i, 1); cvGuardaLista(); cvRender();
+  document.getElementById("cv-msg").textContent = "Apagada da lista.";
+});
+cvRender();
 // Partilhar uma secção: Imprimir (janela só com a secção) ou WhatsApp (o texto que está no ecrã)
 function secLimpa(id) {
   const c = document.getElementById(id).cloneNode(true);
@@ -4770,6 +5123,7 @@ const appSec = [
   ["series", "ST", "Séries-tipo", "SprintSalo, Popovici, FOCA e séries GDNF"],
   ["atletas", "AT", "Atletas", "Lista por escalão e aniversários"],
   ["ranking", "RK", "Ranking", "Top 10 do clube e estafetas"],
+  ["convocatorias", "CV", "Convocatórias", "Modelo a partir do regulamento da prova"],
   ["treinadores", "TR", "Treinadores", "Contactos, cédulas e aniversários"],
   ["guia", "GA", "Guia do Atleta", "Regras, horários e mensalidades"],
   ["calendario", "CA", "Calendário", "Quadro competitivo FPN"],
@@ -4786,7 +5140,7 @@ const appTabs = [...document.querySelectorAll("#tabbar a")].map(a => a.dataset.t
 const appPastas = [
   ["Planificação", ["inicio", "epoca", "calendario", "macrociclo", "plano"]],
   ["Treino", ["zonas", "series", "tempos"]],
-  ["Competição", ["minimos", "internacionais", "ranking", "recordes"]],
+  ["Competição", ["minimos", "internacionais", "ranking", "recordes", "convocatorias"]],
   ["Equipa", ["atletas", "treinadores", "horarios", "guia"]],
   ["Eventos e viagens", ["deslocacoes", "fama-a-nadar"]]
 ];
