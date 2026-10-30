@@ -249,12 +249,12 @@
   tr.atl-aniv td { background: color-mix(in srgb, var(--z-a3) 22%, transparent); font-weight: 600; }
   .rk-eps { border: 0; padding: 0; margin: 0 0 14px; min-width: 0; }
   .rk-eps legend { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; padding: 0; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #tr-ep) { display: flex; flex-wrap: wrap; gap: 6px; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #tr-ep) label { cursor: pointer; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #tr-ep) input { position: absolute; opacity: 0; pointer-events: none; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #tr-ep) span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #tr-ep) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #tr-ep) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) { display: flex; flex-wrap: wrap; gap: 6px; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) label { cursor: pointer; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) input { position: absolute; opacity: 0; pointer-events: none; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
   .es-list { padding-left: 16px; } .es-list li { margin-bottom: 8px; } .es-list b { color: var(--text); }
   /* capa de rosto (app): abre aqui, ecrã inteiro sem barra de cima */
   body:not(.app) main > #capa { display: none; }
@@ -1232,17 +1232,24 @@
     <div id="tr-saida"></div>
     <p><a class="btn-wa" id="tr-wa" href="#" target="_blank" rel="noopener" hidden>Enviar por WhatsApp</a></p>
     <h3>Tempos do grupo</h3>
-    <p class="lead">Os tempos-alvo da série acima para vários atletas, cada um com os seus RP do Ranking. Escolhe a época (só entram os atletas com tempos nessa época), um ou mais escalões e o género; depois toca nos atletas que queres (Absolutos mostra todos). Dá para imprimir ou enviar por WhatsApp.</p>
-    <div id="tr-ep"></div>
-    <div id="tr-esc"></div>
+    <p class="lead">Os tempos-alvo da série acima para vários atletas, cada um com os seus RP do Ranking. Escolhe a época (só aparecem os atletas com tempos nessa época) e, se quiseres, o género e os escalões. Depois escolhe os atletas na lista, um de cada vez: ficam por baixo e tocas num nome para o tirar. Dá para imprimir ou enviar por WhatsApp.</p>
     <div class="pickers">
+      <label>Época
+        <select id="tr-ep"></select>
+      </label>
       <label>Género
         <select id="tr-gen"><option value="">Todos</option><option value="0">Masculino</option><option value="1">Feminino</option></select>
       </label>
     </div>
+    <div id="tr-esc"></div>
+    <div class="pickers">
+      <label>Juntar atleta
+        <select id="tr-add"></select>
+      </label>
+    </div>
     <p class="note-line" id="tr-atls-n"></p>
-    <p><button type="button" class="btn-sug" id="tr-todos">Marcar todos</button> <button type="button" class="btn-sug" id="tr-nenhum">Desmarcar todos</button></p>
     <div id="tr-atls"></div>
+    <p><button type="button" class="btn-sug" id="tr-todos">Juntar todos da lista</button> <button type="button" class="btn-sug" id="tr-nenhum">Limpar escolha</button></p>
     <p><button type="button" class="btn-sug" id="tr-grupo-btn">Ver tempos do grupo</button> <button type="button" class="btn-sug" id="tr-print" hidden>Imprimir</button> <a class="btn-wa" id="tr-grupo-wa" href="#" target="_blank" rel="noopener" hidden>Enviar por WhatsApp</a></p>
     <div class="table-scroll" id="tr-grupo-saida"></div>
     <p class="note-line">Exemplo: RP 100 L de 59.56 em A4 dá 100 a 1:06.56 (59.56 + 7"). Os RP escritos à mão servem só para o cálculo: não são guardados nem publicados.</p>
@@ -4268,29 +4275,28 @@ document.getElementById("tr-sug").addEventListener("click", () => {
   document.getElementById("tr-sug").textContent = "Sugerir outras";
   trCalc();
 });
-// Tempos do grupo: escalões (vários) + género + época → lista de atletas para escolher
-const trEsc = document.getElementById("tr-esc"), trAtls = document.getElementById("tr-atls"), trEp = document.getElementById("tr-ep");
-// épocas com tempos no Ranking; as duas mais recentes vêm marcadas (a atual ainda tem poucos tempos)
+// Tempos do grupo: época + género + escalões (opcional) → lista pendente de atletas; os escolhidos ficam por baixo
+const trEsc = document.getElementById("tr-esc"), trAtls = document.getElementById("tr-atls"), trEp = document.getElementById("tr-ep"), trAdd = document.getElementById("tr-add");
+// épocas com tempos no Ranking; por defeito as duas mais recentes (a atual ainda tem poucos tempos)
 const trEpocas = [...new Set(ranking.map(r => rkEpoca(r[7])))].sort().reverse();
-trEp.innerHTML = trEpocas.map((e, i) => `<label><input type="checkbox" value="${e}"${i < 2 ? " checked" : ""}><span>${e}</span></label>`).join("");
-trEsc.innerHTML = rkEscs.map(([k, n]) => `<label><input type="checkbox" value="${k}"><span>${n}</span></label>`).join("");
+trEp.innerHTML = `<option value="${trEpocas.slice(0, 2).join(",")}">${trEpocas.slice(0, 2).join(" e ")}</option>` + trEpocas.map(e => `<option value="${e}">${e}</option>`).join("") + '<option value="">Todas as épocas</option>';
+trEsc.innerHTML = rkEscs.filter(([k]) => k !== "abs").map(([k, n]) => `<label><input type="checkbox" value="${k}"><span>${n}</span></label>`).join("");
+const trEscolhidos = () => [...trAtls.querySelectorAll("input")].map(x => x.value);
 function trListaAtletas() {
-  const sel = rkEscs.filter(([k]) => trEsc.querySelector(`input[value="${k}"]`).checked), gen = document.getElementById("tr-gen").value;
-  const eps = [...trEp.querySelectorAll("input:checked")].map(x => x.value);
-  const ok = r => sel.some(x => x[2](rkIdade(r))) && (gen === "" || r[0] % 2 === +gen) && (!eps.length || eps.includes(rkEpoca(r[7])));
-  const nomes = sel.length ? [...new Set(ranking.filter(ok).map(r => r[3]))].sort((a, b) => a.localeCompare(b, "pt")) : [];
-  // nenhum vem marcado: o treinador escolhe; quem já estava marcado continua marcado
-  const antes = new Set([...trAtls.querySelectorAll("input:checked")].map(x => x.value));
-  trAtls.innerHTML = nomes.map(n => `<label><input type="checkbox" value="${escH(n)}"${antes.has(n) ? " checked" : ""}><span>${escH(n)}</span></label>`).join("");
-  trAtlsN();
+  const sel = rkEscs.filter(([k]) => trEsc.querySelector(`input[value="${k}"]`)?.checked), gen = document.getElementById("tr-gen").value;
+  const eps = trEp.value ? trEp.value.split(",") : [], ja = new Set(trEscolhidos());
+  const ok = r => (!sel.length || sel.some(x => x[2](rkIdade(r)))) && (gen === "" || r[0] % 2 === +gen) && (!eps.length || eps.includes(rkEpoca(r[7])));
+  const nomes = [...new Set(ranking.filter(ok).map(r => r[3]))].filter(n => !ja.has(n)).sort((a, b) => a.localeCompare(b, "pt"));
+  trAdd.innerHTML = `<option value="">${nomes.length ? `Escolhe um atleta (${nomes.length})` : "Sem mais atletas com esta escolha"}</option>` + nomes.map(n => `<option>${escH(n)}</option>`).join("");
+  const n = ja.size;
+  document.getElementById("tr-atls-n").textContent = n ? `${n} atleta${n > 1 ? "s" : ""} escolhido${n > 1 ? "s" : ""} (toca num nome para o tirar)` : "Ainda não escolheste atletas.";
 }
-const trAtlsN = () => { const n = trAtls.querySelectorAll("input:checked").length, t = trAtls.querySelectorAll("input").length; document.getElementById("tr-atls-n").textContent = t ? `${n} de ${t} atletas escolhidos (toca nos nomes para escolher)` : "Escolhe um ou mais escalões."; };
-trEsc.addEventListener("change", trListaAtletas);
-trEp.addEventListener("change", trListaAtletas);
-document.getElementById("tr-todos").addEventListener("click", () => { trAtls.querySelectorAll("input").forEach(x => { x.checked = true; }); trAtlsN(); });
-document.getElementById("tr-nenhum").addEventListener("click", () => { trAtls.querySelectorAll("input").forEach(x => { x.checked = false; }); trAtlsN(); });
-document.getElementById("tr-gen").addEventListener("change", trListaAtletas);
-trAtls.addEventListener("change", trAtlsN);
+const trJuntar = n => { trAtls.insertAdjacentHTML("beforeend", `<label><input type="checkbox" value="${escH(n)}" checked><span>${escH(n)} ✕</span></label>`); };
+trAdd.addEventListener("change", () => { if (trAdd.value) trJuntar(trAdd.value); trListaAtletas(); });
+trAtls.addEventListener("change", ev => { ev.target.closest("label").remove(); trListaAtletas(); });
+[trEsc, trEp, document.getElementById("tr-gen")].forEach(el => el.addEventListener("change", trListaAtletas));
+document.getElementById("tr-todos").addEventListener("click", () => { [...trAdd.options].slice(1).forEach(o => trJuntar(o.value)); trListaAtletas(); });
+document.getElementById("tr-nenhum").addEventListener("click", () => { trAtls.innerHTML = ""; trListaAtletas(); });
 trListaAtletas();
 let trGrupoHtml = "";
 document.getElementById("tr-grupo-btn").addEventListener("click", () => {
