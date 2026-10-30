@@ -1003,6 +1003,14 @@
     <details class="es-disp"><summary id="es-atls-n">Atletas disponíveis</summary>
       <p><button type="button" class="btn-sug" id="es-todos">Todos</button> <button type="button" class="btn-sug" id="es-nenhum">Nenhum</button></p>
       <div id="es-atls"></div>
+      <div class="pickers">
+        <label>Juntar atleta de outra época
+          <input id="es-extra" list="es-extra-nomes" placeholder="escreve o nome">
+          <datalist id="es-extra-nomes"></datalist>
+        </label>
+      </div>
+      <p><button type="button" class="btn-sug" id="es-extra-btn">Juntar à estafeta</button> <span class="sub" id="es-extra-msg"></span></p>
+      <p class="note-line">O atleta junto entra com o melhor tempo de sempre que está no ranking (em qualquer época e escalão). Para o tirar, toca no nome dele na lista.</p>
     </details>
     <div class="grid" id="es-grid"></div>
     <p class="note-line">Atenção: só há dados dos 10 melhores de sempre em cada prova, por isso pode faltar quem não está no ranking (por exemplo, atletas atuais que ainda não entraram no top 10). O tempo é a soma dos tempos individuais, sem contar as partidas lançadas.</p>
@@ -4136,7 +4144,8 @@ const esNadoNome = ["Costas", "Bruços", "Mariposa", "Livres"];
 // melhor tempo de cada atleta do género g (0 masc., 1 fem.) no escalão escolhido
 function esMelhores(g, prova) {
   const eps = rkEpocas(), pisc = esPisc.value, best = new Map();
-  rkTempos(g, eps).map(x => x.r).filter(r => r[1] === prova && (!pisc || r[6] === pisc))
+  rkTempos(g, eps).map(x => x.r).concat(ranking.filter(r => r[0] % 2 === g && esExtra.has(g + "|" + r[3])))
+    .filter(r => r[1] === prova && (!pisc || r[6] === pisc))
     .filter(r => !esFora.has(g + "|" + r[3]))
     .forEach(r => { const t = esSeg(r[5]); if (!best.has(r[3]) || t < best.get(r[3]).t) best.set(r[3], { n: r[3], t, tt: r[5], esc: g }); });
   return [...best.values()].sort((a, b) => a.t - b.t);
@@ -4165,20 +4174,31 @@ function esEstilos(provas, escs) {
   return melhor && melhor.sel;
 }
 // atletas disponíveis: os que têm tempos nas provas das estafetas para a escolha feita; tirar um recalcula as estafetas
-const esFora = new Set(), esProvas = [0, 1, 2, 6, 7, 9, 10, 12, 13];
+const esFora = new Set(), esExtra = new Set(), esProvas = [0, 1, 2, 6, 7, 9, 10, 12, 13];
 function esAtletas() {
   const eps = rkEpocas(), pisc = esPisc.value;
-  const lista = [0, 1].flatMap(g => [...new Set(rkTempos(g, eps).map(x => x.r).filter(r => esProvas.includes(r[1]) && (!pisc || r[6] === pisc)).map(r => r[3]))].sort((a, b) => a.localeCompare(b)).map(n => [g, n]));
-  document.getElementById("es-atls").innerHTML = lista.map(([g, n]) => `<label><input type="checkbox" value="${g}|${escH(n)}"${esFora.has(g + "|" + n) ? "" : " checked"}><span>${escH(n)} ${g ? "(F)" : "(M)"}</span></label>`).join("") || '<p class="sub">Sem atletas para esta escolha.</p>';
+  const lista = [0, 1].flatMap(g => [...new Set(rkTempos(g, eps).map(x => x.r).filter(r => esProvas.includes(r[1]) && (!pisc || r[6] === pisc)).map(r => r[3]))].filter(n => !esExtra.has(g + "|" + n)).sort((a, b) => a.localeCompare(b)).map(n => [g, n]));
+  const extra = [...esExtra].map(v => [+v[0], v.slice(2)]);
+  document.getElementById("es-atls").innerHTML = extra.map(([g, n]) => `<label><input type="checkbox" data-extra value="${g}|${escH(n)}" checked><span>+ ${escH(n)} ${g ? "(F)" : "(M)"}</span></label>`).join("") + (lista.map(([g, n]) => `<label><input type="checkbox" value="${g}|${escH(n)}"${esFora.has(g + "|" + n) ? "" : " checked"}><span>${escH(n)} ${g ? "(F)" : "(M)"}</span></label>`).join("") || '<p class="sub">Sem atletas para esta escolha.</p>');
+  if (!document.getElementById("es-extra-nomes").options.length)
+    document.getElementById("es-extra-nomes").innerHTML = [...new Set(ranking.filter(r => esProvas.includes(r[1])).map(r => `${r[3]} (${r[0] % 2 ? "F" : "M"})`))].sort((a, b) => a.localeCompare(b, "pt")).map(n => `<option value="${escH(n)}">`).join("");
   const fora = lista.filter(([g, n]) => esFora.has(g + "|" + n)).length;
-  document.getElementById("es-atls-n").textContent = `Atletas disponíveis: ${lista.length - fora} de ${lista.length}${fora ? ` (${fora} fora)` : ""} · tocar para escolher`;
+  document.getElementById("es-atls-n").textContent = `Atletas disponíveis: ${lista.length - fora} de ${lista.length}${fora ? ` (${fora} fora)` : ""}${extra.length ? ` + ${extra.length} de outra época` : ""} · tocar para escolher`;
 }
 document.getElementById("es-atls").addEventListener("change", ev => {
-  const v = ev.target.value; ev.target.checked ? esFora.delete(v) : esFora.add(v);
+  const v = ev.target.value;
+  if (ev.target.hasAttribute("data-extra")) esExtra.delete(v); else ev.target.checked ? esFora.delete(v) : esFora.add(v);
   showEstafetas();
 });
 document.getElementById("es-todos").addEventListener("click", () => { esFora.clear(); showEstafetas(); });
-document.getElementById("es-nenhum").addEventListener("click", () => { document.querySelectorAll("#es-atls input").forEach(x => esFora.add(x.value)); showEstafetas(); });
+document.getElementById("es-nenhum").addEventListener("click", () => { document.querySelectorAll("#es-atls input:not([data-extra])").forEach(x => esFora.add(x.value)); showEstafetas(); });
+document.getElementById("es-extra-btn").addEventListener("click", () => {
+  const inp = document.getElementById("es-extra"), m = inp.value.trim().match(/^(.+) \((M|F)\)$/), msg = document.getElementById("es-extra-msg");
+  const g = m ? (m[2] === "F" ? 1 : 0) : -1;
+  if (!m || !ranking.some(r => r[3] === m[1] && r[0] % 2 === g)) { msg.textContent = "Escolhe um nome da lista."; return; }
+  esExtra.add(g + "|" + m[1]); esFora.delete(g + "|" + m[1]); inp.value = ""; msg.textContent = `${m[1]} junto.`;
+  showEstafetas();
+});
 function showEstafetas() {
   esAtletas();
   const base = 0, grupo = rkEscAtual()[1];
