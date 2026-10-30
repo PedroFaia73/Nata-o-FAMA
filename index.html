@@ -1232,7 +1232,7 @@
     <div id="tr-saida"></div>
     <p><a class="btn-wa" id="tr-wa" href="#" target="_blank" rel="noopener" hidden>Enviar por WhatsApp</a></p>
     <h3>Tempos do grupo</h3>
-    <p class="lead">Os tempos-alvo da série acima para vários atletas, cada um com os seus RP do Ranking. Escolhe a época (só entram os atletas com tempos nessa época), um ou mais escalões e o género; depois podes tirar ou juntar atletas na lista (Absolutos mostra todos). Dá para imprimir ou enviar por WhatsApp.</p>
+    <p class="lead">Os tempos-alvo da série acima para vários atletas, cada um com os seus RP do Ranking. Escolhe a época (só entram os atletas com tempos nessa época), um ou mais escalões e o género; depois toca nos atletas que queres (Absolutos mostra todos). Dá para imprimir ou enviar por WhatsApp.</p>
     <div id="tr-ep"></div>
     <div id="tr-esc"></div>
     <div class="pickers">
@@ -4268,7 +4268,7 @@ document.getElementById("tr-sug").addEventListener("click", () => {
   document.getElementById("tr-sug").textContent = "Sugerir outras";
   trCalc();
 });
-// Tempos do grupo: escalões (vários) + género → lista de atletas (todos marcados; dá para tirar ou juntar)
+// Tempos do grupo: escalões (vários) + género + época → lista de atletas para escolher
 const trEsc = document.getElementById("tr-esc"), trAtls = document.getElementById("tr-atls"), trEp = document.getElementById("tr-ep");
 // épocas com tempos no Ranking; as duas mais recentes vêm marcadas (a atual ainda tem poucos tempos)
 const trEpocas = [...new Set(ranking.map(r => rkEpoca(r[7])))].sort().reverse();
@@ -4279,10 +4279,12 @@ function trListaAtletas() {
   const eps = [...trEp.querySelectorAll("input:checked")].map(x => x.value);
   const ok = r => sel.some(x => x[2](rkIdade(r))) && (gen === "" || r[0] % 2 === +gen) && (!eps.length || eps.includes(rkEpoca(r[7])));
   const nomes = sel.length ? [...new Set(ranking.filter(ok).map(r => r[3]))].sort((a, b) => a.localeCompare(b, "pt")) : [];
-  trAtls.innerHTML = nomes.map(n => `<label><input type="checkbox" value="${escH(n)}" checked><span>${escH(n)}</span></label>`).join("");
+  // nenhum vem marcado: o treinador escolhe; quem já estava marcado continua marcado
+  const antes = new Set([...trAtls.querySelectorAll("input:checked")].map(x => x.value));
+  trAtls.innerHTML = nomes.map(n => `<label><input type="checkbox" value="${escH(n)}"${antes.has(n) ? " checked" : ""}><span>${escH(n)}</span></label>`).join("");
   trAtlsN();
 }
-const trAtlsN = () => { const n = trAtls.querySelectorAll("input:checked").length, t = trAtls.querySelectorAll("input").length; document.getElementById("tr-atls-n").textContent = t ? `${n} de ${t} atletas escolhidos (toca num nome para tirar ou juntar)` : "Escolhe um ou mais escalões."; };
+const trAtlsN = () => { const n = trAtls.querySelectorAll("input:checked").length, t = trAtls.querySelectorAll("input").length; document.getElementById("tr-atls-n").textContent = t ? `${n} de ${t} atletas escolhidos (toca nos nomes para escolher)` : "Escolhe um ou mais escalões."; };
 trEsc.addEventListener("change", trListaAtletas);
 trEp.addEventListener("change", trListaAtletas);
 document.getElementById("tr-todos").addEventListener("click", () => { trAtls.querySelectorAll("input").forEach(x => { x.checked = true; }); trAtlsN(); });
