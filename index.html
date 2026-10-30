@@ -473,6 +473,18 @@
       </table>
     </div>
     <p class="note-line">Os mínimos são diferentes para piscina de 50 m e de 25 m, e não se convertem tempos entre piscinas. Têm de ser obtidos em provas oficiais, em Portugal ou no estrangeiro. Os nadadores do Regime de Alto Rendimento estão dispensados do TAC.</p>
+    <div id="min-atl">
+      <h3>Atletas do clube com mínimo</h3>
+      <p class="note-line" id="min-atl-info"></p>
+      <div class="table-scroll">
+        <table class="tac">
+          <thead><tr><th>Atleta</th><th>Prova</th><th class="num">Tempo</th><th class="num">Mínimo</th><th>Data · local</th></tr></thead>
+          <tbody id="min-atl-rows"></tbody>
+        </table>
+      </div>
+      <p class="note-line">Com base nos melhores tempos do Ranking do Clube, de 2025/26 e 2026/27, nadados na piscina escolhida. O ranking guarda os 10 melhores de cada prova, por isso pode faltar algum atleta: confirma sempre na FPN.</p>
+      <p class="partilhar" data-sec="min-atl"><button type="button" class="btn-sug" data-acao="imprimir">Imprimir</button> <a class="btn-wa" data-acao="wa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a></p>
+    </div>
     <p class="docs"><a href="docs/regulamento-natacao-pura-2026-27.pdf">Regulamento das Competições Nacionais (PDF)</a></p>
   </section>
 
@@ -3955,6 +3967,36 @@ function rkMinOk(r) {
   const row = c && tac["p" + parseInt(r[6])] && tac["p" + parseInt(r[6])][r[0] % 2 ? "F" : "M"].find(x => x[0] === k), t = row && row[c[1] + 1];
   return t ? rkSeg(r[5]) <= rkSeg(t) : false;
 }
+// Mínimos FPN: atletas do clube que já têm o TAC da categoria escolhida (anos de nascimento de cada coluna da tac)
+const minAnos = [[1900, 2008], [2006, 2008], [2009, 2010], [2010, 2010], [2011, 2011], [2012, 2012], [2011, 2011], [2012, 2012], [2013, 2013], [2014, 2014], [2011, 2011], [2012, 2012], [2013, 2013], [2014, 2014]];
+function minAtletas() {
+  const c = +document.getElementById("tac-cat").value, pool = document.getElementById("tac-pool").value, [a0, a1] = minAnos[c];
+  const melhor = {};
+  ranking.forEach(r => {
+    if ("p" + parseInt(r[6]) !== pool || !["2025/26", "2026/27"].includes(rkEpoca(r[7]))) return;
+    const n = rkNasc(r); if (n < a0 || n > a1) return;
+    const g = r[0] % 2 ? "F" : "M", [d, est] = rkProvas[r[1]].split(" "), k = `${d} ${est === "Bruços" ? "B" : est[0]}`;
+    const row = tac[pool][g].find(x => x[0] === k), t = row && row[c + 1];
+    if (!t || rkSeg(r[5]) > rkSeg(t)) return;
+    const id = `${g}|${r[3]}|${r[1]}`;
+    if (!melhor[id] || rkSeg(r[5]) < rkSeg(melhor[id].r[5])) melhor[id] = { g, r, t };
+  });
+  const lst = Object.values(melhor), rows = [];
+  const cat = document.getElementById("tac-cat").selectedOptions[0];
+  [["M", "Masculinos"], ["F", "Femininos"]].forEach(([g, nome]) => {
+    const por = {};
+    lst.filter(x => x.g === g).forEach(x => (por[x.r[3]] = por[x.r[3]] || []).push(x));
+    const nomes = Object.keys(por).sort((a, b) => por[b].length - por[a].length || a.localeCompare(b));
+    rows.push(`<tr class="grp"><td colspan="5">${nome} · ${nomes.length} atleta${nomes.length === 1 ? "" : "s"}</td></tr>`);
+    if (!nomes.length) rows.push('<tr><td colspan="5">Ainda nenhum atleta com mínimo.</td></tr>');
+    nomes.forEach(n => por[n].sort((a, b) => a.r[1] - b.r[1]).forEach((x, i) => rows.push(`<tr><td>${i ? "" : `<b>${escH(n)}</b> (${rkNasc(x.r)}) · ${por[n].length} prova${por[n].length === 1 ? "" : "s"}`}</td><td>${rkProvas[x.r[1]]}</td><td class="num"><b>${x.r[5]}</b></td><td class="num">${x.t}</td><td>${x.r[7]} · ${escH(x.r[8])}</td></tr>`)));
+  });
+  document.getElementById("min-atl-info").textContent = `${cat.parentNode.label} · ${cat.textContent.replace(/ \(.*\)/, "")} · piscina de ${pool === "p50" ? "50" : "25"} m`;
+  document.getElementById("min-atl-rows").innerHTML = rows.join("");
+}
+document.getElementById("tac-cat").addEventListener("change", minAtletas);
+document.getElementById("tac-pool").addEventListener("change", minAtletas);
+minAtletas();
 // Partilhar: o que está no ecrã, por WhatsApp ou para imprimir
 let rkTxt = "", rkHtml = "";
 function rkPartilha(titulo, linhas) {
