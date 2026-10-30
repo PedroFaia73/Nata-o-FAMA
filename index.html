@@ -1194,6 +1194,22 @@
         <tbody id="tt-rows"></tbody>
       </table>
     </div>
+    <p class="note-line" id="tt-min"></p>
+    <h3>Objetivos da época</h3>
+    <p class="lead">Os RP do atleta em cada prova e o que falta para o mínimo dos Campeonatos Nacionais do seu escalão 2026/27 (TAC FPN). Os tempos da outra piscina são convertidos (aprox.).</p>
+    <div class="pickers">
+      <label>Piscina
+        <select id="ob-pool"><option value="50">50 m</option><option value="25">25 m</option></select>
+      </label>
+    </div>
+    <div class="table-scroll"><table><thead><tr><th>Prova</th><th class="num">RP</th><th class="num">Mínimo</th><th class="num">Falta</th></tr></thead><tbody id="ob-rows"></tbody></table></div>
+    <h3>Evolução do atleta</h3>
+    <div class="pickers">
+      <label>Prova
+        <select id="ev-prova"></select>
+      </label>
+    </div>
+    <div id="ev-graf"></div>
     <h3>Ritmo de prova</h3>
     <div class="pickers">
       <label>Prova
@@ -1226,9 +1242,24 @@
       </label>
     </div>
     <p><button type="button" class="btn-sug" id="tr-sug">Sugerir séries desta zona</button></p>
+    <div class="pickers">
+      <label>Juntar série-tipo
+        <select id="tr-lib"></select>
+      </label>
+      <label>Abrir treino guardado
+        <select id="tr-abrir"></select>
+      </label>
+    </div>
     <label class="tt-treino">
       <textarea id="tr-texto" rows="7" placeholder='Escreve ou cola aqui a série. Exemplos:&#10;A3 10x200L c/2&apos;30"&#10;A4 4x(4x100+1x200+4x50)&#10;RP100 6x[1x100E1 c/20"]c/3&apos;30"'></textarea>
     </label>
+    <div class="pickers">
+      <label>Nome do treino
+        <input id="tr-nome" placeholder="ex.: Juvenis · terça A4">
+      </label>
+    </div>
+    <p><button type="button" class="btn-sug" id="tr-guardar">Guardar treino</button> <button type="button" class="btn-sug" id="tr-apagar" hidden>Apagar treino aberto</button></p>
+    <p class="note-line" id="tr-guardado">Os treinos ficam guardados só neste telemóvel (não são publicados).</p>
     <div id="tr-saida"></div>
     <p><a class="btn-wa" id="tr-wa" href="#" target="_blank" rel="noopener" hidden>Enviar por WhatsApp</a></p>
     <h3>Tempos do grupo</h3>
@@ -4028,8 +4059,8 @@ const ttP50 = e => e === 15 ? -1 : e, ttP100 = e => e === 15 ? 15 : e + 1;
 // por cada 50 m, piscina longa = curta + Livres 0,7" · Costas 0,8" · Bruços 1,0" · Mariposa 0,7" · Estilos 0,8"
 const ttPisc = document.getElementById("tt-pisc");
 const ttViragem = { Livres: 0.7, Costas: 0.8, "Bruços": 1.0, Mariposa: 0.7, Estilos: 0.8 };
-function ttConv(r) {
-  const alvo = ttPisc.value, de = parseInt(r[6]);
+function ttConv(r, alvo = ttPisc.value) {
+  const de = parseInt(r[6]);
   if (!alvo || !de || de === +alvo) return r;
   const [d, est] = rkProvas[r[1]].split(" "), dif = ttViragem[est] * d / 50 * (alvo === "50" ? 1 : -1);
   const c = r.slice(); c[5] = ttFmt(ttSeg(r[5]) + dif); c[6] = `${r[6]} → ${alvo}m`;
@@ -4048,7 +4079,7 @@ function ttPreencher() {
   document.getElementById("tt-fonte").textContent = n ? (r ? `RP do Ranking: ${rkProvas[p]} ${r[5]} (${r[6]}, ${r[7]})` : `Sem ${rkProvas[p]} deste atleta no Ranking: escreve o RP.`) : "";
   ttCalc();
 }
-ttPv.addEventListener("change", () => { ttE.value = ttEstDe(+ttPv.value); ttE.dispatchEvent(new Event("change")); });
+ttPv.addEventListener("change", () => { evP.value = ttPv.value; ttE.value = ttEstDe(+ttPv.value); ttE.dispatchEvent(new Event("change")); });
 ttRP.addEventListener("input", ttCalc);
 ttPisc.addEventListener("change", () => ttA.dispatchEvent(new Event("change")));
 // T de uma distância de treino: 25 = metade do T50, 50 = T50, 100 ou mais = T100 por cada 100 m
@@ -4071,7 +4102,59 @@ function ttCalc() {
   const r100 = ttSeg(tt100.value);
   if (!est && !isNaN(r100)) z.push(`<tr><td><b>Vel</b> <small>Velocidade</small></td><td class="num" colspan="${cols.length}">25 m a ${ttFmt((r100 - 5) / 4)} (RP 100 − 5", a dividir por 4)</td></tr>`);
   document.getElementById("tt-rows").innerHTML = z.join("");
+  // mínimo nacional do escalão para esta prova (piscina do treino; sem escolha, a do RP)
+  const n = ttA.value, r = n && ttMelhor(n, p), pool = ttPisc.value || (r && (String(r[6]).match(/(\d+)m\s*$/) || [])[1]) || "50";
+  const m = n && ttMinimo(n, p, pool);
+  document.getElementById("tt-min").textContent = m ? `Mínimo ${m[0]} (piscina ${pool} m): ${m[1]}${isNaN(rp) ? "" : ttSeg(m[1]) >= rp ? " · já tem o mínimo ✓" : ` · faltam ${(rp - ttSeg(m[1])).toFixed(2)}"`}` : "";
+  obCalc(); evCalc();
 }
+// Mínimos dos nacionais (TAC FPN 2026/27) pelo escalão do atleta (idade em 2027): [nome, coluna da tabela TAC]
+function ttMinCol(idade) {
+  if (idade >= 22) return ["CN Sénior", 0];
+  if (idade >= 19) return ["CN Sub21", 1];
+  return { 18: ["CN Júnior", 2], 17: ["CN 1.º ano Júnior", 3], 16: ["CN Juvenis A (julho)", 4], 15: ["CN Juvenis B (julho)", 5], 14: ["CN Infantis A", 8], 13: ["CN Infantis B", 9] }[idade] || null;
+}
+function ttMinimo(n, p, pool) {
+  const r0 = ranking.find(r => r[3] === n), c = r0 && ttMinCol(rkIdade(r0));
+  if (!c) return null;
+  const [d, est] = rkProvas[p].split(" "), k = `${d} ${est === "Bruços" ? "B" : est[0]}`;
+  const row = tac["p" + pool][ttGenero(n) ? "F" : "M"].find(x => x[0] === k), t = row && row[c[1] + 1];
+  return t ? [c[0], t] : null;
+}
+// Objetivos: RP de cada prova na piscina escolhida (convertido quando é da outra) e o que falta para o mínimo
+const obPool = document.getElementById("ob-pool");
+const obMelhor = (n, p, pool) => ranking.filter(r => r[3] === n && r[1] === p).map(r => ttConv(r, pool)).sort((a, b) => ttSeg(a[5]) - ttSeg(b[5]))[0];
+function obCalc() {
+  const n = ttA.value, pool = obPool.value, b = document.getElementById("ob-rows");
+  if (!n) { b.innerHTML = '<tr><td colspan="4">Escolhe o atleta.</td></tr>'; return; }
+  const l = rkProvas.map((_, p) => { const r = obMelhor(n, p, pool); return r && [p, r, ttMinimo(n, p, pool)]; }).filter(Boolean);
+  b.innerHTML = l.map(([p, r, m]) => {
+    const f = m ? ttSeg(r[5]) - ttSeg(m[1]) : NaN;
+    return `<tr><td>${rkProvas[p]}</td><td class="num">${r[5]}${String(r[6]).includes("→") ? " *" : ""}</td><td class="num">${m ? m[1] : "–"}</td><td class="num">${isNaN(f) ? "–" : f <= 0 ? "✓" : f.toFixed(2) + '"'}</td></tr>`;
+  }).join("") + (l.length ? `<tr><td colspan="4"><small>${(() => { const r0 = ranking.find(r => r[3] === n), c = r0 && ttMinCol(rkIdade(r0)); return c ? `Mínimos: ${c[0]}. ` : "Sem mínimos nacionais para este escalão. "; })()}* convertido da outra piscina.</small></td></tr>` : '<tr><td colspan="4">Sem tempos no Ranking.</td></tr>');
+}
+obPool.addEventListener("change", () => { obCalc(); evCalc(); });
+// Evolução: melhor tempo de cada época na prova escolhida (piscina dos Objetivos), com a linha do mínimo
+const evP = document.getElementById("ev-prova");
+evP.innerHTML = rkProvas.map((x, p) => `<option value="${p}"${p === 1 ? " selected" : ""}>${x}</option>`).join("");
+function evCalc() {
+  const n = ttA.value, p = +evP.value, pool = obPool.value, g = document.getElementById("ev-graf");
+  if (!n) { g.innerHTML = ""; return; }
+  const por = {};
+  ranking.filter(r => r[3] === n && r[1] === p).map(r => ttConv(r, pool)).forEach(r => { const e = rkEpoca(r[7]), t = ttSeg(r[5]); if (!(e in por) || t < por[e]) por[e] = t; });
+  const eps = Object.keys(por).sort(), m = ttMinimo(n, p, pool), tm = m ? ttSeg(m[1]) : NaN;
+  if (!eps.length) { g.innerHTML = `<p class="note-line">Sem tempos de ${rkProvas[p]} no Ranking.</p>`; return; }
+  const vals = eps.map(e => por[e]).concat(isNaN(tm) ? [] : [tm]), lo = Math.min(...vals), hi = Math.max(...vals), pad = (hi - lo) * 0.15 || 1;
+  const W = 340, H = 190, L = 50, R = 12, T = 14, B = 34;
+  const x = i => eps.length === 1 ? (L + W - R) / 2 : L + i * (W - L - R) / (eps.length - 1), y = t => T + (t - (lo - pad)) / (hi - lo + 2 * pad) * (H - T - B);
+  const pts = eps.map((e, i) => [x(i), y(por[e]), e, por[e]]);
+  g.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:520px" role="img" aria-label="Evolução em ${rkProvas[p]}">
+    ${isNaN(tm) ? "" : `<line x1="${L}" x2="${W - R}" y1="${y(tm)}" y2="${y(tm)}" stroke="var(--muted)" stroke-dasharray="4 4"/><text x="${W - R}" y="${y(tm) - 4}" text-anchor="end" font-size="10" fill="var(--muted)">mínimo ${m[1]}</text>`}
+    <polyline fill="none" stroke="var(--accent)" stroke-width="2" points="${pts.map(q => q[0] + "," + q[1]).join(" ")}"/>
+    ${pts.map(q => `<circle cx="${q[0]}" cy="${q[1]}" r="3.5" fill="var(--accent)"/><text x="${q[0]}" y="${q[1] - 7}" text-anchor="middle" font-size="10" fill="currentColor">${ttFmt(q[3])}</text><text x="${q[0]}" y="${H - 14}" text-anchor="middle" font-size="9" fill="var(--muted)">${q[2]}</text>`).join("")}
+  </svg><p class="note-line">Melhor tempo de cada época em ${rkProvas[p]} (piscina ${pool} m; mais acima = mais rápido).</p>`;
+}
+evP.addEventListener("change", evCalc);
 ttA.addEventListener("change", ttPreencher);
 ttE.addEventListener("change", ttPreencher);
 [tt50, tt100].forEach(el => el.addEventListener("input", ttCalc));
@@ -4119,7 +4202,8 @@ const trEstilo = { L: 0, C: 6, B: 9, M: 12, E: 15 };
 // ciclo de partida sugerido: tempo-alvo + pausa, arredondado aos 5"
 // A1-A3: pausa fixa por 100 m (25 e 50 m com a pausa de 50); A4: esforço:pausa 1:1; TL: 1:2
 const trPausa = { A1: 10, A2: 15, A3: 20 }, trRelacao = { A4: 1, TL: 2 };
-const trCiclo = (zona, d, v) => { const c = Math.ceil((v + (trRelacao[zona] ? v * trRelacao[zona] : trPausa[zona] * Math.max(d, 50) / 100)) / 5) * 5, m = Math.floor(c / 60), r = c % 60; return m ? `${m}'${String(r).padStart(2, "0")}"` : `${r}"`; };
+const trCicloSeg = (zona, d, v) => Math.ceil((v + (trRelacao[zona] ? v * trRelacao[zona] : trPausa[zona] * Math.max(d, 50) / 100)) / 5) * 5;
+const trCiclo = (zona, d, v) => { const c = trCicloSeg(zona, d, v), m = Math.floor(c / 60), r = c % 60; return m ? `${m}'${String(r).padStart(2, "0")}"` : `${r}"`; };
 // prova de base escolhida no bloco do treino: [prova, tempo em s] ou null
 // nos tempos do grupo, cada atleta usa só os seus tempos do Ranking (os campos escritos à mão não contam)
 let trGrupoNome = null;
@@ -4231,7 +4315,11 @@ function trCalc() {
     msg.push(a ? `${l}\n   → ${a}` : l);
   }
   const tot = Object.values(vz).reduce((x, y) => x + y, 0);
-  if (tot) cartoes.push(`<div class="card"><b>Volume: ${tot} m</b><div class="alvo">${Object.entries(vz).map(([z, v]) => `${escH(z)} ${v} m (${Math.round(v / tot * 100)}%)`).join(" · ")}</div></div>`);
+  // tempo da sessão (estimativa): cada zona ao ciclo de 100 m sugerido, a partir do RP 100 do estilo; RP, PL e linhas sem zona contam como A2
+  const t100 = ttSeg(trRP(ttP100(+ttE.value)));
+  const seg = isNaN(t100) ? NaN : Object.entries(vz).reduce((a, [z, v]) => { const k = trPausa[z] || trRelacao[z] ? z : "A2", zz = ttZonas.find(x => x[0] === k); return a + v / 100 * trCicloSeg(k, 100, t100 + zz[3]); }, 0);
+  const dur = isNaN(seg) ? "" : ` · tempo estimado ~${Math.floor(seg / 3600) ? Math.floor(seg / 3600) + "h" : ""}${String(Math.round(seg % 3600 / 60)).padStart(Math.floor(seg / 3600) ? 2 : 1, "0")} min`;
+  if (tot) cartoes.push(`<div class="card"><b>Volume: ${tot} m${dur}</b><div class="alvo">${Object.entries(vz).map(([z, v]) => `${escH(z)} ${v} m (${Math.round(v / tot * 100)}%)`).join(" · ")}</div></div>`);
   document.getElementById("tr-saida").innerHTML = cartoes.join("");
   const wa = document.getElementById("tr-wa"), nome = ttA.value || "atleta";
   wa.hidden = !ls.length;
@@ -4320,6 +4408,51 @@ document.getElementById("tr-print").addEventListener("click", () => {
   w.document.write(`<!doctype html><meta charset="utf-8"><title>Tempos do grupo</title><style>body{font:12px system-ui,sans-serif}table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:4px;vertical-align:top;text-align:left}</style><h2>GDNF · Tempos do grupo</h2>${trGrupoHtml}`);
   w.document.close(); w.focus(); w.print();
 });
+// Treinos guardados neste aparelho (localStorage); nada é publicado
+const TR_KEY = "gdnf-treinos";
+const trLer = () => { try { return JSON.parse(localStorage.getItem(TR_KEY)) || []; } catch (e) { return []; } };
+const trGravar = l => { try { localStorage.setItem(TR_KEY, JSON.stringify(l)); return true; } catch (e) { return false; } };
+const trAbrir = document.getElementById("tr-abrir"), trLib = document.getElementById("tr-lib"), trTx = document.getElementById("tr-texto");
+function trListaGuardados() {
+  const l = trLer();
+  trAbrir.innerHTML = `<option value="">${l.length ? `Escolhe (${l.length})` : "Ainda não há treinos guardados"}</option>` + l.map((t, i) => `<option value="${i}">${escH(t.nome)} · ${t.data}</option>`).join("");
+  document.getElementById("tr-apagar").hidden = true;
+}
+document.getElementById("tr-guardar").addEventListener("click", () => {
+  const texto = trTx.value.trim(), info = document.getElementById("tr-guardado");
+  if (!texto) { info.textContent = "Escreve primeiro o treino."; return; }
+  const nome = document.getElementById("tr-nome").value.trim() || texto.split("\n")[0].slice(0, 30), d = new Date();
+  const l = trLer().filter(t => t.nome !== nome);
+  l.unshift({ nome, data: `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`, texto, zona: document.getElementById("tr-zona").value });
+  info.textContent = trGravar(l) ? `Guardado: ${nome} (só neste telemóvel).` : "Não foi possível guardar neste navegador.";
+  trListaGuardados();
+});
+trAbrir.addEventListener("change", () => {
+  const t = trLer()[+trAbrir.value];
+  if (trAbrir.value === "" || !t) return;
+  trTx.value = t.texto; document.getElementById("tr-nome").value = t.nome; document.getElementById("tr-zona").value = t.zona || "";
+  document.getElementById("tr-apagar").hidden = false;
+  trCalc();
+});
+document.getElementById("tr-apagar").addEventListener("click", () => {
+  const i = +trAbrir.value, l = trLer();
+  if (trAbrir.value === "" || !l[i]) return;
+  const nome = l[i].nome; l.splice(i, 1); trGravar(l);
+  document.getElementById("tr-guardado").textContent = `Apagado: ${nome}.`;
+  trListaGuardados();
+});
+// Biblioteca: séries-tipo GDNF por zona (e as propostas de A1/A2); escolher junta a série ao treino
+const trLibZ = ["A1", "A2", "A3", "A4", "TL", "RP", "VEL", "TÉC"];
+trLib.innerHTML = '<option value="">Escolhe uma série</option>' + trLibZ.map(z => {
+  const l = trSeriesA12[z] ? trSeriesA12[z] : gzSeries.filter(r => r[0] === z).sort((a, b) => b[5] - a[5]).map(r => r[2]);
+  return l.length ? `<optgroup label="${z}">${l.map(x => `<option>${escH(x)}</option>`).join("")}</optgroup>` : "";
+}).join("");
+trLib.addEventListener("change", () => {
+  if (!trLib.value) return;
+  trTx.value = (trTx.value.trim() ? trTx.value.trim() + "\n" : "") + trLib.value;
+  trLib.value = ""; trCalc();
+});
+trListaGuardados();
 rpPreencher();
 trPreencher();
 ttPreencher();
