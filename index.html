@@ -249,16 +249,18 @@
   tr.atl-aniv td { background: color-mix(in srgb, var(--z-a3) 22%, transparent); font-weight: 600; }
   .rk-eps { border: 0; padding: 0; margin: 0 0 14px; min-width: 0; }
   .rk-eps legend { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; padding: 0; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) { display: flex; flex-wrap: wrap; gap: 6px; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) label { cursor: pointer; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats) { display: flex; flex-wrap: wrap; gap: 6px; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats) label { cursor: pointer; }
+  #min-cats { margin: 8px 0 12px; }
+  #min-atl .so-print { position: absolute; left: -9999px; }
   .rk-novo, .rk-min { display: inline-block; padding: 1px 6px; border-radius: 999px; font-size: .7rem; font-weight: 800; vertical-align: middle; }
   .rk-comp { display: flex; gap: 8px; align-items: center; margin: 8px 0; font-weight: 600; cursor: pointer; }
   .rk-novo { background: var(--accent); color: var(--surface); }
   .rk-min { border: 1px solid var(--accent); color: var(--accent); }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) input { position: absolute; opacity: 0; pointer-events: none; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats) input { position: absolute; opacity: 0; pointer-events: none; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats) span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
   .es-list { padding-left: 16px; } .es-list li { margin-bottom: 8px; } .es-list b { color: var(--text); }
   /* capa de rosto (app): abre aqui, ecrã inteiro sem barra de cima */
   body:not(.app) main > #capa { display: none; }
@@ -473,8 +475,11 @@
       </table>
     </div>
     <p class="note-line">Os mínimos são diferentes para piscina de 50 m e de 25 m, e não se convertem tempos entre piscinas. Têm de ser obtidos em provas oficiais, em Portugal ou no estrangeiro. Os nadadores do Regime de Alto Rendimento estão dispensados do TAC.</p>
+    <h3>Atletas do clube com mínimo</h3>
+    <p class="note-line">Escolhe uma ou mais categorias (a piscina é a escolhida em cima).</p>
+    <div id="min-cats"></div>
     <div id="min-atl">
-      <h3>Atletas do clube com mínimo</h3>
+      <h3 class="so-print">Atletas do clube com mínimo</h3>
       <p class="note-line" id="min-atl-info"></p>
       <div class="table-scroll">
         <table class="tac">
@@ -3969,32 +3974,37 @@ function rkMinOk(r) {
 }
 // Mínimos FPN: atletas do clube que já têm o TAC da categoria escolhida (anos de nascimento de cada coluna da tac)
 const minAnos = [[1900, 2008], [2006, 2008], [2009, 2010], [2010, 2010], [2011, 2011], [2012, 2012], [2011, 2011], [2012, 2012], [2013, 2013], [2014, 2014], [2011, 2011], [2012, 2012], [2013, 2013], [2014, 2014]];
+const minNomes = ["Sénior", "Sub21", "Júnior", "1.º ano Júnior", "Juv A · CN jul", "Juv B · CN jul", "Juv A · CN mar/abr", "Juv B · CN mar/abr", "Inf A · CN jul", "Inf B · CN jul", "Juv A · Zonais", "Juv B · Zonais", "Inf A · Zonais", "Inf B · Zonais"];
+document.getElementById("min-cats").innerHTML = minNomes.map((n, c) => `<label><input type="checkbox" value="${c}"${c === +document.getElementById("tac-cat").value ? " checked" : ""}><span>${n}</span></label>`).join("");
 function minAtletas() {
-  const c = +document.getElementById("tac-cat").value, pool = document.getElementById("tac-pool").value, [a0, a1] = minAnos[c];
-  const melhor = {};
-  ranking.forEach(r => {
-    if ("p" + parseInt(r[6]) !== pool || !["2025/26", "2026/27"].includes(rkEpoca(r[7]))) return;
-    const n = rkNasc(r); if (n < a0 || n > a1) return;
-    const g = r[0] % 2 ? "F" : "M", [d, est] = rkProvas[r[1]].split(" "), k = `${d} ${est === "Bruços" ? "B" : est[0]}`;
-    const row = tac[pool][g].find(x => x[0] === k), t = row && row[c + 1];
-    if (!t || rkSeg(r[5]) > rkSeg(t)) return;
-    const id = `${g}|${r[3]}|${r[1]}`;
-    if (!melhor[id] || rkSeg(r[5]) < rkSeg(melhor[id].r[5])) melhor[id] = { g, r, t };
+  const pool = document.getElementById("tac-pool").value, rows = [];
+  const cats = [...document.querySelectorAll("#min-cats input:checked")].map(x => +x.value);
+  cats.forEach(c => {
+    const [a0, a1] = minAnos[c], melhor = {};
+    ranking.forEach(r => {
+      if ("p" + parseInt(r[6]) !== pool || !["2025/26", "2026/27"].includes(rkEpoca(r[7]))) return;
+      const n = rkNasc(r); if (n < a0 || n > a1) return;
+      const g = r[0] % 2 ? "F" : "M", [d, est] = rkProvas[r[1]].split(" "), k = `${d} ${est === "Bruços" ? "B" : est[0]}`;
+      const row = tac[pool][g].find(x => x[0] === k), t = row && row[c + 1];
+      if (!t || rkSeg(r[5]) > rkSeg(t)) return;
+      const id = `${g}|${r[3]}|${r[1]}`;
+      if (!melhor[id] || rkSeg(r[5]) < rkSeg(melhor[id].r[5])) melhor[id] = { g, r, t };
+    });
+    const lst = Object.values(melhor);
+    rows.push(`<tr class="grp"><td colspan="5"><b>${minNomes[c]} · ${a0 === 1900 ? `${a1} e anteriores` : a0 === a1 ? a0 : `${a0}–${a1}`}</b></td></tr>`);
+    [["M", "Masculinos"], ["F", "Femininos"]].forEach(([g, nome]) => {
+      const por = {};
+      lst.filter(x => x.g === g).forEach(x => (por[x.r[3]] = por[x.r[3]] || []).push(x));
+      const nomes = Object.keys(por).sort((a, b) => por[b].length - por[a].length || a.localeCompare(b));
+      rows.push(`<tr><td colspan="5"><i>${nome} · ${nomes.length} atleta${nomes.length === 1 ? "" : "s"}</i></td></tr>`);
+      nomes.forEach(n => por[n].sort((a, b) => a.r[1] - b.r[1]).forEach((x, i) => rows.push(`<tr><td>${i ? "" : `<b>${escH(n)}</b> (${rkNasc(x.r)}) · ${por[n].length} prova${por[n].length === 1 ? "" : "s"}`}</td><td>${rkProvas[x.r[1]]}</td><td class="num"><b>${x.r[5]}</b></td><td class="num">${x.t}</td><td>${x.r[7]} · ${escH(x.r[8])}</td></tr>`)));
+    });
   });
-  const lst = Object.values(melhor), rows = [];
-  const cat = document.getElementById("tac-cat").selectedOptions[0];
-  [["M", "Masculinos"], ["F", "Femininos"]].forEach(([g, nome]) => {
-    const por = {};
-    lst.filter(x => x.g === g).forEach(x => (por[x.r[3]] = por[x.r[3]] || []).push(x));
-    const nomes = Object.keys(por).sort((a, b) => por[b].length - por[a].length || a.localeCompare(b));
-    rows.push(`<tr class="grp"><td colspan="5">${nome} · ${nomes.length} atleta${nomes.length === 1 ? "" : "s"}</td></tr>`);
-    if (!nomes.length) rows.push('<tr><td colspan="5">Ainda nenhum atleta com mínimo.</td></tr>');
-    nomes.forEach(n => por[n].sort((a, b) => a.r[1] - b.r[1]).forEach((x, i) => rows.push(`<tr><td>${i ? "" : `<b>${escH(n)}</b> (${rkNasc(x.r)}) · ${por[n].length} prova${por[n].length === 1 ? "" : "s"}`}</td><td>${rkProvas[x.r[1]]}</td><td class="num"><b>${x.r[5]}</b></td><td class="num">${x.t}</td><td>${x.r[7]} · ${escH(x.r[8])}</td></tr>`)));
-  });
-  document.getElementById("min-atl-info").textContent = `${cat.parentNode.label} · ${cat.textContent.replace(/ \(.*\)/, "")} · piscina de ${pool === "p50" ? "50" : "25"} m`;
+  if (!cats.length) rows.push('<tr><td colspan="5">Escolhe pelo menos uma categoria.</td></tr>');
+  document.getElementById("min-atl-info").textContent = `${cats.map(c => minNomes[c]).join(" + ") || "Nenhuma categoria"} · piscina de ${pool === "p50" ? "50" : "25"} m`;
   document.getElementById("min-atl-rows").innerHTML = rows.join("");
 }
-document.getElementById("tac-cat").addEventListener("change", minAtletas);
+document.getElementById("min-cats").addEventListener("change", minAtletas);
 document.getElementById("tac-pool").addEventListener("change", minAtletas);
 minAtletas();
 // Partilhar: o que está no ecrã, por WhatsApp ou para imprimir
