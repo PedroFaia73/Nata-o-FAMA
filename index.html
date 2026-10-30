@@ -1161,16 +1161,22 @@
   <!-- TEMPOS DE TREINO -->
   <section id="tempos">
     <h2>Tempos de treino por zona</h2>
-    <p class="lead">Escolhe o atleta e o estilo. O recorde pessoal (RP) de 50 e de 100 m vem do Ranking do clube e podes alterá-lo à mão. Os tempos-alvo somam ao RP os segundos da tabela GPS FAMA (T50 e T100).</p>
+    <p class="lead">Escolhe o atleta e a prova (distância e estilo). O recorde pessoal (RP) vem do Ranking do clube e podes alterá-lo à mão. Para cada zona, o tempo-alvo é o ritmo da prova nessa distância mais os segundos da tabela GPS FAMA (T50 por 50 m, T100 por 100 m). Nas provas de Estilos a tabela mostra cada estilo à parte, a partir das passagens da prova.</p>
     <div class="pickers">
       <label>Atleta
         <select id="tt-atl"></select>
       </label>
-      <label>Estilo
+      <label>Prova
+        <select id="tt-prova"></select>
+      </label>
+      <label>RP da prova
+        <input id="tt-rp" inputmode="decimal" placeholder="ex.: 59.56 ou 2:10.40">
+      </label>
+      <label hidden>Estilo
         <select id="tt-est"><option value="0">Livres</option><option value="6">Costas</option><option value="9">Bruços</option><option value="12">Mariposa</option><option value="15">Estilos</option></select>
       </label>
     </div>
-    <div class="pickers tt-rp">
+    <div class="pickers tt-rp" hidden>
       <label>RP 50 m
         <input id="tt-rp50" inputmode="decimal" placeholder="ex.: 27.14">
       </label>
@@ -1181,7 +1187,7 @@
     <p class="note-line" id="tt-fonte"></p>
     <div class="table-scroll">
       <table>
-        <thead><tr><th>Zona</th><th class="num">Séries de 50</th><th class="num">Séries de 100</th><th>Variação</th></tr></thead>
+        <thead id="tt-head"></thead>
         <tbody id="tt-rows"></tbody>
       </table>
     </div>
@@ -3995,29 +4001,43 @@ ttA.innerHTML = '<option value="">Outro atleta (escreve o RP)</option>' +
 // estilo = índice do 50 m em rkProvas; Estilos (15) não tem 50 m e o 100 é o próprio 15
 const ttP50 = e => e === 15 ? -1 : e, ttP100 = e => e === 15 ? 15 : e + 1;
 const ttMelhor = (n, p) => ranking.filter(r => r[3] === n && r[1] === p).sort((a, b) => ttSeg(a[5]) - ttSeg(b[5]))[0];
+// a prova escolhida define o estilo (os RP de 50 e 100 desse estilo ficam escondidos e servem o treino mais abaixo)
+const ttPv = document.getElementById("tt-prova"), ttRP = document.getElementById("tt-rp");
+const ttEstDe = p => ({ Livres: 0, Costas: 6, "Bruços": 9, Mariposa: 12, Estilos: 15 })[rkProvas[p].split(" ")[1]];
+ttPv.innerHTML = rkProvas.map((x, p) => `<option value="${p}"${p === 1 ? " selected" : ""}>${x}</option>`).join("");
 function ttPreencher() {
-  const n = ttA.value, e = +ttE.value, f = [];
-  [[tt50, ttP50(e)], [tt100, ttP100(e)]].forEach(([el, p]) => {
-    const r = n && ttMelhor(n, p);
-    el.value = r ? r[5] : "";
-    if (r) f.push(`${rkProvas[p]}: ${r[5]} (${r[6]}, ${r[7]})`);
-  });
-  document.getElementById("tt-fonte").textContent = n ? (f.length ? "RP do Ranking: " + f.join(" · ") : "Sem tempos deste atleta no Ranking neste estilo: escreve o RP.") : "";
+  const n = ttA.value, e = +ttE.value, p = +ttPv.value;
+  [[tt50, ttP50(e)], [tt100, ttP100(e)]].forEach(([el, q]) => { const r = n && ttMelhor(n, q); el.value = r ? r[5] : ""; });
+  const r = n && ttMelhor(n, p);
+  ttRP.value = r ? r[5] : "";
+  document.getElementById("tt-fonte").textContent = n ? (r ? `RP do Ranking: ${rkProvas[p]} ${r[5]} (${r[6]}, ${r[7]})` : `Sem ${rkProvas[p]} deste atleta no Ranking: escreve o RP.`) : "";
   ttCalc();
 }
+ttPv.addEventListener("change", () => { ttE.value = ttEstDe(+ttPv.value); ttE.dispatchEvent(new Event("change")); });
+ttRP.addEventListener("input", ttCalc);
+// T de uma distância de treino: 25 = metade do T50, 50 = T50, 100 ou mais = T100 por cada 100 m
+const ttT = (z, d) => d <= 50 ? z[2] * d / 50 : z[3] * d / 100;
 function ttCalc() {
+  const p = +ttPv.value, D = rpDist(p), rp = ttSeg(ttRP.value), est = ttEstDe(p) === 15, head = document.getElementById("tt-head");
+  // Estilos: um troço de D/4 m por estilo (M, C, B, L), com as passagens da prova; o 100 Estilos usa as proporções do 200
+  const L = D / 4, nomes = ["Mariposa", "Costas", "Bruços", "Livres"];
+  let cols;
+  if (est) {
+    const g = ttGenero(ttA.value), c = rpCoef[g][p] || rpCoef[g][16], k = c.length / 4;
+    const parc = nomes.map((_, i) => c.slice(i * k, i * k + k).reduce((a, x) => a + x, 0) / c.reduce((a, x) => a + x, 0));
+    cols = nomes.map((x, i) => [`${L} ${x}`, L, parc[i]]).concat([[`${D} Estilos`, D, 1]]);
+  } else cols = [25, 50, 100, 200].map(d => [`${d} m`, d, d / D]);
+  head.innerHTML = `<tr><th>Zona</th>${cols.map(c => `<th class="num">${c[0]}</th>`).join("")}</tr>`;
+  const v = (z, [, d, f]) => isNaN(rp) ? "–" : z[2] === null ? "máx" : ttFmt(rp * f + ttT(z, d));
+  const z = ttZonas.map(x => `<tr><td><b>${x[0]}</b> <small>${x[1]}</small></td>${cols.map(c => `<td class="num">${v(x, c)}</td>`).join("")}</tr>`);
+  if (est && !isNaN(rp)) z.unshift(`<tr><td><small>Passagem na prova</small></td>${cols.map(c => `<td class="num"><small>${ttFmt(rp * c[2])}</small></td>`).join("")}</tr>`);
   const r100 = ttSeg(tt100.value);
-  let r50 = ttSeg(tt50.value), aviso = "";
-  if (isNaN(r50) && !isNaN(r100)) { r50 = r100 / 2; aviso = " *"; }
-  const c = (rp, t) => isNaN(rp) ? "–" : t === null ? "máx" : ttFmt(rp + t);
-  const z = ttZonas.map(([k, nome, t50, t100, v]) => `<tr><td><b>${k}</b> <small>${nome}</small></td><td class="num">${c(r50, t50)}${t50 !== null && !isNaN(r50) ? aviso : ""}</td><td class="num">${c(r100, t100)}</td><td>${v}</td></tr>`);
-  z.push(`<tr><td><b>Vel</b> <small>Velocidade</small></td><td class="num" colspan="2">${isNaN(r100) ? "–" : "25 m a " + ttFmt((r100 - 5) / 4)}</td><td>0,0"</td></tr>`);
-  document.getElementById("tt-rows").innerHTML = z.join("") + (aviso ? '<tr><td colspan="4"><small>* sem RP de 50 m: calculado com metade do RP de 100 m</small></td></tr>' : "");
+  if (!est && !isNaN(r100)) z.push(`<tr><td><b>Vel</b> <small>Velocidade</small></td><td class="num" colspan="${cols.length}">25 m a ${ttFmt((r100 - 5) / 4)} (RP 100 − 5", a dividir por 4)</td></tr>`);
+  document.getElementById("tt-rows").innerHTML = z.join("");
 }
 ttA.addEventListener("change", ttPreencher);
 ttE.addEventListener("change", ttPreencher);
 [tt50, tt100].forEach(el => el.addEventListener("input", ttCalc));
-ttPreencher();
 
 // Ritmo de prova: parciais por 50 m com as percentagens da folha "Cálculo do ritmo de prova" (masc./fem.)
 const rpCoef = [{"1": [0.485, 0.515], "2": [0.2335, 0.2543, 0.2562, 0.256], "3": [0.1141, 0.1239, 0.1268, 0.128, 0.1275, 0.1278, 0.1278, 0.1241], "4": [0.0585, 0.0633, 0.0626, 0.0632, 0.0626, 0.0632, 0.0628, 0.0632, 0.0629, 0.0631, 0.063, 0.0632, 0.063, 0.0626, 0.063, 0.0598], "5": [0.0328, 0.0328, 0.0336, 0.0336, 0.0337, 0.0337, 0.0336, 0.0336, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0333, 0.0333, 0.0333, 0.0333, 0.0322, 0.0322], "7": [0.4897, 0.5103], "8": [0.2355, 0.2535, 0.2566, 0.2544], "10": [0.4685, 0.5315], "11": [0.2355, 0.2535, 0.2566, 0.2544], "13": [0.4897, 0.5103], "14": [0.2234, 0.2508, 0.2593, 0.2665], "16": [0.216, 0.253, 0.2914, 0.2396], "17": [0.2282, 0.2561, 0.287, 0.2286]}, {"1": [0.4861, 0.5139], "2": [0.2367, 0.256, 0.256, 0.2513], "3": [0.1141, 0.1239, 0.1268, 0.128, 0.1275, 0.1278, 0.1278, 0.1241], "4": [0.0585, 0.0633, 0.0626, 0.0632, 0.0626, 0.0632, 0.0628, 0.0632, 0.0629, 0.0631, 0.063, 0.0632, 0.063, 0.0626, 0.063, 0.0598], "5": [0.0328, 0.0328, 0.0336, 0.0336, 0.0337, 0.0337, 0.0336, 0.0336, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0335, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0334, 0.0333, 0.0333, 0.0333, 0.0333, 0.0322, 0.0322], "7": [0.4795, 0.5205], "8": [0.2345, 0.2523, 0.2562, 0.257], "10": [0.4715, 0.5285], "11": [0.232, 0.2546, 0.2555, 0.2579], "13": [0.4589, 0.5411], "14": [0.2295, 0.2558, 0.2571, 0.2575], "16": [0.2189, 0.2621, 0.2868, 0.2322], "17": [0.2314, 0.2583, 0.2828, 0.2275]}];
@@ -4183,6 +4203,7 @@ document.getElementById("tr-sug").addEventListener("click", () => {
 });
 rpPreencher();
 trPreencher();
+ttPreencher();
 // App no telemóvel: uma secção de cada vez, barra em baixo com as 4 secções principais e "Mais" com as restantes
 // (para trocar as secções da barra, muda os href/data-tab do nav.tabbar)
 const appSec = [
