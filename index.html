@@ -251,6 +251,9 @@
   .rk-eps legend { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; padding: 0; }
   :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) { display: flex; flex-wrap: wrap; gap: 6px; }
   :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) label { cursor: pointer; }
+  .rk-novo, .rk-min { display: inline-block; padding: 1px 6px; border-radius: 999px; font-size: .7rem; font-weight: 800; vertical-align: middle; }
+  .rk-novo { background: var(--accent); color: var(--surface); }
+  .rk-min { border: 1px solid var(--accent); color: var(--accent); }
   :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) input { position: absolute; opacity: 0; pointer-events: none; }
   :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
   :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
@@ -907,7 +910,8 @@
   <!-- TREINADORES -->
   <section id="ranking">
     <h2>Ranking do Clube</h2>
-    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos é o ranking geral do clube. Os outros escalões são os da época 2026/27, calculados pelo ano de nascimento com a regra da FPN, para todos os tempos (idade em 2027: Infantis B 13 anos, Infantis A 14, Juvenis B 15, Juvenis A 16, Juniores B 17, Juniores A 18, Sub 21 dos 19 aos 21, Seniores 19 ou mais, que inclui os Sub 21). Podes escolher vários escalões ao mesmo tempo, por exemplo Juniores A e Juniores B. Escolhe o escalão, o género e a prova, um atleta para ver todas as suas provas, ou uma ou mais épocas para ver os tempos conseguidos nessa altura. Os filtros funcionam juntos e o lugar é calculado dentro da escolha feita (melhor tempo de cada atleta).</p>
+    <p class="lead">Os 10 melhores tempos de sempre do GDNF em cada prova. Escolhe o género, a prova, o atleta, a piscina, os escalões e as épocas; os filtros funcionam juntos.</p>
+    <details class="note-line"><summary>Saber mais</summary><p>Os 10 melhores tempos de sempre do GDNF em cada prova (de outubro de 2000 a outubro de 2026). Absolutos é o ranking geral do clube. Os outros escalões são os da época 2026/27, calculados pelo ano de nascimento com a regra da FPN, para todos os tempos (idade em 2027: Infantis B 13 anos, Infantis A 14, Juvenis B 15, Juvenis A 16, Juniores B 17, Juniores A 18, Sub 21 dos 19 aos 21, Seniores 19 ou mais, que inclui os Sub 21). Podes escolher vários escalões ao mesmo tempo, por exemplo Juniores A e Juniores B. Escolhe o escalão, o género e a prova, um atleta para ver todas as suas provas, ou uma ou mais épocas para ver os tempos conseguidos nessa altura. Os filtros funcionam juntos e o lugar é calculado dentro da escolha feita (melhor tempo de cada atleta). <b>novo</b> marca os tempos da época 2026/27; <b>✓ mín.</b> marca os tempos de 2025/26 e 2026/27 que já fazem o mínimo dos Campeonatos Nacionais do escalão 2026/27 (TAC FPN) nessa piscina; Dif. é a diferença para o 1.º lugar.</p></details>
     <div class="pickers">
       <label>Género
         <select id="rk-gen"><option value="0">Masculino</option><option value="1">Feminino</option></select>
@@ -917,6 +921,13 @@
       </label>
       <label>Atleta
         <select id="rk-atl"></select>
+      </label>
+      <label>Procurar atleta
+        <input id="rk-busca" list="rk-nomes" placeholder="Escreve parte do nome">
+        <datalist id="rk-nomes"></datalist>
+      </label>
+      <label>Piscina
+        <select id="rk-pisc"><option value="">25 m e 50 m</option><option value="25m">25 m</option><option value="50m">50 m</option></select>
       </label>
     </div>
     <fieldset class="rk-eps">
@@ -934,6 +945,7 @@
         <tbody id="rk-rows"></tbody>
       </table>
     </div>
+    <p><button type="button" class="btn-sug" id="rk-print">Imprimir</button> <a class="btn-wa" id="rk-wa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a></p>
     <p class="note-line">Fonte: rankings top 10 do clube (27/10/2026): top 10 de sempre absoluto e de infantis, top 10 absoluto da época 2025/26 e top 10 de cada escalão de outubro de 2025 a outubro de 2026 (falta Juniores B femininos). Pts = pontos FINA. A época 2025/26 está completa até ao 10.º lugar. Nas outras épocas só aparecem os tempos que entraram no top 10 de sempre, por isso podem faltar atletas.</p>
 
     <h3 id="estafetas">Melhores estafetas</h3>
@@ -3848,9 +3860,9 @@ const rkEscAtual = () => {
 };
 // tempos do género, escalões e épocas escolhidos; o lugar é calculado dentro da escolha
 // (melhor tempo de cada atleta por prova; só o top 10, porque fora dele os dados não estão completos)
-function rkTempos(g, eps = []) {
+function rkTempos(g, eps = [], pisc = "") {
   const ok = rkEscAtual()[2];
-  const l = ranking.filter(r => r[0] % 2 === g && ok(rkIdade(r)) && (!eps.length || eps.includes(rkEpoca(r[7])))).map(r => ({ r, pos: null }));
+  const l = ranking.filter(r => r[0] % 2 === g && ok(rkIdade(r)) && (!eps.length || eps.includes(rkEpoca(r[7]))) && (!pisc || r[6] === pisc)).map(r => ({ r, pos: null }));
   rkProvas.forEach((_, p) => {
     const vistos = new Set();
     l.filter(x => x.r[1] === p).sort((a, b) => rkSeg(a.r[5]) - rkSeg(b.r[5]))
@@ -3859,8 +3871,9 @@ function rkTempos(g, eps = []) {
   return l;
 }
 function rkAtletas() {
-  const l = rkTempos(+rkGen.value), sel = rkEpocas(), a = rkA.value, todas = rkS.querySelector("[data-todas]:checked");
+  const l = rkTempos(+rkGen.value, [], rkPisc.value), sel = rkEpocas(), a = rkA.value, todas = rkS.querySelector("[data-todas]:checked");
   const nomes = [...new Set(l.map(x => x.r[3]))].sort((a, b) => a.localeCompare(b, "pt"));
+  document.getElementById("rk-nomes").innerHTML = nomes.map(n => `<option value="${escH(n)}">`).join("");
   rkA.innerHTML = `<option value="">Todos</option>` + nomes.map(n => `<option${n === a ? " selected" : ""}>${escH(n)}</option>`).join("");
   const eps = [...new Set(["2026/27", ...l.map(x => rkEpoca(x.r[7]))])].sort().reverse();
   rkS.innerHTML = `<label><input type="checkbox" data-todas><span>Todas as épocas</span></label>` + eps.map(x => `<label><input type="checkbox" value="${x}"${todas || sel.includes(x) ? " checked" : ""}><span>${x}</span></label>`).join("");
@@ -3870,8 +3883,11 @@ function showRanking() {
   const g = +rkGen.value, p = rkP.value === "" ? -1 : +rkP.value, a = rkA.value, eps = rkEpocas();
   const nomeEsc = `${rkEscAtual()[1]} ${rkGenNome[g]}`;
   const head = document.getElementById("rk-head"), body = document.getElementById("rk-rows");
-  const cel = r => `<td class="num">${r[5]}</td><td>${r[6]}</td><td class="num">${r[7]}</td><td>${escH(r[8].replace(/ \(POR\)$/, ""))}</td><td class="num">${r[9] || "–"}</td>`;
-  const todos = rkTempos(g, eps);
+  // novo = tempo da época atual; ✓ mín. = já tem o mínimo CN do escalão nessa piscina
+  const marca = r => `${rkEpoca(r[7]) === "2026/27" ? ' <span class="rk-novo">novo</span>' : ""}${rkMinOk(r) ? ' <span class="rk-min">✓ mín.</span>' : ""}`;
+  const cel = r => `<td class="num">${r[5]}${marca(r)}</td><td>${r[6]}</td><td class="num">${r[7]}</td><td>${escH(r[8].replace(/ \(POR\)$/, ""))}</td><td class="num">${r[9] || "–"}</td>`;
+  const todos = rkTempos(g, eps, rkPisc.value);
+  const pisTxt = rkPisc.value ? `piscina ${rkPisc.value.replace("m", " m")}` : "";
   const epTxt = rkS.querySelector("[data-todas]:checked") ? "todas as épocas" : eps.length ? `${eps.length > 1 ? "épocas" : "época"} ${eps.slice().sort().join(" + ")}` : "";
   if (a || p < 0) {
     const l = todos.filter(({ r }) => (p < 0 || r[1] === p) && (!a || r[3] === a))
@@ -3879,16 +3895,49 @@ function showRanking() {
     const partes = [a ? `${a}${l.length ? ` (${rkNasc(l[0].r)})` : ""}` : nomeEsc];
     if (p >= 0) partes.push(rkProvas[p]);
     if (epTxt) partes.push(epTxt);
+    if (pisTxt) partes.push(pisTxt);
     document.getElementById("rk-count").textContent = `${partes.join(" · ")}: ${l.length} ${l.length === 1 ? "tempo" : "tempos"}`;
     head.innerHTML = `<tr><th>Prova</th><th class="num">Lugar</th>${a ? "" : "<th>Nome</th>"}<th class="num">Tempo</th><th>Pisc.</th><th class="num">Data</th><th>Local</th><th class="num">Pts</th></tr>`;
     body.innerHTML = l.map(({ r, pos }) => `<tr><td>${rkProvas[r[1]]}</td><td class="num">${pos ? pos + ".º" : "–"}</td>${a ? "" : `<td>${escH(r[3])}</td>`}${cel(r)}</tr>`).join("") || `<tr><td colspan="8">Sem tempos com esta escolha.</td></tr>`;
+    rkPartilha(document.getElementById("rk-count").textContent, l.map(({ r, pos }) => `${rkProvas[r[1]]}${pos ? ` ${pos}.º` : ""}${a ? "" : ` ${r[3]}`} ${r[5]} (${r[6]}, ${r[7]})`));
   } else {
     const l = todos.filter(x => x.r[1] === p && x.pos).sort((x, y) => x.pos - y.pos);
-    document.getElementById("rk-count").textContent = `${[nomeEsc, rkProvas[p], epTxt].filter(Boolean).join(" · ")}: top ${l.length}`;
-    head.innerHTML = `<tr><th class="num">#</th><th>Nome</th><th class="num">Ano</th><th class="num">Tempo</th><th>Pisc.</th><th class="num">Data</th><th>Local</th><th class="num">Pts</th></tr>`;
-    body.innerHTML = l.map(({ r, pos }) => `<tr><td class="num">${pos}</td><td>${escH(r[3])}${r[10] ? ` <small>(${r[10]})</small>` : ""}</td><td class="num">${rkNasc(r)}</td>${cel(r)}</tr>`).join("") || '<tr><td colspan="8">Sem tempos nesta prova.</td></tr>';
+    document.getElementById("rk-count").textContent = `${[nomeEsc, rkProvas[p], epTxt, pisTxt].filter(Boolean).join(" · ")}: top ${l.length}`;
+    // Dif. = distância ao 1.º lugar da lista
+    const t1 = l.length ? rkSeg(l[0].r[5]) : 0, dif = r => { const d = rkSeg(r[5]) - t1; return d ? "+" + d.toFixed(2) : "–"; };
+    head.innerHTML = `<tr><th class="num">#</th><th>Nome</th><th class="num">Ano</th><th class="num">Tempo</th><th>Pisc.</th><th class="num">Data</th><th>Local</th><th class="num">Pts</th><th class="num">Dif.</th></tr>`;
+    body.innerHTML = l.map(({ r, pos }) => `<tr><td class="num">${pos}</td><td>${escH(r[3])}${r[10] ? ` <small>(${r[10]})</small>` : ""}</td><td class="num">${rkNasc(r)}</td>${cel(r)}<td class="num">${dif(r)}</td></tr>`).join("") || '<tr><td colspan="9">Sem tempos nesta prova.</td></tr>';
+    rkPartilha(document.getElementById("rk-count").textContent, l.map(({ r, pos }) => `${pos}. ${r[3]} ${r[5]} (${r[6]}, ${r[7]})${pos > 1 ? ` ${dif(r)}` : ""}`));
   }
 }
+// mínimo CN do escalão (TAC FPN 2026/27) na piscina do tempo
+function rkMinOk(r) {
+  // só os tempos de 2025/26 e 2026/27 (os que ainda contam para os nacionais desta época)
+  if (!["2025/26", "2026/27"].includes(rkEpoca(r[7]))) return false;
+  const c = ttMinCol(rkIdade(r)), [d, est] = rkProvas[r[1]].split(" "), k = `${d} ${est === "Bruços" ? "B" : est[0]}`;
+  const row = c && tac["p" + parseInt(r[6])] && tac["p" + parseInt(r[6])][r[0] % 2 ? "F" : "M"].find(x => x[0] === k), t = row && row[c[1] + 1];
+  return t ? rkSeg(r[5]) <= rkSeg(t) : false;
+}
+// Partilhar: o que está no ecrã, por WhatsApp ou para imprimir
+let rkTxt = "", rkHtml = "";
+function rkPartilha(titulo, linhas) {
+  rkTxt = `GDNF · Ranking do Clube\n${titulo}\n\n${linhas.join("\n")}`;
+  document.getElementById("rk-wa").href = "https://wa.me/?text=" + encodeURIComponent(rkTxt);
+  rkHtml = `<h2>GDNF · Ranking do Clube</h2><p>${escH(titulo)}</p><table><thead>${document.getElementById("rk-head").innerHTML}</thead><tbody>${document.getElementById("rk-rows").innerHTML}</tbody></table>`;
+}
+document.getElementById("rk-print").addEventListener("click", () => {
+  const w = window.open("", "_blank");
+  if (!w) return;
+  w.document.write(`<!doctype html><meta charset="utf-8"><title>Ranking GDNF</title><style>body{font:12px system-ui,sans-serif}table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:4px;text-align:left}.rk-novo,.rk-min{font-size:10px;font-weight:700}</style>${rkHtml}`);
+  w.document.close(); w.focus(); w.print();
+});
+// Procurar atleta: escrever parte do nome e escolher na lista
+const rkPisc = document.getElementById("rk-pisc"), rkBusca = document.getElementById("rk-busca");
+rkBusca.addEventListener("change", () => {
+  const q = rkBusca.value.trim().toLowerCase(), op = [...rkA.options].filter(o => o.value && o.value.toLowerCase().includes(q));
+  if (q && op.length) { rkA.value = (op.find(o => o.value.toLowerCase() === q) || op[0]).value; showRanking(); }
+});
+rkPisc.addEventListener("change", () => { rkAtletas(); showRanking(); });
 [rkG, rkGen].forEach(el => el.addEventListener("change", () => { rkAtletas(); showRanking(); }));
 rkP.addEventListener("change", showRanking);
 rkA.addEventListener("change", showRanking);
