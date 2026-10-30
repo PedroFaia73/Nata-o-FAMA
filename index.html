@@ -249,18 +249,20 @@
   tr.atl-aniv td { background: color-mix(in srgb, var(--z-a3) 22%, transparent); font-weight: 600; }
   .rk-eps { border: 0; padding: 0; margin: 0 0 14px; min-width: 0; }
   .rk-eps legend { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; padding: 0; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats) { display: flex; flex-wrap: wrap; gap: 6px; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats) label { cursor: pointer; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls) { display: flex; flex-wrap: wrap; gap: 6px; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls) label { cursor: pointer; }
   #min-cats { margin: 8px 0 12px; }
+  .es-disp { margin: 8px 0 14px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  .es-disp summary { cursor: pointer; font-weight: 700; }
   #min-atl .so-print { position: absolute; left: -9999px; }
   .rk-novo, .rk-min { display: inline-block; padding: 1px 6px; border-radius: 999px; font-size: .7rem; font-weight: 800; vertical-align: middle; }
   .rk-comp { display: flex; gap: 8px; align-items: center; margin: 8px 0; font-weight: 600; cursor: pointer; }
   .rk-novo { background: var(--accent); color: var(--surface); }
   .rk-min { border: 1px solid var(--accent); color: var(--accent); }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats) input { position: absolute; opacity: 0; pointer-events: none; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats) span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls) input { position: absolute; opacity: 0; pointer-events: none; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls) span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
   .es-list { padding-left: 16px; } .es-list li { margin-bottom: 8px; } .es-list b { color: var(--text); }
   /* capa de rosto (app): abre aqui, ecrã inteiro sem barra de cima */
   body:not(.app) main > #capa { display: none; }
@@ -992,12 +994,16 @@
     <p class="note-line">Fonte: rankings top 10 do clube (27/10/2026): top 10 de sempre absoluto e de infantis, top 10 absoluto da época 2025/26 e top 10 de cada escalão de outubro de 2025 a outubro de 2026 (falta Juniores B femininos). Pts = pontos FINA. A época 2025/26 está completa até ao 10.º lugar. Nas outras épocas só aparecem os tempos que entraram no top 10 de sempre, por isso podem faltar atletas.</p>
 
     <h3 id="estafetas">Melhores estafetas</h3>
-    <p class="lead">As estafetas mais rápidas possíveis com o melhor tempo de cada atleta nas épocas escolhidas acima (sem épocas escolhidas, usa todos os tempos). Usa o escalão escolhido acima. Nas estafetas de estilos é escolhida a melhor combinação, com um atleta por estilo e sem repetir.</p>
+    <p class="lead">As estafetas mais rápidas possíveis com o melhor tempo de cada atleta nas épocas escolhidas acima (sem épocas escolhidas, usa todos os tempos). Usa o escalão escolhido acima. Nas estafetas de estilos é escolhida a melhor combinação, com um atleta por estilo e sem repetir. Tira da lista os atletas que não estão disponíveis (doentes, ausentes…) e as estafetas são recalculadas sem eles.</p>
     <div class="pickers">
       <label>Piscina
         <select id="es-pisc"><option value="25m">25 m</option><option value="50m">50 m</option><option value="">Juntar 25 m e 50 m</option></select>
       </label>
     </div>
+    <details class="es-disp"><summary id="es-atls-n">Atletas disponíveis</summary>
+      <p><button type="button" class="btn-sug" id="es-todos">Todos</button> <button type="button" class="btn-sug" id="es-nenhum">Nenhum</button></p>
+      <div id="es-atls"></div>
+    </details>
     <div class="grid" id="es-grid"></div>
     <p class="note-line">Atenção: só há dados dos 10 melhores de sempre em cada prova, por isso pode faltar quem não está no ranking (por exemplo, atletas atuais que ainda não entraram no top 10). O tempo é a soma dos tempos individuais, sem contar as partidas lançadas.</p>
   </section>
@@ -4131,6 +4137,7 @@ const esNadoNome = ["Costas", "Bruços", "Mariposa", "Livres"];
 function esMelhores(g, prova) {
   const eps = rkEpocas(), pisc = esPisc.value, best = new Map();
   rkTempos(g, eps).map(x => x.r).filter(r => r[1] === prova && (!pisc || r[6] === pisc))
+    .filter(r => !esFora.has(g + "|" + r[3]))
     .forEach(r => { const t = esSeg(r[5]); if (!best.has(r[3]) || t < best.get(r[3]).t) best.set(r[3], { n: r[3], t, tt: r[5], esc: g }); });
   return [...best.values()].sort((a, b) => a.t - b.t);
 }
@@ -4157,7 +4164,23 @@ function esEstilos(provas, escs) {
   rec(0, new Set(), {}, 0, []);
   return melhor && melhor.sel;
 }
+// atletas disponíveis: os que têm tempos nas provas das estafetas para a escolha feita; tirar um recalcula as estafetas
+const esFora = new Set(), esProvas = [0, 1, 2, 6, 7, 9, 10, 12, 13];
+function esAtletas() {
+  const eps = rkEpocas(), pisc = esPisc.value;
+  const lista = [0, 1].flatMap(g => [...new Set(rkTempos(g, eps).map(x => x.r).filter(r => esProvas.includes(r[1]) && (!pisc || r[6] === pisc)).map(r => r[3]))].sort((a, b) => a.localeCompare(b)).map(n => [g, n]));
+  document.getElementById("es-atls").innerHTML = lista.map(([g, n]) => `<label><input type="checkbox" value="${g}|${escH(n)}"${esFora.has(g + "|" + n) ? "" : " checked"}><span>${escH(n)} ${g ? "(F)" : "(M)"}</span></label>`).join("") || '<p class="sub">Sem atletas para esta escolha.</p>';
+  const fora = lista.filter(([g, n]) => esFora.has(g + "|" + n)).length;
+  document.getElementById("es-atls-n").textContent = `Atletas disponíveis: ${lista.length - fora} de ${lista.length}${fora ? ` (${fora} fora)` : ""} · tocar para escolher`;
+}
+document.getElementById("es-atls").addEventListener("change", ev => {
+  const v = ev.target.value; ev.target.checked ? esFora.delete(v) : esFora.add(v);
+  showEstafetas();
+});
+document.getElementById("es-todos").addEventListener("click", () => { esFora.clear(); showEstafetas(); });
+document.getElementById("es-nenhum").addEventListener("click", () => { document.querySelectorAll("#es-atls input").forEach(x => esFora.add(x.value)); showEstafetas(); });
 function showEstafetas() {
+  esAtletas();
   const base = 0, grupo = rkEscAtual()[1];
   const generos = [["Masculinos", [[0, 4]]], ["Femininos", [[1, 4]]], ["Mistas (2M + 2F)", [[0, 2], [1, 2]]]];
   document.getElementById("es-grid").innerHTML = esTipos.map(([nome, provas]) => {
