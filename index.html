@@ -1197,7 +1197,12 @@
     <div class="table-scroll"><table><thead><tr><th class="num">Metros</th><th class="num">Parcial 50</th><th class="num">Parcial 100</th><th class="num">Passagem</th></tr></thead><tbody id="rp-rows"></tbody></table></div>
 
     <h3>Treino da atleta</h3>
-    <p class="lead">Escreve ou cola a série (ou o treino). Nas linhas com zona (A1 a TL) ou ritmo de prova (RP100, RP200…) a app escreve o tempo-alvo de cada distância. As linhas sem zona usam a zona da linha de cima. L, C, B, M e E (Estilos) escolhem o estilo; sem letra, ou com E1, usa o estilo escolhido acima.</p>
+    <p class="lead">Escreve ou cola a série (ou o treino). Nas linhas com zona (A1 a TL) ou ritmo de prova (RP100, RP200…) a app escreve o tempo-alvo de cada distância. As linhas sem zona usam a zona da linha de cima ou a zona escolhida na lista. L, C, B, M e E (Estilos) escolhem o estilo; sem letra, ou com E1, usa o estilo escolhido acima.</p>
+    <div class="pickers">
+      <label>Zona (se não estiver escrita na série)
+        <select id="tr-zona"><option value="">Escolhe a zona</option><option>A1</option><option>A2</option><option>A3</option><option>A4</option><option>TL</option><option>PL</option><option>RP50</option><option>RP100</option><option>RP200</option><option>RP400</option><option>RP800</option><option>RP1500</option></select>
+      </label>
+    </div>
     <label class="tt-treino">
       <textarea id="tr-texto" rows="7" placeholder='Escreve ou cola aqui a série. Exemplos:&#10;A3 10x200L c/2&apos;30"&#10;A4 4x(4x100+1x200+4x50)&#10;RP100 6x[1x100E1 c/20"]c/3&apos;30"'></textarea>
     </label>
@@ -4040,7 +4045,7 @@ rpT.addEventListener("input", rpCalc);
 const trEstilo = { L: 0, C: 6, B: 9, M: 12, E: 15 };
 function trAlvos(linha, zona, est, g) {
   // distâncias pela ordem, com repetições: "2x50" = 50, 50; "1x25" = 25
-  const ds = [], re = /(?:(\d+)\s*x\s*)?(25|50|75|100|150|200|300|400|800|1500)\s*(L|C|B|M|E\d?)?(?![\d'"])/gi;
+  const ds = [], re = /(?:(\d+)\s*x\s*)?(25|50|75|100|150|200|300|400|800|1500)\s*(?:(L|C|B|M|E\d?)(?![a-zà-ú]))?(?![\d'"])/gi;
   for (const m of linha.replace(/c\/[\d'"\/:,.]+/gi, " ").matchAll(re)) {
     const k = m[3] && !/^E\d/i.test(m[3]) ? m[3][0].toUpperCase() : "", e = k ? trEstilo[k] : est;
     for (let i = 0; i < (+m[1] || 1); i++) ds.push([+m[2], e]);
@@ -4064,12 +4069,13 @@ function trAlvos(linha, zona, est, g) {
   if (!z) return "";
   if (z[2] === null) return "máx";
   const out = ds.map(([d, e]) => {
-    const r50 = ttSeg(trRP(ttP50(e))), r100 = ttSeg(trRP(ttP100(e))), b50 = isNaN(r50) ? r100 / 2 : r50;
-    if (d <= 50) { const v = (b50 + z[2]) * d / 50; return isNaN(v) ? `${d}: –` : `${d}: ${ttFmt(v)}`; }
-    // 100 m ou mais: RP da distância + T100 por cada 100 m; sem RP dessa distância, ritmo do RP de 100 m
-    const p = d === 100 ? ttP100(e) : rkProvas.indexOf(`${d} ${rkProvas[e].split(" ")[1]}`), rp = p >= 0 ? ttSeg(trRP(p)) : NaN;
-    const v = (isNaN(rp) ? r100 * d / 100 : rp) + z[3] * d / 100;
-    if (isNaN(v)) return `${d}: –`;
+    // RP de uma distância do estilo; sem ele, ritmo da distância mais próxima que exista (100, 200, 50, 400)
+    const rpD = D => { const p = D === 50 ? ttP50(e) : D === 100 ? ttP100(e) : rkProvas.indexOf(`${D} ${rkProvas[e].split(" ")[1]}`); return p >= 0 ? ttSeg(trRP(p)) : NaN; };
+    const base = D => { const v = rpD(D); if (!isNaN(v)) return v; for (const o of [100, 200, 50, 400]) { const w = rpD(o); if (!isNaN(w)) return w * D / o; } return NaN; };
+    if (d <= 50) { const v = (base(50) + z[2]) * d / 50; return isNaN(v) ? `${d}: sem RP` : `${d}: ${ttFmt(v)}`; }
+    // 100 m ou mais: RP da distância + T100 por cada 100 m
+    const v = base(d) + z[3] * d / 100;
+    if (isNaN(v)) return `${d}: sem RP`;
     return d > 100 ? `${d}: ${ttFmt(v)} (cada 100: ${ttFmt(v * 100 / d)})` : `${d}: ${ttFmt(v)}`;
   });
   return [...new Set(out)].join(" · ");
@@ -4084,13 +4090,17 @@ function trRP(p) {
 }
 function trCalc() {
   const linhas = document.getElementById("tr-texto").value.split("\n").map(l => l.trim()).filter(Boolean);
-  const g = ttGenero(ttA.value), est = +ttE.value, cartoes = [], msg = [];
-  let zona = "";
+  const g = ttGenero(ttA.value), cartoes = [], msg = [];
+  // sem zona escrita, usa a zona escolhida na lista
+  let zona = document.getElementById("tr-zona").value;
   for (const l of linhas) {
     const m = l.match(/\b(A[1-4]|TL|PL|RP\s?\d{2,4})\b/i);
     if (m) zona = m[1].toUpperCase().replace(/\s/g, "");
+    // o nome do estilo escrito na linha (Livres, Costas, Bruços, Mariposa, Estilos) vale para as distâncias sem letra
+    const w = l.match(/\b(livres?|crol|costas|bru[çc]os|mariposa|estilos)\b/i), est = w ? { l: 0, c: 0, o: 6, r: 9, m: 12, e: 15 }[w[1][0].toLowerCase() === "c" && /^cos/i.test(w[1]) ? "o" : w[1][0].toLowerCase() === "b" ? "r" : w[1][0].toLowerCase()] : +ttE.value;
     const a = zona ? trAlvos(l.replace(m ? m[0] : "", " "), zona, est, g) : "";
-    cartoes.push(`<div class="card"><code>${escH(l)}</code>${a ? `<div class="alvo">${escH(zona)} → ${escH(a)}</div>` : ""}</div>`);
+    const falta = !zona && /\d/.test(l) ? '<div class="alvo">Falta a zona: escreve-a na série (ex.: A4) ou escolhe-a na lista acima.</div>' : "";
+    cartoes.push(`<div class="card"><code>${escH(l)}</code>${a ? `<div class="alvo">${escH(zona)} → ${escH(a)}</div>` : falta}</div>`);
     msg.push(a ? `${l}\n   → ${a}` : l);
   }
   document.getElementById("tr-saida").innerHTML = cartoes.join("");
@@ -4102,6 +4112,7 @@ document.getElementById("tr-texto").addEventListener("input", trCalc);
 ttA.addEventListener("change", rpPreencher);
 [tt50, tt100, ttE].forEach(el => el.addEventListener("input", trCalc));
 ttE.addEventListener("change", trCalc);
+document.getElementById("tr-zona").addEventListener("change", trCalc);
 rpPreencher();
 // App no telemóvel: uma secção de cada vez, barra em baixo com as 4 secções principais e "Mais" com as restantes
 // (para trocar as secções da barra, muda os href/data-tab do nav.tabbar)
