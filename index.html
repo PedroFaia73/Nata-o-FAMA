@@ -982,6 +982,7 @@
       </label>
     </div>
     <p><button type="button" class="btn-sug" id="cv-guardar">Guardar</button> <button type="button" class="btn-sug" id="cv-nova">Nova convocatória</button> <button type="button" class="btn-sug" id="cv-apagar">Apagar</button> <span class="sub" id="cv-msg"></span></p>
+    <p><label class="btn-sug cv-fich">Abrir ficheiro<input type="file" id="cv-abrir" accept=".json,application/json" hidden></label> <button type="button" class="btn-sug" id="cv-exportar">Guardar em ficheiro</button> <span class="sub">Para passar uma convocatória para outro telemóvel ou computador.</span></p>
 
     <h3>1. Regulamento</h3>
     <div class="pickers">
@@ -5084,6 +5085,27 @@ document.getElementById("cv-apagar").addEventListener("click", () => {
   if (i < 0) { document.getElementById("cv-msg").textContent = "Esta convocatória não está guardada."; return; }
   cvGuardadas.splice(i, 1); cvGuardaLista(); cvRender();
   document.getElementById("cv-msg").textContent = "Apagada da lista.";
+});
+// ficheiro .json: abrir uma convocatória feita noutro aparelho, ou guardá-la para enviar
+document.getElementById("cv-abrir").addEventListener("change", async ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  try {
+    const x = JSON.parse(await f.text()), c = x.conv || x;
+    if (!Array.isArray(c.sessoes)) throw 0;
+    cv = Object.assign(cvVazia(), c);
+    const nome = `${cv.prova || "Convocatória"}${cv.data ? " · " + cv.data : ""}`, i = cvGuardadas.findIndex(y => y.nome === nome);
+    const item = { nome, conv: JSON.parse(JSON.stringify(cv)) };
+    if (i >= 0) cvGuardadas[i] = item; else cvGuardadas.unshift(item);
+    cvGuardaLista(); cvRender();
+    document.getElementById("cv-msg").textContent = `Aberta e guardada neste telemóvel: ${nome}`;
+  } catch (e) { document.getElementById("cv-msg").textContent = "Este ficheiro não é uma convocatória."; }
+  ev.target.value = "";
+});
+document.getElementById("cv-exportar").addEventListener("click", () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(cv, null, 1)], { type: "application/json" }));
+  a.download = `Convocatoria ${(cv.prova || "GDNF").replace(/[^\w\u00C0-\u017F -]+/g, " ").trim()}.json`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 });
 cvRender();
 // Partilhar uma secção: Imprimir (janela só com a secção) ou WhatsApp (o texto que está no ecrã)
