@@ -143,6 +143,11 @@
   .rec td.f, .rec th.f { text-align: right; }
   .new { display: inline-block; background: var(--z-a2); color: #fff; font-size: .68rem; font-weight: 700; padding: 0 5px; border-radius: 4px; margin-left: 4px; vertical-align: 1px; }
   .rec .yr { color: var(--muted); font-size: .78rem; display: block; }
+  .rec-alerta { margin: 0 0 14px; padding: 12px 14px; border-radius: 10px; background: var(--warn-bg); outline: 2px solid var(--warn-line); outline-offset: -2px; font-size: .92rem; }
+  .rec-alerta b { display: block; margin-bottom: 4px; }
+  .rec-alerta ul { margin: 0; padding-left: 18px; }
+  #rv-res { font-weight: 600; }
+  #rv-res.bate { color: var(--z-a2); }
 
   .mapa img { width: 100%; height: auto; display: block; border-radius: 12px; border: 1px solid var(--line); background: #fff; }
 
@@ -1568,6 +1573,7 @@
   <section id="recordes">
     <h2>Recordes do clube · Absolutos</h2>
     <p class="lead" id="rec-info"></p>
+    <div class="rec-alerta" id="rec-alerta" hidden></div>
     <div class="tabs" role="tablist">
       <button role="tab" aria-selected="true" data-pool="p25">Piscina 25 m</button>
       <button role="tab" aria-selected="false" data-pool="p50">Piscina 50 m</button>
@@ -1580,6 +1586,23 @@
     </div>
     <div class="legend"><span style="--c: var(--z-a2)">Recorde batido na época 2025/26</span></div>
     <p class="docs"><a href="docs/recordes-p25.pdf">Recordes P25 (PDF)</a><a href="docs/recordes-p50.pdf">Recordes P50 (PDF)</a></p>
+    <h3>Este tempo é recorde?</h3>
+    <p class="lead">Escreve um tempo de uma prova para saber se bate o recorde do clube.</p>
+    <div class="pickers">
+      <label>Piscina
+        <select id="rv-pisc"><option value="p25">25 m</option><option value="p50">50 m</option></select>
+      </label>
+      <label>Género
+        <select id="rv-gen"><option value="0">Masculino</option><option value="1">Feminino</option></select>
+      </label>
+      <label>Prova
+        <select id="rv-prova"></select>
+      </label>
+      <label>Tempo
+        <input id="rv-tempo" inputmode="decimal" placeholder="ex.: 59.56 ou 2:10.40">
+      </label>
+    </div>
+    <p id="rv-res" aria-live="polite"></p>
   </section>
 
   <section id="mais">
@@ -4214,6 +4237,42 @@ rkA.addEventListener("change", showRanking);
 rkS.addEventListener("change", showRanking);
 rkAtletas();
 showRanking();
+
+// Recordes batidos: compara o Ranking do clube com a tabela de recordes e verifica um tempo escrito
+const recSeg = t => String(t).trim().replace(",", ".").replace(/["”]/g, "").split(":").reduce((a, x) => a * 60 + parseFloat(x), 0);
+const recFmt = s => { s = Math.round(s * 100) / 100; const m = Math.floor(s / 60), r = (s - m * 60).toFixed(2); return m ? `${m}:${r.padStart(5, "0")}` : r; };
+const recDe = (pool, prova, g) => { const row = recordes[pool].rows.find(x => x[0] === prova); return row && { tempo: g ? row[6] : row[3], atleta: g ? row[7] : row[1] }; };
+(function recAlerta() {
+  const melhor = new Map();
+  ranking.forEach(r => {
+    const pool = r[6] === "25m" ? "p25" : "p50", g = r[0] % 2, prova = rkProvas[r[1]], rec = recDe(pool, prova, g);
+    const k = [pool, g, prova].join("|");
+    if (!rec || !(recSeg(r[5]) < recSeg(rec.tempo) - 0.001) || (melhor.has(k) && recSeg(melhor.get(k).t) <= recSeg(r[5]))) return;
+    melhor.set(k, { t: r[5], li: `<li>${escH(r[3])}: ${escH(prova)} ${g ? "fem." : "masc."} ${pool === "p25" ? "P25" : "P50"} em ${escH(r[5])} (${escH(r[7])}), o recorde era ${escH(rec.tempo)}</li>` });
+  });
+  const batidos = [...melhor.values()].map(x => x.li);
+  const el = document.getElementById("rec-alerta");
+  if (!batidos.length) return;
+  el.innerHTML = `<b>Novo recorde do clube!</b><ul>${batidos.join("")}</ul>`;
+  el.hidden = false;
+})();
+const rvP = document.getElementById("rv-prova");
+rvP.innerHTML = rkProvas.map(p => `<option>${p}</option>`).join("");
+function rvVer() {
+  const pool = document.getElementById("rv-pisc").value, g = +document.getElementById("rv-gen").value;
+  const t = document.getElementById("rv-tempo").value, res = document.getElementById("rv-res");
+  const rec = recDe(pool, rvP.value, g), s = recSeg(t);
+  res.className = "";
+  if (!rec) { res.textContent = "Não há recorde desta prova nesta piscina."; return; }
+  if (!t.trim() || isNaN(s)) { res.textContent = `Recorde atual: ${rec.tempo} (${rec.atleta}).`; return; }
+  const d = s - recSeg(rec.tempo);
+  if (d < 0) { res.className = "bate"; res.textContent = `Novo recorde do clube! Bate o ${rec.tempo} de ${rec.atleta} por ${recFmt(-d)} s.`; }
+  else if (d === 0) res.textContent = `Iguala o recorde do clube (${rec.tempo}, ${rec.atleta}).`;
+  else res.textContent = `Faltam ${recFmt(d)} s para o recorde (${rec.tempo}, ${rec.atleta}).`;
+}
+["rv-pisc", "rv-gen", "rv-prova"].forEach(id => document.getElementById(id).addEventListener("change", rvVer));
+document.getElementById("rv-tempo").addEventListener("input", rvVer);
+rvVer();
 
 // Melhores estafetas a partir do ranking
 const esPisc = document.getElementById("es-pisc");

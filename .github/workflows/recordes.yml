@@ -1,0 +1,38 @@
+# Sempre que o site muda, verifica se algum tempo do Ranking bate um recorde do clube.
+# Se bater, abre um aviso (issue) atribuído ao Pedro, e o GitHub envia a notificação.
+name: Aviso de recorde do clube
+
+on:
+  push:
+    branches: [main]
+    paths: [index.html]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Comparar Ranking com Recordes
+        run: node .github/scripts/verificar-recordes.js
+      - name: Avisar
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ ! -s recordes-batidos.md ]; then echo "Sem recordes novos."; exit 0; fi
+          titulo="Novo recorde do clube"
+          if [ -n "$(gh issue list --state open --search "\"$titulo\" in:title" --json number --jq '.[].number')" ]; then
+            echo "Já há um aviso aberto."; exit 0
+          fi
+          {
+            echo "@PedroFaia73, há tempos no Ranking do clube que batem o recorde:"
+            echo
+            cat recordes-batidos.md
+            echo
+            echo "Quando atualizares a tabela de Recordes do site, fecha este aviso."
+          } > corpo.md
+          gh issue create --title "$titulo" --body-file corpo.md --assignee PedroFaia73
