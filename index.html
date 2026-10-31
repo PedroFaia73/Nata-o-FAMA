@@ -249,9 +249,10 @@
   tr.atl-aniv td { background: color-mix(in srgb, var(--z-a3) 22%, transparent); font-weight: 600; }
   .rk-eps { border: 0; padding: 0; margin: 0 0 14px; min-width: 0; }
   .rk-eps legend { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; padding: 0; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls) { display: flex; flex-wrap: wrap; gap: 6px; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls) label { cursor: pointer; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs) { display: flex; flex-wrap: wrap; gap: 6px; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs) label { cursor: pointer; }
   #min-cats { margin: 8px 0 12px; }
+  #cv-escs { margin: 4px 0 12px; }
   .es-disp { margin: 8px 0 14px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
   .es-disp summary { cursor: pointer; font-weight: 700; }
   #min-atl .so-print { position: absolute; left: -9999px; }
@@ -278,10 +279,10 @@
   .rk-comp { display: flex; gap: 8px; align-items: center; margin: 8px 0; font-weight: 600; cursor: pointer; }
   .rk-novo { background: var(--accent); color: var(--surface); }
   .rk-min { border: 1px solid var(--accent); color: var(--accent); }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls) input { position: absolute; opacity: 0; pointer-events: none; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls) span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs) input { position: absolute; opacity: 0; pointer-events: none; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs) span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
   .es-list { padding-left: 16px; } .es-list li { margin-bottom: 8px; } .es-list b { color: var(--text); }
   /* capa de rosto (app): abre aqui, ecrã inteiro sem barra de cima */
   body:not(.app) main > #capa { display: none; }
@@ -1010,14 +1011,19 @@
 
     <h3>3. Atletas</h3>
     <div class="pickers">
-      <label>Escalão
-        <select id="cv-esc"></select>
+      <label>Convocatória já com cruzes (PDF)
+        <input type="file" id="cv-cruzes" accept="application/pdf,.pdf">
       </label>
+    </div>
+    <p class="note-line" id="cv-cruzes-msg">Tens a convocatória em PDF com as cruzes? Carrega-a aqui: o site junta os atletas e marca as provas sozinho (confirma depois na grelha).</p>
+    <p class="sub">Escalões (podes escolher vários)</p>
+    <div id="cv-escs"></div>
+    <div class="pickers">
       <label>Juntar atleta
         <select id="cv-atl"></select>
       </label>
     </div>
-    <p><button type="button" class="btn-sug" id="cv-todos-esc">Juntar todos do escalão</button></p>
+    <p><button type="button" class="btn-sug" id="cv-todos-esc">Juntar todos dos escalões escolhidos</button></p>
     <p class="note-line" id="cv-atls-n"></p>
     <div id="cv-atls"></div>
 
@@ -4870,10 +4876,13 @@ function cvLer(txt) {
   return { titulo, data: campo(/DATA\s*:\s*([^\n]+)/i), local: campo(/LOCAL\s*:\s*([^\n]+)/i), sessoes: sess.filter(s => s.provas.length) };
 }
 // PDF do regulamento: lê o texto com o pdf.js e refaz as linhas pela posição (para as colunas do programa)
-async function cvPdfTexto(file) {
+async function cvPdf(file) {
   if (!window.pdfjsLib) await new Promise((ok, erro) => { const sc = document.createElement("script"); sc.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"; sc.onload = ok; sc.onerror = erro; document.head.append(sc); });
   pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-  const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise, out = [];
+  return pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+}
+async function cvPdfTexto(file) {
+  const pdf = await cvPdf(file), out = [];
   for (let i = 1; i <= pdf.numPages; i++) {
     const c = await (await pdf.getPage(i)).getTextContent(), linhas = [];
     // juntar em linhas pela altura (com tolerância: o "ª" vem um pouco acima)
@@ -4905,7 +4914,8 @@ const cvExemplo = () => ({
   atletas: [], sel: {}
 });
 const cvVazia = () => ({ prova: "", data: "", local: "", piscina: "", tecnicos: "", nota: "", regulamento: "", sessoes: [], atletas: [], sel: {} });
-let cvGuardadas = [], cv;
+let cvGuardadas = [], cv, cvEscs = new Set();
+try { cvEscs = new Set(JSON.parse(localStorage.getItem("gdnf-conv-escs") || "[]")); } catch (e) {}
 try { cvGuardadas = JSON.parse(localStorage.getItem("gdnf-convocatorias") || "[]"); } catch (e) {}
 try { cv = JSON.parse(localStorage.getItem("gdnf-conv-atual") || "null"); } catch (e) {}
 if (!cv || !Array.isArray(cv.sessoes)) cv = cvExemplo();
@@ -4937,10 +4947,9 @@ function cvRender() {
     <textarea data-k="provas" rows="5">${s.provas.map(p => `${p.n}ª ${p.d} ${cvEstNome[p.e] || p.e} ${{ F: "Femininos", M: "Masculinos", X: "Misto", "": "" }[p.g]}`.trim()).join("\n")}</textarea></details>
   </div>`).join("") || '<p class="sub">Sem sessões: carrega o regulamento ou cola o programa.</p>';
   // atletas
-  const esc = document.getElementById("cv-esc"), e = esc.value;
-  esc.innerHTML = `<option value="">Todos os escalões</option>` + escaloes.slice().reverse().map(x => `<option${x === e ? " selected" : ""}>${x}</option>`).join("");
+  document.getElementById("cv-escs").innerHTML = escaloes.slice().reverse().map(x => `<label><input type="checkbox" value="${escH(x)}"${cvEscs.has(x) ? " checked" : ""}><span>${escH(x)}</span></label>`).join("");
   const ja = new Set(cv.atletas.map(a => a.n));
-  document.getElementById("cv-atl").innerHTML = `<option value="">Escolhe um atleta…</option>` + atletas.filter(a => (!esc.value || a[2] === esc.value) && !ja.has(a[0])).sort((a, b) => a[0].localeCompare(b[0], "pt")).map(a => `<option value="${escH(a[0])}">${escH(a[0])} (${a[5]}, ${a[2]})</option>`).join("");
+  document.getElementById("cv-atl").innerHTML = `<option value="">Escolhe um atleta…</option>` + atletas.filter(a => (!cvEscs.size || cvEscs.has(a[2])) && !ja.has(a[0])).sort((a, b) => a[0].localeCompare(b[0], "pt")).map(a => `<option value="${escH(a[0])}">${escH(a[0])} (${a[5]}, ${a[2]})</option>`).join("");
   const ord = cvAtlOrdem();
   document.getElementById("cv-atls").innerHTML = ord.map(a => `<label><input type="checkbox" value="${escH(a.n)}" checked><span>${escH(cvCurto(a.n))} (${a.g}) ✕</span></label>`).join("");
   document.getElementById("cv-atls-n").textContent = ord.length ? `${ord.length} atleta${ord.length === 1 ? "" : "s"} (${ord.filter(a => a.g === "M").length} M, ${ord.filter(a => a.g === "F").length} F). Toca num nome para o tirar.` : "Ainda sem atletas.";
@@ -5031,15 +5040,19 @@ document.getElementById("cv-mais-sessao").addEventListener("click", () => {
   cv.sessoes.push({ jornada: u ? u.jornada + (u.sessao === 2 ? 1 : 0) : 1, sessao: u ? (u.sessao === 2 ? 1 : 2) : 1, dia: "", hora: "", comparencia: "", provas: [] });
   cvRender();
 });
-document.getElementById("cv-esc").addEventListener("change", cvRender);
+document.getElementById("cv-escs").addEventListener("change", ev => {
+  if (ev.target.checked) cvEscs.add(ev.target.value); else cvEscs.delete(ev.target.value);
+  try { localStorage.setItem("gdnf-conv-escs", JSON.stringify([...cvEscs])); } catch (e) {}
+  cvRender();
+});
 document.getElementById("cv-atl").addEventListener("change", ev => {
   const a = atletas.find(x => x[0] === ev.target.value); if (!a) return;
   cv.atletas.push({ n: a[0], g: a[5], esc: a[2] }); cvRender();
 });
 document.getElementById("cv-todos-esc").addEventListener("click", () => {
-  const e = document.getElementById("cv-esc").value, ja = new Set(cv.atletas.map(a => a.n));
-  if (!e) { document.getElementById("cv-atls-n").textContent = "Escolhe primeiro o escalão."; return; }
-  atletas.filter(a => a[2] === e && !ja.has(a[0])).forEach(a => cv.atletas.push({ n: a[0], g: a[5], esc: a[2] }));
+  const ja = new Set(cv.atletas.map(a => a.n));
+  if (!cvEscs.size) { document.getElementById("cv-atls-n").textContent = "Escolhe primeiro os escalões."; return; }
+  atletas.filter(a => cvEscs.has(a[2]) && !ja.has(a[0])).forEach(a => cv.atletas.push({ n: a[0], g: a[5], esc: a[2] }));
   cvRender();
 });
 document.getElementById("cv-atls").addEventListener("change", ev => {
@@ -5085,6 +5098,97 @@ document.getElementById("cv-apagar").addEventListener("click", () => {
   if (i < 0) { document.getElementById("cv-msg").textContent = "Esta convocatória não está guardada."; return; }
   cvGuardadas.splice(i, 1); cvGuardaLista(); cvRender();
   document.getElementById("cv-msg").textContent = "Apagada da lista.";
+});
+// convocatória já preenchida (PDF com NOME, colunas "estilo / distância" e X ou nº de equipa): junta atletas e cruzes
+const cvSemAc = t => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const cvDist = (a, b) => { const d = Array.from({ length: b.length + 1 }, (_, j) => j); for (let i = 1; i <= a.length; i++) { let p = d[0]; d[0] = i; for (let j = 1; j <= b.length; j++) { const t = d[j]; d[j] = Math.min(d[j] + 1, d[j - 1] + 1, p + (a[i - 1] === b[j - 1] ? 0 : 1)); p = t; } } return d[b.length]; };
+// nome do PDF → atleta da lista (nomes encurtados ou com uma gralha no apelido)
+function cvAtletaDe(nome) {
+  const t = cvSemAc(nome).split(/\s+/), ts = a => cvSemAc(a[0]).split(/\s+/), ult = t[t.length - 1];
+  for (const ok of [a => ts(a)[0] === t[0] && ts(a).slice(-1)[0] === ult, a => t.every(x => ts(a).includes(x)), a => ts(a)[0] === t[0] && ts(a).some(x => cvDist(x, ult) <= 3)]) {
+    const c = atletas.filter(ok); if (c.length === 1) return c[0]; if (c.length > 1) return null;
+  }
+  return null;
+}
+async function cvLerCruzes(file) {
+  const pdf = await cvPdf(file), provas = cv.sessoes.flatMap((s, si) => s.provas.map(p => ({ ...p, si })));
+  const avisos = [], novos = []; let nCruzes = 0;
+  for (let pg = 1; pg <= pdf.numPages; pg++) {
+    // o pdf.js parte palavras ("4x1" + "00"): voltar a juntar os pedaços colados na mesma linha
+    const it = [], filas = [];
+    (await (await pdf.getPage(pg)).getTextContent()).items.filter(i => i.str.trim()).map(i => ({ s: i.str, x0: i.transform[4], x1: i.transform[4] + i.width, y: i.transform[5] }))
+      .sort((a, b) => b.y - a.y).forEach(i => { const f = filas[filas.length - 1]; if (f && f[0].y - i.y < 1) f.push(i); else filas.push([i]); });
+    filas.forEach(f => f.sort((a, b) => a.x0 - b.x0).forEach(i => {
+      const u = it[it.length - 1];
+      if (u && f.includes(u) && Math.abs(i.x0 - u.x1) < 1 && !/\s$/.test(u.s) && !/^\s/.test(i.s)) { u.s += i.s; u.x1 = i.x1; } else it.push(i);
+    }));
+    it.forEach(i => { i.s = i.s.trim(); i.x = (i.x0 + i.x1) / 2; });
+    // cabeçalho: a linha com mais distâncias e, logo acima, a dos estilos
+    const dist = it.filter(i => /^(\d+x)?\d{2,4}$/i.test(i.s)), conta = {};
+    dist.forEach(i => { const k = Math.round(i.y / 4); conta[k] = (conta[k] || 0) + 1; });
+    const yk = Object.keys(conta).sort((a, b) => conta[b] - conta[a])[0];
+    if (yk === undefined || conta[yk] < 3) continue;
+    const ds = dist.filter(i => Math.round(i.y / 4) === +yk).sort((a, b) => a.x - b.x), yD = Math.min(...ds.map(d => d.y));
+    const est = it.filter(i => /^[LCBME]\s*(\([mfMF]\))?$/.test(i.s) && i.y > yD && i.y - yD < 30);
+    // cada coluna é a prova seguinte do programa com essa distância e estilo (feminina e masculina juntas)
+    let ptr = 0;
+    const cols = ds.map(d => {
+      const e = est.slice().sort((a, b) => Math.abs(a.x - d.x) - Math.abs(b.x - d.x))[0]; if (!e) return null;
+      const st = e.s[0], gm = /\((.)\)/.exec(e.s), gf = gm ? (gm[1] === "m" ? "X" : gm[1].toUpperCase()) : "", dd = d.s.toLowerCase();
+      const ok = p => p.n > ptr && p.d.toLowerCase() === dd && p.e === st && (gf ? p.g === gf : p.g !== "X");
+      const p1 = provas.find(ok); if (!p1) return { x: d.x, provas: [], nome: `${st} ${d.s}` };
+      const grupo = provas.filter(p => ok(p) && p.si === p1.si);
+      ptr = Math.max(...grupo.map(p => p.n));
+      return { x: d.x, provas: grupo, nome: `${st} ${d.s}` };
+    }).filter(Boolean);
+    if (!cols.length) continue;
+    const xMin = cols[0].x - 12, perto = x => cols.reduce((m, c) => Math.abs(c.x - x) < Math.abs(m.x - x) ? c : m);
+    // nomes à esquerda das colunas; as marcas vão para a linha mais próxima
+    const linhas = [];
+    it.filter(i => i.y < yD - 4 && i.x0 < xMin && /\p{L}/u.test(i.s)).sort((a, b) => b.y - a.y || a.x0 - b.x0).forEach(i => {
+      const l = linhas.find(l => Math.abs(l.y - i.y) < 3); if (l) l.p.push(i); else linhas.push({ y: i.y, p: [i] });
+    });
+    const marcas = it.filter(i => i.y < yD - 4 && i.x0 >= xMin && i.x0 < cols[cols.length - 1].x + 12 && /^(x|[1-5])$/i.test(i.s));
+    let fim = false; const fila = [];
+    linhas.forEach(l => {
+      const nome = l.p.sort((a, b) => a.x0 - b.x0).map(i => i.s).join(" ").replace(/\s+/g, " ").trim();
+      if (/^(nota|obs)/i.test(nome)) fim = true;
+      if (fim || /[:\d]/.test(nome) || nome.split(" ").length > 6) return;
+      const ms = marcas.filter(m => Math.abs(m.y - l.y) < 6); if (!ms.length) return;
+      const r = cv.atletas.find(x => x.n === nome) ? null : cvAtletaDe(nome);
+      let a = cv.atletas.find(x => x.n === (r ? r[0] : nome));
+      if (!a) { a = r ? { n: r[0], g: r[5], esc: r[2] } : { n: nome, g: "", esc: "" }; cv.atletas.push(a); if (!r) novos.push(a); }
+      fila.push([a, ms]);
+    });
+    // quem não está na lista fica com o género da maioria da página (no PDF, uma folha por género)
+    const gp = fila.map(([a]) => a.g).filter(Boolean), gPag = gp.filter(g => g === "F").length > gp.length / 2 ? "F" : "M";
+    fila.forEach(([a]) => { if (!a.g) a.g = gPag; });
+    fila.forEach(([a, ms]) => {
+      ms.forEach(m => {
+        const c = perto(m.x);
+        let p = c.provas.find(p => p.g === "X") || c.provas.find(p => p.g === a.g);
+        if (!p && c.provas.length) {
+          p = provas.find(q => q.d === c.provas[0].d && q.e === c.provas[0].e && q.g === a.g);
+          avisos.push(`${cvCurto(a.n)}: marca em ${c.nome} da ${c.provas[0].si + 1}ª sessão, que é do outro género${p ? `; ficou na ${p.si + 1}ª sessão` : ""}.`);
+        }
+        if (!p) { avisos.push(`${cvCurto(a.n)}: não encontrei a prova ${c.nome} no programa.`); return; }
+        cv.sel[`${a.n}|${p.n}`] = /x/i.test(m.s) ? "X" : m.s; nCruzes++;
+      });
+    });
+  }
+  novos.forEach(a => avisos.push(`${a.n} não está na lista de atletas do site: entrou com o nome do PDF.`));
+  return { nCruzes, avisos };
+}
+document.getElementById("cv-cruzes").addEventListener("change", async ev => {
+  const f = ev.target.files[0], msg = document.getElementById("cv-cruzes-msg"); if (!f) return;
+  if (!cv.sessoes.length) { msg.textContent = "Carrega primeiro o regulamento (passo 1), para o site saber as provas."; ev.target.value = ""; return; }
+  msg.textContent = "A ler as cruzes…";
+  try {
+    const { nCruzes, avisos } = await cvLerCruzes(f);
+    cvRender();
+    msg.innerHTML = nCruzes ? `Li ${nCruzes} marcas de ${cv.atletas.length} atletas. Confirma na grelha.${avisos.length ? "<br>⚠️ " + avisos.map(escH).join("<br>⚠️ ") : ""}` : "Não encontrei cruzes neste PDF.";
+  } catch (e) { msg.textContent = "Não consegui ler este PDF."; }
+  ev.target.value = "";
 });
 // ficheiro .json: abrir uma convocatória feita noutro aparelho, ou guardá-la para enviar
 document.getElementById("cv-abrir").addEventListener("change", async ev => {
