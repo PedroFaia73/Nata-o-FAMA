@@ -254,10 +254,12 @@
   tr.atl-aniv td { background: color-mix(in srgb, var(--z-a3) 22%, transparent); font-weight: 600; }
   .rk-eps { border: 0; padding: 0; margin: 0 0 14px; min-width: 0; }
   .rk-eps legend { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; padding: 0; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs) { display: flex; flex-wrap: wrap; gap: 6px; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs) label { cursor: pointer; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs, #cc-atls) { display: flex; flex-wrap: wrap; gap: 6px; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs, #cc-atls) label { cursor: pointer; }
   #min-cats { margin: 8px 0 12px; }
-  #cv-escs { margin: 4px 0 12px; }
+  #cv-escs, #cc-atls { margin: 4px 0 12px; }
+  #cc-atls input:disabled + span { opacity: .4; text-decoration: line-through; }
+  .cc-det { margin: 8px 0 14px; } .cc-det summary { cursor: pointer; font-weight: 700; }
   .es-disp { margin: 8px 0 14px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
   .es-disp summary { cursor: pointer; font-weight: 700; }
   #min-atl .so-print { position: absolute; left: -9999px; }
@@ -284,10 +286,10 @@
   .rk-comp { display: flex; gap: 8px; align-items: center; margin: 8px 0; font-weight: 600; cursor: pointer; }
   .rk-novo { background: var(--accent); color: var(--surface); }
   .rk-min { border: 1px solid var(--accent); color: var(--accent); }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs) input { position: absolute; opacity: 0; pointer-events: none; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs) span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
-  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs, #cc-atls) input { position: absolute; opacity: 0; pointer-events: none; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs, #cc-atls) span { display: inline-block; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs, #cc-atls) input:checked + span { background: var(--accent); border-color: transparent; color: var(--surface); }
+  :is(#rk-ep, #rk-esc, #tr-esc, #tr-atls, #min-cats, #es-atls, #cv-atls, #cv-escs, #cc-atls) input:focus-visible + span { outline: 2px solid var(--accent, #1f6feb); outline-offset: 2px; }
   .es-list { padding-left: 16px; } .es-list li { margin-bottom: 8px; } .es-list b { color: var(--text); }
   /* capa de rosto (app): abre aqui, ecrã inteiro sem barra de cima */
   body:not(.app) main > #capa { display: none; }
@@ -395,6 +397,7 @@
     <a href="#atletas">Atletas</a>
     <a href="#ranking">Ranking</a>
     <a href="#convocatorias">Convocatórias</a>
+    <a href="#clubes">CN Clubes</a>
     <a href="#treinadores">Treinadores</a>
     <a href="#guia">Guia do Atleta</a>
     <a href="#calendario">Calendário</a>
@@ -1011,6 +1014,42 @@
     <div class="table-scroll cv-scroll"><table class="cv-grelha" id="cv-grelha"></table></div>
     <p><label class="cv-so"><input type="checkbox" id="cv-so" checked> Imprimir e enviar só as provas com atletas</label></p>
     <p><button type="button" class="btn-sug" id="cv-print">Imprimir</button> <a class="btn-wa" id="cv-wa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a></p>
+  </section>
+
+  <!-- CN CLUBES: MELHOR EQUIPA -->
+  <section id="clubes">
+    <h2>CN Clubes 2.ª Divisão · melhor equipa</h2>
+    <p class="lead">Escolha automática de quem nada cada prova no Campeonato Nacional de Clubes da 2.ª Divisão (Mealhada, 28–29 nov. 2026), para somar o máximo de pontos. Usa os melhores tempos do Ranking do Clube de 2025/26 e 2026/27.</p>
+    <div class="pickers">
+      <label>Género
+        <select id="cc-gen"><option value="1">Femininos</option><option value="0">Masculinos</option></select>
+      </label>
+      <label>Máximo de nadadores
+        <select id="cc-max"><option>8</option><option>9</option><option>10</option><option>11</option><option selected>12</option></select>
+      </label>
+    </div>
+    <details class="cc-det"><summary id="cc-atls-n">Atletas disponíveis</summary>
+      <p class="sub">Toca para tirar (doente, lesionada…) ou voltar a pôr. As apagadas não estão na lista de atletas 2026/27 ou são cadetes.</p>
+      <div id="cc-atls"></div>
+    </details>
+    <div class="stats" id="cc-resumo"></div>
+    <div id="cc-tab">
+      <div class="table-scroll">
+        <table class="tac">
+          <thead><tr><th>Prova</th><th>Atleta</th><th class="num">Tempo</th><th class="num">Pontos</th></tr></thead>
+          <tbody id="cc-rows"></tbody>
+        </table>
+      </div>
+      <h3>Provas de cada atleta</h3>
+      <div class="table-scroll">
+        <table class="tac">
+          <thead><tr><th>Atleta</th><th>Individuais (máx. 3)</th><th>Estafetas</th></tr></thead>
+          <tbody id="cc-atl-rows"></tbody>
+        </table>
+      </div>
+    </div>
+    <p class="note-line">Regras do regulamento: 1 nadador e 1 estafeta em todas as provas (quem falha uma prova é eliminado), no máximo 3 provas individuais por nadador mais as estafetas, e no máximo 12 nadadores inscritos. Só entram Infantis, Juvenis, Juniores e Seniores. A pontuação do campeonato depende do lugar entre os 24 clubes; como não temos os tempos dos outros clubes, a escolha usa os pontos FINA de cada tempo do ranking (mais pontos = melhor lugar provável) e soma-os. O ranking guarda os 10 melhores de cada prova, por isso uma atleta pode não ter tempo numa prova que até nada bem: confirma sempre.</p>
+    <p class="partilhar" data-sec="cc-tab"><button type="button" class="btn-sug" data-acao="imprimir">Imprimir</button> <a class="btn-wa" data-acao="wa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a></p>
   </section>
 
   <section id="ranking">
@@ -5251,6 +5290,131 @@ document.getElementById("cv-exportar").addEventListener("click", () => {
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 });
 cvRender();
+// CN Clubes 2.ª Divisão: melhor distribuição dos nadadores pelas provas (pontos FINA do Ranking, 2025/26 e 2026/27)
+// sessões do regulamento: provas individuais (índice de rkProvas) e estafetas [nome, provas de cada percurso]
+const ccSessoes = [
+  ["1.ª sessão · 28 nov · 9h30", [3, 12, 7, 16], [["4×100 Livres", [1, 1, 1, 1]]]],
+  ["2.ª sessão · 28 nov · 16h30", [14, 10, 2], [["4×100 Estilos", [7, 10, 13, 1]]]],
+  ["3.ª sessão · 29 nov · 9h30", [4, 0, 11, 6, 13], []],
+  ["4.ª sessão · 29 nov · 16h30", [17, 1, 8, 9], [["4×200 Livres", [2, 2, 2, 2]]]]
+];
+const ccFora = new Set();
+let ccRoster = null;
+// nome do ranking (sem acentos, às vezes sem nomes do meio) → atleta da lista do clube, com o mesmo ano de nascimento
+function ccNaLista(nome, ano) {
+  const t = cvSemAc(nome).split(/\s+/), ts = a => cvSemAc(a[0]).split(/\s+/), l = atletas.filter(a => !ano || a[1] === ano);
+  let c = l.filter(a => t.every(x => ts(a).includes(x)));
+  if (!c.length) c = l.filter(a => ts(a)[0] === t[0] && cvDist(ts(a).slice(-1)[0], t[t.length - 1]) <= 2);
+  return c.length === 1 ? c[0] : null;
+}
+// melhor tempo (mais pontos) de cada atleta em cada prova, nas épocas 2025/26 e 2026/27
+function ccMelhores(g) {
+  const m = new Map();
+  ranking.filter(r => r[0] % 2 === g && ["2025/26", "2026/27"].includes(rkEpoca(r[7])) && r[9]).forEach(r => {
+    if (!m.has(r[3])) m.set(r[3], {});
+    const b = m.get(r[3]);
+    if (!b[r[1]] || r[9] > b[r[1]][9]) b[r[1]] = r;
+  });
+  return m;
+}
+// atribuição ótima (algoritmo húngaro): linhas = provas, colunas = lugares (3 por atleta); maximiza os pontos
+function ccHungaro(peso, n, m) {
+  const INF = 1e18, u = Array(n + 1).fill(0), v = Array(m + 1).fill(0), p = Array(m + 1).fill(0), way = Array(m + 1).fill(0);
+  for (let i = 1; i <= n; i++) {
+    p[0] = i; let j0 = 0; const minv = Array(m + 1).fill(INF), used = Array(m + 1).fill(false);
+    do {
+      used[j0] = true; const i0 = p[j0]; let delta = INF, j1 = 0;
+      for (let j = 1; j <= m; j++) if (!used[j]) {
+        const cur = -peso(i0 - 1, j - 1) - u[i0] - v[j];
+        if (cur < minv[j]) { minv[j] = cur; way[j] = j0; }
+        if (minv[j] < delta) { delta = minv[j]; j1 = j; }
+      }
+      for (let j = 0; j <= m; j++) if (used[j]) { u[p[j]] += delta; v[j] -= delta; } else minv[j] -= delta;
+      j0 = j1;
+    } while (p[j0] !== 0);
+    do { const j1 = way[j0]; p[j0] = p[j1]; j0 = j1; } while (j0);
+  }
+  const res = Array(n).fill(-1);
+  for (let j = 1; j <= m; j++) if (p[j]) res[p[j] - 1] = j - 1;
+  return res;
+}
+const ccPts = (b, n, p) => (b.get(n)[p] || [])[9] || 0;
+// estafetas: os 4 com mais pontos (livres) ou a melhor combinação de 4 estilos diferentes
+function ccEstafeta(b, nomes, provas) {
+  if (provas.every(p => p === provas[0])) {
+    const l = nomes.filter(n => b.get(n)[provas[0]]).sort((x, y) => ccPts(b, y, provas[0]) - ccPts(b, x, provas[0])).slice(0, 4);
+    return l.length === 4 ? l : null;
+  }
+  let melhor = null;
+  const rec = (i, sel, soma) => {
+    if (i === 4) { if (!melhor || soma > melhor.soma) melhor = { soma, sel: sel.slice() }; return; }
+    nomes.filter(n => !sel.includes(n) && b.get(n)[provas[i]]).forEach(n => { sel.push(n); rec(i + 1, sel, soma + ccPts(b, n, provas[i])); sel.pop(); });
+  };
+  rec(0, [], 0);
+  return melhor && melhor.sel;
+}
+function ccPlano(b, nomes) {
+  const ind = ccSessoes.flatMap(s => s[1]), lug = nomes.flatMap(n => [n, n, n]);
+  if (lug.length < ind.length) return null;
+  // sem tempo: 0 pontos, mas a prova tem de ter alguém (melhor alguém com tempo noutra prova do que ficar sem nadador)
+  const at = ccHungaro((i, j) => ccPts(b, lug[j], ind[i]) * 10 + 1, ind.length, lug.length).map(j => lug[j]);
+  const est = ccSessoes.flatMap(s => s[2]).map(([nome, provas]) => [nome, provas, ccEstafeta(b, nomes, provas)]);
+  const usados = new Set([...at, ...est.flatMap(e => e[2] || [])]);
+  const total = ind.reduce((t, p, i) => t + ccPts(b, at[i], p), 0) + est.reduce((t, [, pr, l]) => t + (l ? l.reduce((s, n, k) => s + ccPts(b, n, pr[k]), 0) : 0), 0);
+  return { at, est, usados, total };
+}
+function ccRender() {
+  const g = +document.getElementById("cc-gen").value, max = +document.getElementById("cc-max").value, b = ccMelhores(g);
+  // só a lista do clube (2026/27) e sem cadetes; os outros aparecem desligados
+  const todos = [...b.keys()].map(n => { const a = ccNaLista(n, rkNasc(Object.values(b.get(n))[0])); return { n, a, ok: !!a && !/cadete/i.test(a[2]) }; })
+    .sort((x, y) => Math.max(...Object.values(b.get(y.n)).map(r => r[9])) - Math.max(...Object.values(b.get(x.n)).map(r => r[9])));
+  const disp = todos.filter(x => x.ok && !ccFora.has(g + "|" + x.n)).map(x => x.n);
+  document.getElementById("cc-atls").innerHTML = todos.map(x => `<label title="${x.ok ? "" : "Não está na lista de atletas 2026/27 ou é cadete"}"><input type="checkbox" value="${escH(x.n)}"${x.ok && !ccFora.has(g + "|" + x.n) ? " checked" : ""}${x.ok ? "" : " disabled"}><span>${escH(x.a ? cvCurto(x.a[0]) : x.n)}</span></label>`).join("");
+  document.getElementById("cc-atls-n").textContent = `Atletas disponíveis: ${disp.length} (toca para mudar)`;
+  let nomes = disp.slice(), p = ccPlano(b, nomes);
+  // máximo de nadadores: tira, um a um, quem faz perder menos pontos
+  while (p && p.usados.size > max) {
+    let melhor = null;
+    [...p.usados].forEach(n => { const q = ccPlano(b, nomes.filter(x => x !== n)); if (q && (!melhor || q.total > melhor.q.total)) melhor = { n, q }; });
+    if (!melhor) break;
+    nomes = nomes.filter(x => x !== melhor.n); p = melhor.q;
+  }
+  const nome = n => { const x = todos.find(y => y.n === n); return escH(x && x.a ? cvCurto(x.a[0]) : n); };
+  const tempo = (n, pr) => { const r = b.get(n)[pr]; return r ? `${r[5]} <span class="sub">${r[6]}</span>` : '<span class="sub">sem tempo</span>'; };
+  if (!p) {
+    document.getElementById("cc-resumo").innerHTML = "";
+    document.getElementById("cc-rows").innerHTML = '<tr><td colspan="4">Faltam atletas: são precisas pelo menos 6 para as 16 provas individuais.</td></tr>';
+    document.getElementById("cc-atl-rows").innerHTML = "";
+    return;
+  }
+  const ind = ccSessoes.flatMap(s => s[1]), gen = g ? "Fem." : "Masc.", rows = [];
+  let k = 0;
+  ccSessoes.forEach(([ses, provas, ests]) => {
+    rows.push(`<tr class="grp"><td colspan="4">${ses}</td></tr>`);
+    provas.forEach(pr => { const n = p.at[k++]; rows.push(`<tr><td>${rkProvas[pr]} ${gen}</td><td>${nome(n)}</td><td class="num">${tempo(n, pr)}</td><td class="num">${ccPts(b, n, pr) || "–"}</td></tr>`); });
+    ests.forEach(([en]) => {
+      const [, pr, l] = p.est.find(e => e[0] === en);
+      // cada percurso com o seu tempo; a soma só faz sentido se forem todos da mesma piscina
+      const rs = l && l.map((n, i) => b.get(n)[pr[i]]), uma = rs && rs.every(r => r[6] === rs[0][6]);
+      rows.push(l ? `<tr><td>${en} ${gen}</td><td>${l.map((n, i) => `${pr[0] !== pr[1] ? ["C", "B", "M", "L"][i] + " · " : ""}${nome(n)} <small style="opacity:.7;white-space:nowrap">${rs[i][5]} ${rs[i][6]}</small>`).join("<br>")}</td><td class="num">${uma ? `${esFmt(rs.reduce((t, r) => t + rkSeg(r[5]), 0))} <span class="sub">soma ${rs[0][6]}</span>` : "–"}</td><td class="num">${l.reduce((s, n, i) => s + ccPts(b, n, pr[i]), 0)}</td></tr>`
+        : `<tr><td>${en} ${gen}</td><td colspan="3">Faltam tempos para formar a estafeta: escolhe à mão.</td></tr>`);
+    });
+  });
+  document.getElementById("cc-rows").innerHTML = rows.join("");
+  const porAtl = [...p.usados].map(n => ({ n, ind: ind.map((pr, i) => p.at[i] === n ? rkProvas[pr] : null).filter(Boolean), est: p.est.filter(e => (e[2] || []).includes(n)).map(e => e[0]) }))
+    .sort((x, y) => y.ind.length - x.ind.length || x.n.localeCompare(y.n, "pt"));
+  document.getElementById("cc-atl-rows").innerHTML = porAtl.map(x => `<tr><td>${nome(x.n)}</td><td>${x.ind.join(", ") || "–"}</td><td>${x.est.join(", ") || "–"}</td></tr>`).join("");
+  const semTempo = ind.filter((pr, i) => !b.get(p.at[i])[pr]).length;
+  document.getElementById("cc-resumo").innerHTML = `<div class="stat"><b>${p.total}</b><span>pontos FINA somados</span></div><div class="stat"><b>${p.usados.size}</b><span>nadadores (máx. ${max})</span></div>${semTempo ? `<div class="stat"><b>${semTempo}</b><span>provas sem tempo no ranking</span></div>` : ""}`;
+}
+document.getElementById("cc-atls").addEventListener("change", ev => {
+  const k = document.getElementById("cc-gen").value + "|" + ev.target.value;
+  if (ev.target.checked) ccFora.delete(k); else ccFora.add(k);
+  ccRender();
+});
+document.getElementById("cc-gen").addEventListener("change", ccRender);
+document.getElementById("cc-max").addEventListener("change", ccRender);
+ccRender();
 // Partilhar uma secção: Imprimir (janela só com a secção) ou WhatsApp (o texto que está no ecrã)
 function secLimpa(id) {
   const c = document.getElementById(id).cloneNode(true);
@@ -5289,6 +5453,7 @@ const appSec = [
   ["atletas", "AT", "Atletas", "Lista por escalão e aniversários"],
   ["ranking", "RK", "Ranking", "Top 10 do clube e estafetas"],
   ["convocatorias", "CV", "Convocatórias", "Modelo a partir do regulamento da prova"],
+  ["clubes", "CC", "CN Clubes", "Melhor equipa por prova (2.ª Divisão)"],
   ["treinadores", "TR", "Treinadores", "Contactos, cédulas e aniversários"],
   ["guia", "GA", "Guia do Atleta", "Regras, horários e mensalidades"],
   ["calendario", "CA", "Calendário", "Quadro competitivo FPN"],
@@ -5304,7 +5469,7 @@ const appTabs = [...document.querySelectorAll("#tabbar a")].map(a => a.dataset.t
 // Índice em pastas (temas) e subpastas (secções); algumas secções têm separadores próprios
 const appPastas = [
   ["Treino", ["tempos", "series", "zonas"]],
-  ["Competição", ["ranking", "minimos", "internacionais", "recordes", "convocatorias"]],
+  ["Competição", ["ranking", "minimos", "internacionais", "recordes", "convocatorias", "clubes"]],
   ["Equipa", ["atletas", "treinadores", "horarios", "guia"]],
   ["Eventos e viagens", ["deslocacoes", "fama-a-nadar"]],
   ["Planificação", ["inicio", "epoca", "calendario", "macrociclo", "plano"]]
