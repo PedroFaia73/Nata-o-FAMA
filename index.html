@@ -5303,15 +5303,15 @@ const appSec = [
 const appTabs = [...document.querySelectorAll("#tabbar a")].map(a => a.dataset.tab);
 // Índice em pastas (temas) e subpastas (secções); algumas secções têm separadores próprios
 const appPastas = [
-  ["Planificação", ["inicio", "epoca", "calendario", "macrociclo", "plano"]],
   ["Treino", ["zonas", "series", "tempos"]],
   ["Competição", ["minimos", "internacionais", "ranking", "recordes", "convocatorias"]],
   ["Equipa", ["atletas", "treinadores", "horarios", "guia"]],
-  ["Eventos e viagens", ["deslocacoes", "fama-a-nadar"]]
+  ["Eventos e viagens", ["deslocacoes", "fama-a-nadar"]],
+  ["Planificação", ["inicio", "epoca", "calendario", "macrociclo", "plano"]]
 ];
 const appSubs = { tempos: [["zona", "Por zona"], ["ritmo", "Ritmo de prova"], ["treino", "Treino da atleta"]] };
 let appAbertas = [];
-try { appAbertas = JSON.parse(localStorage.getItem("gdnf-pastas") || "[]"); } catch (e) {}
+try { appAbertas = JSON.parse(localStorage.getItem("gdnf-pastas2") || "[]"); } catch (e) {}
 const appIndice = appPastas.map(([nome, ids], i) => `
   <details class="pasta" data-p="${i}"${appAbertas.includes(i) ? " open" : ""}><summary><span class="pasta-ic" aria-hidden="true"></span><b>${nome}</b><small>${ids.length} secções</small></summary>
   ${ids.map(id => appSec.find(x => x[0] === id)).filter(Boolean).map(([id, sg, t, sub]) => `<a class="mais-item" href="#${id}"><span class="sigla">${sg}</span><span><b>${t}</b><small>${sub}</small></span><span class="seta">›</span></a>${(appSubs[id] || []).map(([k, n]) => `<a class="pasta-sub" href="#${id}" data-aba="${k}">${n}<span class="seta">›</span></a>`).join("")}`).join("")}
@@ -5322,7 +5322,7 @@ document.querySelectorAll(".pasta").forEach(d => d.addEventListener("toggle", ()
   const i = +d.dataset.p;
   document.querySelectorAll(`.pasta[data-p="${i}"]`).forEach(x => { if (x !== d) x.open = d.open; });
   appAbertas = appAbertas.filter(x => x !== i).concat(d.open ? [i] : []);
-  try { localStorage.setItem("gdnf-pastas", JSON.stringify(appAbertas)); } catch (e) {}
+  try { localStorage.setItem("gdnf-pastas2", JSON.stringify(appAbertas)); } catch (e) {}
 }));
 document.querySelectorAll(".pasta-sub").forEach(a => a.addEventListener("click", () => ttAba(a.dataset.aba)));
 const appMQ = matchMedia("(max-width: 760px)");
